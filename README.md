@@ -1,6 +1,7 @@
-# pwa_table-tennis
+# PingPong
 
 > A Vue.js project
+> It's a precise movement project for PingPong
 
 ## Build Setup
 
