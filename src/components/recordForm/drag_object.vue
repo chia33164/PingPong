@@ -41,10 +41,14 @@ export default {
       table_position: '',
       block_part: '0',
       station: '',
+      prev_x: 0,
+      prev_y: 0,
       x: 0,
       y: 0,
       getpoint: false,
-      serve_point: false
+      serve_point: false,
+      pressTimer: null,
+      presslong: false
     }
   },
   components: {
@@ -64,47 +68,55 @@ export default {
       this.serve_point = false
       this.getpoint = false
       this.station = ''
-      let i = 1
-      for (i = 1; i <= 12; i++) {
-        document.getElementById(`group${i}`).style.background = 'green'
-      }
     },
     judgeBlockpart: function (x, y, draggable) {
       if (this.x >= x && this.x <= x + 50) {
         draggable.style.left = (x + 25) + 'px'
+        this.x = x + 25
         if (this.y >= y && this.y <= y + 50) {
           this.block_part = 'part1'
           draggable.style.top = (y + 25) + 'px'
+          this.y = y + 25
         } else if (this.y > y + 50 && this.y <= y + 100) {
           this.block_part = 'part2'
           draggable.style.top = (y + 75) + 'px'
+          this.y = y + 75
         } else if (this.y > y + 100 && this.y <= y + 150) {
           this.block_part = 'part3'
           draggable.style.top = (y + 125) + 'px'
+          this.y = y + 125
         }
       } else if (this.x >= x + 50 && this.x <= x + 100) {
         draggable.style.left = (x + 75) + 'px'
+        this.x = x + 75
         if (this.y >= y && this.y <= y + 50) {
           this.block_part = 'part4'
           draggable.style.top = (y + 25) + 'px'
+          this.y = y + 25
         } else if (this.y > y + 50 && this.y <= y + 100) {
           this.block_part = 'part5'
           draggable.style.top = (y + 75) + 'px'
+          this.y = y + 75
         } else if (this.y > y + 100 && this.y <= y + 150) {
           this.block_part = 'part6'
           draggable.style.top = (y + 125) + 'px'
+          this.y = y + 125
         }
       } else if (this.x >= x + 100 && this.x <= x + 150) {
         draggable.style.left = (x + 125) + 'px'
+        this.x = x + 125
         if (this.y >= y && this.y <= y + 50) {
           this.block_part = 'part7'
           draggable.style.top = (y + 25) + 'px'
+          this.y = y + 25
         } else if (this.y > y + 50 && this.y <= y + 100) {
           this.block_part = 'part8'
           draggable.style.top = (y + 75) + 'px'
+          this.y = y + 75
         } else if (this.y > y + 100 && this.y <= y + 150) {
           this.block_part = 'part9'
           draggable.style.top = (y + 125) + 'px'
+          this.y = y + 125
         }
       }
     },
@@ -112,262 +124,169 @@ export default {
       let top = document.getElementById('top')
       let bottom = document.getElementById('bottom')
       top.addEventListener('click', (event) => {
-        let i = 1
-        for (; i <= 6; i++) {
+        for (let i = 1; i <= 6; i++) {
           document.getElementById(`group${i}`).style.backgroundColor = 'blue'
         }
-        for (i = 7; i <= 12; i++) {
+        for (let i = 7; i <= 12; i++) {
           document.getElementById(`group${i}`).style.backgroundColor = 'green'
         }
       })
       bottom.addEventListener('click', (event) => {
-        let i = 1
-        for (; i <= 6; i++) {
+        for (let i = 1; i <= 6; i++) {
           document.getElementById(`group${i}`).style.backgroundColor = 'green'
         }
-        for (i = 7; i <= 12; i++) {
+        for (let i = 7; i <= 12; i++) {
           document.getElementById(`group${i}`).style.backgroundColor = 'blue'
         }
       })
+    },
+    check_pressTime: function (event) {
+      if (this.pressTimer === null) {
+        this.pressTimer = setTimeout(() => {
+          this.presslong = true
+          // vibrate screen for presslong
+          window.navigator.vibrate(1000)
+          // record prev x and prev y
+          this.prev_x = this.x
+          this.prev_y = this.y
+          console.log('presslong')
+        }, 2000)
+      }
+    },
+    move_with_finger: function (event) {
+      if (this.pressTimer !== null) {
+        clearTimeout(this.pressTimer)
+        this.pressTimer = null
+      }
+      let touch = event.targetTouches[0]
+      let element = event.target
+      // place element where the finger is
+      element.style.left = touch.pageX - 25 + 'px'
+      element.style.top = touch.pageY - 25 + 'px'
+      this.x = touch.pageX - 25
+      this.y = touch.pageY - 25
+      event.preventDefault()
+    },
+    move_end_pos: function (event) {
+      let element = event.target
+      if (this.x >= 430 && this.x <= 580) {
+        if (this.y >= 0 && this.y <= 150) {
+          // group1
+          this.table_position = '1'
+          this.judgeBlockpart(430, 0, element)
+        } else if (this.y >= 150 && this.y <= 300) {
+          // group4
+          this.table_position = '4'
+          this.judgeBlockpart(430, 150, element)
+        } else if (this.y >= 300 && this.y <= 450) {
+          // group7
+          this.table_position = '6'
+          this.judgeBlockpart(430, 300, element)
+        } else if (this.y >= 450 && this.y <= 600) {
+          // group10
+          this.table_position = '3'
+          this.judgeBlockpart(430, 450, element)
+        }
+      } else if (this.x >= 580 && this.x <= 730) {
+        if (this.y >= 0 && this.y <= 150) {
+          // group2
+          this.table_position = '2'
+          this.judgeBlockpart(580, 0, element)
+        } else if (this.y >= 150 && this.y <= 300) {
+          // group5
+          this.table_position = '5'
+          this.judgeBlockpart(580, 150, element)
+        } else if (this.y >= 300 && this.y <= 450) {
+          // group8
+          this.table_position = '5'
+          this.judgeBlockpart(580, 300, element)
+        } else if (this.y >= 450 && this.y <= 600) {
+          // group11
+          this.table_position = '2'
+          this.judgeBlockpart(580, 450, element)
+        }
+      } else if (this.x >= 730 && this.x <= 880) {
+        if (this.y >= 0 && this.y <= 150) {
+          // group3
+          this.table_position = '3'
+          this.judgeBlockpart(730, 0, element)
+        } else if (this.y >= 150 && this.y <= 300) {
+          // group6
+          this.table_position = '6'
+          this.judgeBlockpart(730, 150, element)
+        } else if (this.y >= 300 && this.y <= 450) {
+          // group9
+          this.table_position = '4'
+          this.judgeBlockpart(730, 300, element)
+        } else if (this.y >= 450 && this.y <= 600) {
+          // group12
+          this.table_position = '1'
+          this.judgeBlockpart(730, 450, element)
+        }
+      } else {
+        // go back init position
+        this.table_position = ''
+        if (element.id === 'lostPoint') {
+          element.style.left = 920 + 'px'
+          element.style.top = 320 + 'px'
+        } else if (element.id === 'getPoint') {
+          element.style.left = 920 + 'px'
+          element.style.top = 278 + 'px'
+        } else if (element.id === 'servePoint') {
+          element.style.left = 920 + 'px'
+          element.style.top = 235 + 'px'
+        }
+      }
+      if (element.id === 'lostPoint') {
+        this.serve_point = false
+        this.getpoint = false
+      } else if (element.id === 'getPoint') {
+        this.serve_point = false
+        this.getpoint = true
+      } else if (element.id === 'servePoint') {
+        this.serve_point = true
+        this.getpoint = true
+      }
+      if (this.presslong) {
+        // save position
+        console.log(element)
+        console.log('x : ', this.x)
+        console.log('y : ', this.y)
+        console.log('prev_x : ', this.prev_x)
+        console.log('prev_y : ', this.prev_y)
+        // plane line
+        // reset presslong
+        this.presslong = false
+      }
+      event.preventDefault()
     },
     initTouch: function () {
       let getPoint = document.getElementById('getPoint')
       let lostPoint = document.getElementById('lostPoint')
       let servePoint = document.getElementById('servePoint')
+
+      // when touchstart
+      getPoint.addEventListener('touchstart', this.check_pressTime, false)
+      lostPoint.addEventListener('touchstart', this.check_pressTime, false)
       // when touchmove
-      getPoint.addEventListener('touchmove', (event) => {
-        let touch = event.targetTouches[0]
-        // place element where the finger is
-        getPoint.style.left = touch.pageX - 25 + 'px'
-        getPoint.style.top = touch.pageY - 25 + 'px'
-        this.x = touch.pageX - 25
-        this.y = touch.pageY - 25
-        event.preventDefault()
-      }, false)
-
-      lostPoint.addEventListener('touchmove', (event) => {
-        let touch = event.targetTouches[0]
-        // place element where the finger is
-        lostPoint.style.left = touch.pageX - 25 + 'px'
-        lostPoint.style.top = touch.pageY - 25 + 'px'
-        this.x = touch.pageX - 25
-        this.y = touch.pageY - 25
-        event.preventDefault()
-      }, false)
-
-      servePoint.addEventListener('touchmove', (event) => {
-        let touch = event.targetTouches[0]
-        // place element where the finger is
-        servePoint.style.left = touch.pageX - 25 + 'px'
-        servePoint.style.top = touch.pageY - 25 + 'px'
-        this.x = touch.pageX - 25
-        this.y = touch.pageY - 25
-        event.preventDefault()
-      }, false)
+      getPoint.addEventListener('touchmove', this.move_with_finger, false)
+      lostPoint.addEventListener('touchmove', this.move_with_finger, false)
+      servePoint.addEventListener('touchmove', this.move_with_finger, false)
 
       // when touchend
-      getPoint.addEventListener('touchend', (event) => {
-        if (this.x >= 430 && this.x <= 580) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group1
-            this.table_position = '1'
-            this.judgeBlockpart(430, 0, getPoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group4
-            this.table_position = '4'
-            this.judgeBlockpart(430, 150, getPoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group7
-            this.table_position = '6'
-            this.judgeBlockpart(430, 300, getPoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group10
-            this.table_position = '3'
-            this.judgeBlockpart(430, 450, getPoint)
-          }
-        } else if (this.x >= 580 && this.x <= 730) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group2
-            this.table_position = '2'
-            this.judgeBlockpart(580, 0, getPoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group5
-            this.table_position = '5'
-            this.judgeBlockpart(580, 150, getPoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group8
-            this.table_position = '5'
-            this.judgeBlockpart(580, 300, getPoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group11
-            this.table_position = '2'
-            this.judgeBlockpart(580, 450, getPoint)
-          }
-        } else if (this.x >= 730 && this.x <= 880) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group3
-            this.table_position = '3'
-            this.judgeBlockpart(730, 0, getPoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group6
-            this.table_position = '6'
-            this.judgeBlockpart(730, 150, getPoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group9
-            this.table_position = '4'
-            this.judgeBlockpart(730, 300, getPoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group12
-            this.table_position = '1'
-            this.judgeBlockpart(730, 450, getPoint)
-          }
-        } else {
-          // go back init position
-          this.table_position = ''
-          getPoint.style.left = 920 + 'px'
-          getPoint.style.top = 278 + 'px'
-        }
-        this.serve_point = false
-        this.getpoint = true
-        event.preventDefault()
-      }, false)
-
-      lostPoint.addEventListener('touchend', (event) => {
-        if (this.x >= 430 && this.x <= 580) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group1
-            this.table_position = '1'
-            this.judgeBlockpart(430, 0, lostPoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group4
-            this.table_position = '4'
-            this.judgeBlockpart(430, 150, lostPoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group7
-            this.table_position = '6'
-            this.judgeBlockpart(430, 300, lostPoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group10
-            this.table_position = '3'
-            this.judgeBlockpart(430, 450, lostPoint)
-          }
-        } else if (this.x >= 580 && this.x <= 730) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group2
-            this.table_position = '2'
-            this.judgeBlockpart(580, 0, lostPoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group5
-            this.table_position = '5'
-            this.judgeBlockpart(580, 150, lostPoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group8
-            this.table_position = '5'
-            this.judgeBlockpart(580, 300, lostPoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group11
-            this.table_position = '2'
-            this.judgeBlockpart(580, 450, lostPoint)
-          }
-        } else if (this.x >= 730 && this.x <= 880) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group3
-            this.table_position = '3'
-            this.judgeBlockpart(730, 0, lostPoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group6
-            this.table_position = '6'
-            this.judgeBlockpart(730, 150, lostPoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group9
-            this.table_position = '4'
-            this.judgeBlockpart(730, 300, lostPoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group12
-            this.table_position = '1'
-            this.judgeBlockpart(730, 450, lostPoint)
-          }
-        } else {
-          // go back init position
-          this.table_position = ''
-          lostPoint.style.left = 920 + 'px'
-          lostPoint.style.top = 320 + 'px'
-        }
-        this.serve_point = false
-        this.getpoint = false
-        event.preventDefault()
-      }, false)
-
-      servePoint.addEventListener('touchend', (event) => {
-        if (this.x >= 430 && this.x <= 580) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group1
-            this.table_position = '1'
-            this.judgeBlockpart(430, 0, servePoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group4
-            this.table_position = '4'
-            this.judgeBlockpart(430, 150, servePoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group7
-            this.table_position = '6'
-            this.judgeBlockpart(430, 300, servePoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group10
-            this.table_position = '3'
-            this.judgeBlockpart(430, 450, servePoint)
-          }
-        } else if (this.x >= 580 && this.x <= 730) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group2
-            this.table_position = '2'
-            this.judgeBlockpart(580, 0, servePoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group5
-            this.table_position = '5'
-            this.judgeBlockpart(580, 150, servePoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group8
-            this.table_position = '5'
-            this.judgeBlockpart(580, 300, servePoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group11
-            this.table_position = '2'
-            this.judgeBlockpart(580, 450, servePoint)
-          }
-        } else if (this.x >= 730 && this.x <= 880) {
-          if (this.y >= 0 && this.y <= 150) {
-            // group3
-            this.table_position = '3'
-            this.judgeBlockpart(730, 0, servePoint)
-          } else if (this.y >= 150 && this.y <= 300) {
-            // group6
-            this.table_position = '6'
-            this.judgeBlockpart(730, 150, servePoint)
-          } else if (this.y >= 300 && this.y <= 450) {
-            // group9
-            this.table_position = '4'
-            this.judgeBlockpart(730, 300, servePoint)
-          } else if (this.y >= 450 && this.y <= 600) {
-            // group12
-            this.table_position = '1'
-            this.judgeBlockpart(730, 450, servePoint)
-          }
-        } else {
-          // go back init position
-          this.table_position = ''
-          servePoint.style.left = 920 + 'px'
-          servePoint.style.top = 235 + 'px'
-        }
-        this.serve_point = true
-        this.getpoint = true
-        event.preventDefault()
-      }, false)
+      getPoint.addEventListener('touchend', this.move_end_pos, false)
+      lostPoint.addEventListener('touchend', this.move_end_pos, false)
+      servePoint.addEventListener('touchend', this.move_end_pos, false)
     }
   },
   mounted () {
     this.initTouch()
     this.changeColor()
+    // forbid presslong to pop menu
+    document.oncontextmenu = function (e) {
+      e.preventDefault()
+      return false
+    }
   }
 }
 </script>

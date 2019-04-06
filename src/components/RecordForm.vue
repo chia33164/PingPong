@@ -210,6 +210,10 @@ export default {
       } else {
         console.log('no send')
       }
+      // reset table to green
+      for (let i = 1; i <= 12; i++) {
+        document.getElementById(`group${i}`).style.background = 'green'
+      }
     },
     saveName: function () {
       this.isWhite = false
