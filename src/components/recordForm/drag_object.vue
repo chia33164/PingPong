@@ -39,7 +39,9 @@ export default {
   data: function () {
     return {
       table_position: '',
+      prev_table_position: '',
       block_part: '0',
+      prev_block_part: '0',
       station: '',
       prev_x: 0,
       prev_y: 0,
@@ -145,10 +147,12 @@ export default {
         this.pressTimer = setTimeout(() => {
           this.presslong = true
           // vibrate screen for presslong
-          window.navigator.vibrate(1000)
+          window.navigator.vibrate(200)
           // record prev x and prev y
           this.prev_x = this.x
           this.prev_y = this.y
+          this.prev_table_position = this.table_position
+          this.prev_block_part = this.block_part
           console.log('presslong')
         }, 2000)
       }
@@ -248,13 +252,7 @@ export default {
         this.getpoint = true
       }
       if (this.presslong) {
-        // save position
-        console.log(element)
-        console.log('x : ', this.x)
-        console.log('y : ', this.y)
-        console.log('prev_x : ', this.prev_x)
-        console.log('prev_y : ', this.prev_y)
-        // plane line
+        // TODO: plane line
         // reset presslong
         this.presslong = false
       }

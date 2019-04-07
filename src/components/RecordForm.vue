@@ -91,12 +91,12 @@ export default {
       // get serve, point, forehand, backhand
       this.serve = this.$refs.symbol.serve
       if (this.$refs.symbol.forehand === '1') {
-        this.hand = 'F' + this.$refs.table.table_position
+        this.hand = 'F' + this.$refs.table.prev_table_position
       } else if (this.$refs.symbol.backhand === '1') {
-        this.hand = 'B' + this.$refs.table.table_position
+        this.hand = 'B' + this.$refs.table.prev_table_position
       } else {
         this.hand = '0'
-        this.$refs.table.block_part = '0'
+        this.$refs.table.prev_block_part = '0'
       }
       // add score
       if (this.$refs.table.getpoint) {
@@ -112,7 +112,9 @@ export default {
         skill: this.$refs.table.serve_point ? 'S' : this.hand,
         part: this.$refs.table.block_part.substr(4),
         getpoint: this.$refs.table.getpoint ? '1' : '0',
-        station: this.$refs.table.station
+        station: this.$refs.table.station,
+        pos: this.$refs.table.table_position,
+        pos_part: this.$refs.table.prev_block_part
       }
       console.log(perRound)
       this.list.push(perRound)
@@ -121,7 +123,19 @@ export default {
       this.$refs.symbol.removeAllchose()
     },
     Del_prev: function () {
-      this.list.pop()
+      if (this.list.length === 0) {
+        this.win = 0
+        this.lose = 0
+      } else if (this.list.length === 1) {
+        this.list.pop()
+        this.win = 0
+        this.lose = 0
+      } else {
+        this.list.pop()
+        let score = this.list[this.list.length - 1].score
+        this.win = score.split(':')[0]
+        this.lose = score.split(':')[1]
+      }
     },
     clear_prev_data: function () {
       // clear previous data
