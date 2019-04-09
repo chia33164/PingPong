@@ -1,27 +1,29 @@
 <template>
   <div class="container">
-    <div class="table_container">
-      <div>
-        <Block id="group1"></Block>
-        <Block id="group2"></Block>
-        <Block id="group3"></Block>
-      </div>
-      <div class="BottomRed">
-        <Block id="group4"></Block>
-        <Block id="group5"></Block>
-        <Block id="group6"></Block>
-      </div>
-      <div class="TopRed">
-        <Block id="group7"></Block>
-        <Block id="group8"></Block>
-        <Block id="group9"></Block>
-      </div>
-      <div>
-        <Block id="group10"></Block>
-        <Block id="group11"></Block>
-        <Block id="group12"></Block>
-      </div>
-    </div>
+    <svg class="table_container" width="450" height="600">
+      <g>
+        <Block ref="block1" id="group1" x='0' y='0'></Block>
+        <Block ref="block2" id="group2" x='150' y='0'></Block>
+        <Block ref="block3" id="group3" x='300' y='0'></Block>
+      </g>
+      <g>
+        <Block ref="block4" id="group4" x='0' y='150'></Block>
+        <Block ref="block5" id="group5" x='150' y='150'></Block>
+        <Block ref="block6" id="group6" x='300' y='150'></Block>
+      </g>
+      <g>
+        <Block ref="block7" id="group7" x='0' y='300'></Block>
+        <Block ref="block8" id="group8" x='150' y='300'></Block>
+        <Block ref="block9" id="group9" x='300' y='300'></Block>
+      </g>
+      <g>
+        <Block ref="block10" id="group10" x='0' y='450'></Block>
+        <Block ref="block11" id="group11" x='150' y='450'></Block>
+        <Block ref="block12" id="group12" x='300' y='450'></Block>
+      </g>
+      <line id='test1' :x1="prev_x-430" :y1="prev_y" :x2="x-430" :y2="y" stroke='red' v-if="draw_line"/>
+      <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
+    </svg>
     <br>
     <div>
       <input type="radio" id="top" value="top" v-model="station">
@@ -50,7 +52,8 @@ export default {
       getpoint: false,
       serve_point: false,
       pressTimer: null,
-      presslong: false
+      presslong: false,
+      draw_line: false
     }
   },
   components: {
@@ -125,21 +128,45 @@ export default {
     changeColor: function () {
       let top = document.getElementById('top')
       let bottom = document.getElementById('bottom')
+      this.$refs.block1.color = 'green'
+      this.$refs.block2.color = 'green'
+      this.$refs.block3.color = 'green'
+      this.$refs.block4.color = 'green'
+      this.$refs.block5.color = 'green'
+      this.$refs.block6.color = 'green'
+      this.$refs.block7.color = 'green'
+      this.$refs.block8.color = 'green'
+      this.$refs.block9.color = 'green'
+      this.$refs.block10.color = 'green'
+      this.$refs.block11.color = 'green'
+      this.$refs.block12.color = 'green'
       top.addEventListener('click', (event) => {
-        for (let i = 1; i <= 6; i++) {
-          document.getElementById(`group${i}`).style.backgroundColor = 'blue'
-        }
-        for (let i = 7; i <= 12; i++) {
-          document.getElementById(`group${i}`).style.backgroundColor = 'green'
-        }
+        this.$refs.block1.color = 'blue'
+        this.$refs.block2.color = 'blue'
+        this.$refs.block3.color = 'blue'
+        this.$refs.block4.color = 'blue'
+        this.$refs.block5.color = 'blue'
+        this.$refs.block6.color = 'blue'
+        this.$refs.block7.color = 'green'
+        this.$refs.block8.color = 'green'
+        this.$refs.block9.color = 'green'
+        this.$refs.block10.color = 'green'
+        this.$refs.block11.color = 'green'
+        this.$refs.block12.color = 'green'
       })
       bottom.addEventListener('click', (event) => {
-        for (let i = 1; i <= 6; i++) {
-          document.getElementById(`group${i}`).style.backgroundColor = 'green'
-        }
-        for (let i = 7; i <= 12; i++) {
-          document.getElementById(`group${i}`).style.backgroundColor = 'blue'
-        }
+        this.$refs.block1.color = 'green'
+        this.$refs.block2.color = 'green'
+        this.$refs.block3.color = 'green'
+        this.$refs.block4.color = 'green'
+        this.$refs.block5.color = 'green'
+        this.$refs.block6.color = 'green'
+        this.$refs.block7.color = 'blue'
+        this.$refs.block8.color = 'blue'
+        this.$refs.block9.color = 'blue'
+        this.$refs.block10.color = 'blue'
+        this.$refs.block11.color = 'blue'
+        this.$refs.block12.color = 'blue'
       })
     },
     check_pressTime: function (event) {
@@ -154,7 +181,7 @@ export default {
           this.prev_table_position = this.table_position
           this.prev_block_part = this.block_part
           console.log('presslong')
-        }, 2000)
+        }, 1000)
       }
     },
     move_with_finger: function (event) {
@@ -252,9 +279,7 @@ export default {
         this.getpoint = true
       }
       if (this.presslong) {
-        // TODO: plane line
-        // reset presslong
-        this.presslong = false
+        this.draw_line = true
       }
       event.preventDefault()
     },
@@ -295,20 +320,6 @@ export default {
   height: 40px;
   border: 1px solid black;
 }
-#group1, #group2, #group3, #group4, #group5, #group6, #group7, #group8, #group9, #group10, #group11, #group12 {
-  background-color: green;
-  border: 1px solid black;
-  width: 150px;
-  height: 150px;
-}
-.table_container {
-  display: flex;
-  flex-direction: column;
-}
-.table_container > div {
-  display: flex;
-  flex-direction: row;
-}
 #getPoint {
   position:absolute;
   left: 920px;
@@ -323,11 +334,5 @@ export default {
   position:absolute;
   left: 920px;
   top: 235px;
-}
-#group4, #group5, #group6 {
-  border-bottom-color: red;
-}
-#group7, #group8, #group9 {
-  border-top-color: red;
 }
 </style>

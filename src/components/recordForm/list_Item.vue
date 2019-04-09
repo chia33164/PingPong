@@ -19,7 +19,7 @@ export default {
 .list-item {
   border: 1px solid black;
   width: 100px;
-  height: 35px;
+  height: 25px;
   text-align: center;
 }
 .list_container {

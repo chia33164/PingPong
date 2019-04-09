@@ -67,6 +67,7 @@ export default {
       hand: '',
       part: '',
       list: [],
+      totalRounds: [],
       players: [],
       name1: '',
       name2: '',
@@ -88,6 +89,11 @@ export default {
   },
   methods: {
     getData: function () {
+      if (this.$refs.table.presslong) {
+        // reset presslong
+        this.$refs.table.presslong = false
+        this.$refs.table.draw_line = false
+      }
       // get serve, point, forehand, backhand
       this.serve = this.$refs.symbol.serve
       if (this.$refs.symbol.forehand === '1') {
@@ -121,6 +127,10 @@ export default {
       // initial drag object's position
       this.$refs.table.initialTouch()
       this.$refs.symbol.removeAllchose()
+    },
+    aRound: function () {
+      this.totalRounds.push(this.list)
+      this.list = []
     },
     Del_prev: function () {
       if (this.list.length === 0) {
@@ -218,9 +228,7 @@ export default {
             })
         }
         // init table color
-        for (i = 1; i < 13; i++) {
-          document.getElementById(`group${i}`).style.backgroundColor = 'green'
-        }
+        this.$refs.table.changeColor()
       } else {
         console.log('no send')
       }

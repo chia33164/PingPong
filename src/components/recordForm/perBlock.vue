@@ -1,38 +1,54 @@
 <template>
-  <div class="block_contain">
-    <div>
-      <div id="part1"></div>
-      <div id="part2"></div>
-      <div id="part3"></div>
-    </div>
-    <div>
-      <div id="part4"></div>
-      <div id="part5"></div>
-      <div id="part6"></div>
-    </div>
-    <div>
-      <div id="part7"></div>
-      <div id="part8"></div>
-      <div id="part9"></div>
-    </div>
-  </div>
+  <svg class="block_contain" width="150" height="150">
+    <g>
+      <g id="part1">
+        <rect x="0" y="0" width="50" height="50" :fill="color" />
+      </g>
+      <g id="part2">
+        <rect x="0" y="50" width="50" height="50" :fill="color" />
+      </g>
+      <g id="part3">
+        <rect x="0" y="100" width="50" height="50" :fill="color" />
+      </g>
+    </g>
+    <g>
+      <g id="part4">
+        <rect x="50" y="0" width="50" height="50" :fill="color" />
+      </g>
+      <g id="part5">
+        <rect x="50" y="50" width="50" height="50" :fill="color" />
+      </g>
+      <g id="part6">
+        <rect x="50" y="100" width="50" height="50" :fill="color" />
+      </g>
+    </g>
+    <g>
+      <g id="part7">
+        <rect x="100" y="0" width="50" height="50" :fill="color" />
+      </g>
+      <g id="part8">
+        <rect x="100" y="50" width="50" height="50" :fill="color" />
+      </g>
+      <g id="part9">
+        <rect x="100" y="100" width="50" height="50" :fill="color" />
+      </g>
+    </g>
+    <line x1='0' y1='0' x2='0' y2='150' stroke='black'/>
+    <line x1='0' y1='0' x2='150' y2='0' stroke='black'/>
+    <line x1='150' y1='0' x2='150' y2='150' stroke='black'/>
+    <line x1='0' y1='150' x2='150' y2='150' stroke='black'/>
+  </svg>
 </template>
 
 <script>
 export default {
+  data: function () {
+    return {
+      color: 'green'
+    }
+  }
 }
 </script>
 
 <style>
-.block_contain {
-  display: flex;
-  flex-direction: row;
-}
-.block_contain > div > div {
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  text-align-last: center;
-}
-
 </style>
