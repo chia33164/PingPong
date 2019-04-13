@@ -15,8 +15,14 @@
     <!-- Add to home screen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="pwa_table-tennis">
-    <link rel="apple-touch-icon" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/apple-touch-icon-152x152.png">
+    <meta name="apple-mobile-web-app-title" content="PingPong">
+    <link rel="apple-touch-startup-image" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/logo.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1)">
+    <link rel="apple-touch-startup-image" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/logo.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/logo.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) and (orientation: landscape)">
+    <link rel="apple-touch-startup-image" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/logo.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/logo.png" media="(min-device-width: 834px) and (max-device-width: 834px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/logo.png" media="(min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-icon" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/logo.png"> 
     <link rel="mask-icon" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/safari-pinned-tab.svg" color="#4DBA87">
     <!-- Add to home screen for Windows -->
     <meta name="msapplication-TileImage" content="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/msapplication-icon-144x144.png">

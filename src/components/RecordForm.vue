@@ -30,13 +30,13 @@
       <br>
       <br>
       <div class="dragBlock">
-        <img src="../assets/serve_point.png" width="40" height="40" id="servePoint">
+        <div width="40px" height="40px" id="servePoint"></div>
       </div>
       <div class="dragBlock">
-        <img src="../assets/getpoint.png" width="40" height="40" id="getPoint">
+        <div width="40px" height="40px" id="getPoint"></div>
       </div>
       <div class="dragBlock">
-        <img src="../assets/lostpoint.png" width="40" height="40" id="lostPoint">
+        <div width="40px" height="40px" id="lostPoint"></div>
       </div>
       <br>
       <div class="btn_container">
@@ -229,6 +229,8 @@ export default {
         }
         // init table color
         this.$refs.table.changeColor()
+        this.win = 0
+        this.lose = 0
       } else {
         console.log('no send')
       }
@@ -253,6 +255,30 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+#lostPoint {
+  background-image:url("../assets/lostpoint.png");
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
+}
+#servePoint {
+  width: 40px;
+  height: 40px;
+  background-image: url("../assets/serve_point.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
+}
+#getPoint {
+  background-image:url("../assets/getpoint.png");
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
 }
 #list {
   display: flex;

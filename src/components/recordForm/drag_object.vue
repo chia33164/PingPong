@@ -72,7 +72,6 @@ export default {
       lostPoint.style.top = 320 + 'px'
       this.serve_point = false
       this.getpoint = false
-      this.station = ''
     },
     judgeBlockpart: function (x, y, draggable) {
       if (this.x >= x && this.x <= x + 50) {
@@ -217,6 +216,22 @@ export default {
           // group10
           this.table_position = '3'
           this.judgeBlockpart(430, 450, element)
+        } else {
+          // go back init position
+          this.table_position = ''
+          if (element.id === 'lostPoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 320 + 'px'
+          } else if (element.id === 'getPoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 278 + 'px'
+          } else if (element.id === 'servePoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 235 + 'px'
+          }
+          // remove red line
+          this.draw_line = false
+          this.presslong = false
         }
       } else if (this.x >= 580 && this.x <= 730) {
         if (this.y >= 0 && this.y <= 150) {
@@ -235,6 +250,22 @@ export default {
           // group11
           this.table_position = '2'
           this.judgeBlockpart(580, 450, element)
+        } else {
+          // go back init position
+          this.table_position = ''
+          if (element.id === 'lostPoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 320 + 'px'
+          } else if (element.id === 'getPoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 278 + 'px'
+          } else if (element.id === 'servePoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 235 + 'px'
+          }
+          // remove red line
+          this.draw_line = false
+          this.presslong = false
         }
       } else if (this.x >= 730 && this.x <= 880) {
         if (this.y >= 0 && this.y <= 150) {
@@ -253,6 +284,22 @@ export default {
           // group12
           this.table_position = '1'
           this.judgeBlockpart(730, 450, element)
+        } else {
+          // go back init position
+          this.table_position = ''
+          if (element.id === 'lostPoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 320 + 'px'
+          } else if (element.id === 'getPoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 278 + 'px'
+          } else if (element.id === 'servePoint') {
+            element.style.left = 920 + 'px'
+            element.style.top = 235 + 'px'
+          }
+          // remove red line
+          this.draw_line = false
+          this.presslong = false
         }
       } else {
         // go back init position
@@ -267,6 +314,9 @@ export default {
           element.style.left = 920 + 'px'
           element.style.top = 235 + 'px'
         }
+        // remove red line
+        this.draw_line = false
+        this.presslong = false
       }
       if (element.id === 'lostPoint') {
         this.serve_point = false
@@ -279,6 +329,10 @@ export default {
         this.getpoint = true
       }
       if (this.presslong) {
+        console.log('prev_x : ', this.prev_x)
+        console.log('prev_y : ', this.prev_y)
+        console.log('x : ', this.x)
+        console.log('y : ', this.y)
         this.draw_line = true
       }
       event.preventDefault()
