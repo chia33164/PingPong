@@ -43,26 +43,22 @@ export default {
   },
   methods: {
     FindByName: function () {
-      db.collection('players').doc(`${this.name}`).get().then((res) => {
-        this.win = res.data().win
-        this.lose = res.data().lose
-      })
-      db.collection('players').doc(`${this.name}`).collection('games').get().then((res) => {
-        console.log('success')
-        this.games = res.docs
+      this.$store.dispatch('getDataByName', this.name).then(res => {
+        this.win = res.win
+        this.lose = res.lose
+        this.games = res.games
       })
     },
     FindByGame: function () {
       // clear data
       document.getElementById('data').innerHTML = ''
-
-      db.collection('players').doc(`${this.name}`).collection('games').doc(`${this.game}`).get().then((res) => {
-        this.result = res.data().result
-        this.rounds = res.data().rounds
-        this.score = res.data().scores
-        this.date = res.data().date
-        this.competitor = res.data().competitor
-        console.log(this.rounds)
+      this.$store.dispatch('getDataByGame', {name: this.name, game: this.game}).then(res => {
+        this.result = res.result
+        this.rounds = res.rounds
+        this.score = res.scores
+        this.date = res.date
+        this.competitor = res.competitor
+        console.log(this.rounds[0])
         // append data to web
         let html = `
           <h1> ${this.name} </h1>

@@ -162,71 +162,22 @@ export default {
       // alert
       let check = confirm('確定要送出嗎？')
       if (check === true) {
-        // check whether exist the player before
-        let isExist = false
-        let i = 0
-        for (; i < this.players.length; i++) {
-          if (this.name1 === this.players[i].id) {
-            isExist = true
-            break
+        let insertData = {
+          name: this.name1,
+          isWin: this.win > this.lose,
+          game: this.game,
+          detail: {
+            result: this.win > this.lose ? 'win' : 'lose',
+            scores: this.score,
+            date: this.date,
+            competitor: this.name2,
+            rounds: this.list
           }
         }
-        // add data into firebase
-        if (isExist) {
-          // check win or not
-          let isWin = this.win > this.lose
-          if (isWin) {
-            this.players[i].win++
-          } else {
-            this.players[i].lose++
-          }
-          // add
-          db.collection('players').doc(`${this.name1}`)
-            .update({
-              win: this.players[i].win,
-              lose: this.players[i].lose
-            })
-            .then(() => {
-              db.collection('players').doc(`${this.name1}`).collection('games').doc(`${this.game}`)
-                .set({
-                  result: this.win > this.lose ? 'win' : 'lose',
-                  scores: this.score,
-                  date: this.date,
-                  competitor: this.name2,
-                  rounds: this.list
-                })
-                .then(() => {
-                  this.clear_prev_data()
-                })
-            })
-        } else {
-          let isWin = this.win > this.lose
-          if (isWin) {
-            this.win = 1
-            this.lose = 0
-          } else {
-            this.win = 0
-            this.lose = 1
-          }
-          db.collection('players').doc(`${this.name1}`)
-            .set({
-              win: this.win,
-              lose: this.lose
-            })
-            .then(() => {
-              db.collection('players').doc(`${this.name1}`).collection('games').doc(`${this.game}`)
-                .set({
-                  result: this.win > this.lose ? 'win' : 'lose',
-                  scores: this.score,
-                  date: this.date,
-                  competitor: this.name2,
-                  rounds: this.list
-                })
-                .then(() => {
-                  this.clear_prev_data()
-                })
-            })
-        }
+        // insert game's data
+        this.$store.dispatch('insertData', insertData).then(() => {
+          this.clear_prev_data()
+        })
         // init table color
         this.$refs.table.changeColor()
         this.win = 0

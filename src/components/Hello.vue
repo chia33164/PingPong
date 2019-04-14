@@ -2,8 +2,9 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <router-link tag="li" to="/recordForm">
-      <a>recordForm</a>
+      <a>record</a>
     </router-link>
+    <!-- <div>{{ count }}</div> -->
   </div>
 </template>
 
@@ -15,6 +16,11 @@ export default {
       msg: 'Welcome to PingPong'
     }
   }
+  // computed: {
+  //   count () {
+  //     return this.$store.state.players
+  //   }
+  // }
 }
 </script>
 
