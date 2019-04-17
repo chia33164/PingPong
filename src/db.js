@@ -12,20 +12,6 @@ firebase.initializeApp({
   messagingSenderId: DB.messagingSenderId
 })
 
-// firebase utils
-// const fb = firebase.firestore()
-// const auth = firebase.auth()
-// const currentUser = auth.currentUser
-
-// date issue fix according to firebase
-// const settings = {
-//   timestampInSnapshots: true
-// }
-// fb.settings(settings)
-
-// firecollections
-// const playersCollection = db.collection('players')
-
 firebase.firestore().enablePersistence()
   .catch(function (err) {
     if (err.code === 'failed-precondition') {
