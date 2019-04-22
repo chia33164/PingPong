@@ -21,7 +21,7 @@
         <Block ref="block11" id="group11" x='150' y='450'></Block>
         <Block ref="block12" id="group12" x='300' y='450'></Block>
       </g>
-      <line id='test1' :x1="prev_x-430" :y1="prev_y" :x2="x-430" :y2="y" stroke='red' v-if="draw_line"/>
+      <line id='test1' :x1="prev_x-430" :y1="prev_y" :x2="x-430" :y2="y" stroke='red' v-if="drawLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
     </svg>
     <br>
@@ -53,7 +53,7 @@ export default {
       serve_point: false,
       pressTimer: null,
       presslong: false,
-      draw_line: false
+      drawLine: false
     }
   },
   components: {
@@ -230,7 +230,7 @@ export default {
             element.style.top = 235 + 'px'
           }
           // remove red line
-          this.draw_line = false
+          this.drawLine = false
           this.presslong = false
         }
       } else if (this.x >= 580 && this.x <= 730) {
@@ -264,7 +264,7 @@ export default {
             element.style.top = 235 + 'px'
           }
           // remove red line
-          this.draw_line = false
+          this.drawLine = false
           this.presslong = false
         }
       } else if (this.x >= 730 && this.x <= 880) {
@@ -298,7 +298,7 @@ export default {
             element.style.top = 235 + 'px'
           }
           // remove red line
-          this.draw_line = false
+          this.drawLine = false
           this.presslong = false
         }
       } else {
@@ -315,7 +315,7 @@ export default {
           element.style.top = 235 + 'px'
         }
         // remove red line
-        this.draw_line = false
+        this.drawLine = false
         this.presslong = false
       }
       if (element.id === 'lostPoint') {
@@ -329,11 +329,11 @@ export default {
         this.getpoint = true
       }
       if (this.presslong) {
-        console.log('prev_x : ', this.prev_x)
-        console.log('prev_y : ', this.prev_y)
-        console.log('x : ', this.x)
-        console.log('y : ', this.y)
-        this.draw_line = true
+        // console.log('prev_x : ', this.prev_x)
+        // console.log('prev_y : ', this.prev_y)
+        // console.log('x : ', this.x)
+        // console.log('y : ', this.y)
+        this.drawLine = true
       }
       event.preventDefault()
     },

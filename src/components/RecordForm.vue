@@ -5,14 +5,14 @@
         <input type="text" v-model="name1" id="name1" placeholder="我方">
         <input type="text" v-model="name2" id="name2" placeholder="對方">
         <input type="text" v-model="game" id="game" placeholder="Game">
-        <input type="date" v-model="date" id= "date">
+        <input type="text" v-model="NumOfBoard" id="NumOfBoard" placeholder="總局數">
         <input type="button" @click="saveName" value="click" id="btn">
       </div>
       <div id="title" v-else>
         <p id="Name1">{{this.name1}}</p>
         <p id="Name2">{{this.name2}}</p>
         <p id="Game">{{this.game}}</p>
-        <p id="Date">{{this.date}}</p>
+        <p id="NumOfBoard">{{this.NumOfBoard}}</p>
       </div>
       <div>
         <div class="record">比分</div>
@@ -21,7 +21,7 @@
         <div class="record">得分落點</div>
       </div>
       <div>
-        <lists v-for="(item, index) in list" :index="index" :key="index" :item="item"></lists>
+        <lists v-for="(item, index) in oneRound" :index="index" :key="index" :item="item"></lists>
       </div>
     </div>
     <drag id="table" ref="table"></drag>
@@ -40,9 +40,10 @@
       </div>
       <br>
       <div class="btn_container">
-        <button id="btn1" type='button' @click='getData'> update </button>
-        <button id="btn2" type='button' @click='Del_prev'> Delete </button>
-        <button id="btn3" type='button' @click='addPlayers'> finish </button>
+        <button id="btn1" type='button' @click='oneHand'> update </button>
+        <button id="btn2" type='button' @click='deletePreviousHand'> Delete </button>
+        <button id="btn3" type='button' @click='endRound'> finish </button>
+        <button id="btn4" type='button' @click='sendData'> store </button>
       </div>
     </div>
   </div>
@@ -52,7 +53,6 @@
 import sym from './recordForm/symbol'
 import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
-import {db} from '../db'
 
 export default {
   components: {
@@ -66,29 +66,25 @@ export default {
       point: '',
       hand: '',
       part: '',
-      list: [],
-      totalRounds: [],
-      players: [],
+      oneRound: [],
+      allRounds: [],
       name1: '',
       name2: '',
       game: '',
-      date: '',
-      win: 0,
-      lose: 0,
+      winRound: 0,
+      loseRound: 0,
+      myPoint: 0,
+      hisPoint: 0,
       result: '',
       score: '',
       x: 0,
       y: 0,
-      isWhite: true
-    }
-  },
-  firestore () {
-    return {
-      players: db.collection('players')
+      isWhite: true,
+      NumOfBoard: ''
     }
   },
   methods: {
-    getData: function () {
+    oneHand: function () {
       if (this.$refs.table.presslong) {
         // reset presslong
         this.$refs.table.presslong = false
@@ -106,13 +102,13 @@ export default {
       }
       // add score
       if (this.$refs.table.getpoint) {
-        this.win++
+        this.myPoint++
       } else {
-        this.lose++
+        this.hisPoint++
       }
-      this.score = `${this.win}:${this.lose}`
+      this.score = `${this.myPoint}:${this.hisPoint}`
       // record every round
-      let perRound = {
+      let perBall = {
         score: this.score,
         serve: this.$refs.table.serve_point ? '1' : this.serve,
         skill: this.$refs.table.serve_point ? 'S' : this.hand,
@@ -122,72 +118,85 @@ export default {
         pos: this.$refs.table.table_position,
         pos_part: this.$refs.table.prev_block_part
       }
-      console.log(perRound)
-      this.list.push(perRound)
+      // console.log(perBall)
+      this.oneRound.push(perBall)
       // initial drag object's position
       this.$refs.table.initialTouch()
       this.$refs.symbol.removeAllchose()
     },
-    aRound: function () {
-      this.totalRounds.push(this.list)
-      this.list = []
-    },
-    Del_prev: function () {
-      if (this.list.length === 0) {
-        this.win = 0
-        this.lose = 0
-      } else if (this.list.length === 1) {
-        this.list.pop()
-        this.win = 0
-        this.lose = 0
+    deletePreviousHand: function () {
+      if (this.oneRound.length === 0) {
+        this.myPoint = 0
+        this.hisPoint = 0
+      } else if (this.oneRound.length === 1) {
+        this.oneRound.pop()
+        this.myPoint = 0
+        this.hisPoint = 0
       } else {
-        this.list.pop()
-        let score = this.list[this.list.length - 1].score
-        this.win = score.split(':')[0]
-        this.lose = score.split(':')[1]
+        this.oneRound.pop()
+        let score = this.oneRound[this.oneRound.length - 1].score
+        this.myPoint = score.split(':')[0]
+        this.hisPoint = score.split(':')[1]
       }
     },
-    clear_prev_data: function () {
+    clearPreviousData: function () {
       // clear previous data
       this.$refs.table.initialTouch()
       this.$refs.symbol.removeAllchose()
-      this.list = []
+      this.oneRound = []
+      this.allRounds = []
       this.isWhite = true
       this.game = ''
       this.name1 = ''
       this.name2 = ''
-      this.date = ''
+      this.NumOfBoard = ''
+      this.winRound = 0
+      this.loseRound = 0
     },
-    addPlayers: function () {
+    endRound: function () {
+      // check this round is win or not
+      this.myPoint > this.hisPoint ? this.winRound++ : this.loseRound++
+      this.allRounds.push({round: this.oneRound})
+      // clear previous data
+      this.$refs.table.initialTouch()
+      this.$refs.symbol.removeAllchose()
+      this.oneRound = []
+      // init table color
+      this.$refs.table.changeColor()
+      this.myPoint = 0
+      this.hisPoint = 0
+    },
+    sendData: function () {
       // alert
       let check = confirm('確定要送出嗎？')
       if (check === true) {
         let insertData = {
           name: this.name1,
-          isWin: this.win > this.lose,
+          isWin: this.winRound > this.loseRound,
           game: this.game,
           detail: {
-            result: this.win > this.lose ? 'win' : 'lose',
-            scores: this.score,
-            date: this.date,
+            result: this.winRound > this.loseRound ? 'win' : 'lose',
+            scores: `${this.winRound}:${this.loseRound}`,
+            date: new Date(),
+            NumOfBoard: this.NumOfBoard,
             competitor: this.name2,
-            rounds: this.list
+            rounds: this.allRounds
           }
         }
         // insert game's data
         this.$store.dispatch('insertData', insertData).then(() => {
-          this.clear_prev_data()
+          this.clearPreviousData()
         })
         // init table color
         this.$refs.table.changeColor()
-        this.win = 0
-        this.lose = 0
+        this.myPoint = 0
+        this.hisPoint = 0
+        // reset table to green
+        for (let i = 1; i <= 12; i++) {
+          document.getElementById(`group${i}`).style.background = 'green'
+        }
       } else {
         console.log('no send')
-      }
-      // reset table to green
-      for (let i = 1; i <= 12; i++) {
-        document.getElementById(`group${i}`).style.background = 'green'
       }
     },
     saveName: function () {
@@ -247,20 +256,15 @@ export default {
   padding: 10px;
 }
 #btn1 {
-  margin-top: 18px;
-  width: 80px;
-  height: 80px;
+  /* margin-top: 4px; */
+  width: 60px;
+  height: 60px;
 }
-#btn2 {
-  width: 80px;
-  height: 80px;
+#btn2, #btn3, #btn4 {
+  width: 60px;
+  height: 60px;
   padding: 10px;
-}
-#btn3 {
-  width: 80px;
-  height: 80px;
-  padding: 10px;
-}
+} 
 .btn_container {
   display: flex;
   flex-direction: column;
@@ -275,13 +279,8 @@ export default {
   width: 60px;
   padding: 5px;
 }
-#date {
-  margin-top: 3%;
-  height: 15px;
-  width: 120px;
-  padding: 5px;
-}
-#Name1, #Name2 ,#Game {
+
+#Name1, #Name2 ,#Game, #NumOfBoard {
   margin-top: 3%;
   height: 15px;
   width: 60px;
