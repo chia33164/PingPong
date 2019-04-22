@@ -88,7 +88,7 @@ export default {
       if (this.$refs.table.presslong) {
         // reset presslong
         this.$refs.table.presslong = false
-        this.$refs.table.draw_line = false
+        this.$refs.table.drawLine = false
       }
       // get serve, point, forehand, backhand
       this.serve = this.$refs.symbol.serve
