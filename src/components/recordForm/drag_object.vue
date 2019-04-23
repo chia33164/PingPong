@@ -40,8 +40,8 @@ import Block from './perBlock.vue'
 export default {
   data: function () {
     return {
-      table_position: '',
-      prev_table_position: '',
+      placement: '',
+      prev_placement: '',
       block_part: '0',
       prev_block_part: '0',
       station: '',
@@ -177,7 +177,7 @@ export default {
           // record prev x and prev y
           this.prev_x = this.x
           this.prev_y = this.y
-          this.prev_table_position = this.table_position
+          this.prev_placement = this.placement
           this.prev_block_part = this.block_part
           console.log('presslong')
         }, 1000)
@@ -202,23 +202,23 @@ export default {
       if (this.x >= 430 && this.x <= 580) {
         if (this.y >= 0 && this.y <= 150) {
           // group1
-          this.table_position = '1'
+          this.placement = '1'
           this.judgeBlockpart(430, 0, element)
         } else if (this.y >= 150 && this.y <= 300) {
           // group4
-          this.table_position = '4'
+          this.placement = '4'
           this.judgeBlockpart(430, 150, element)
         } else if (this.y >= 300 && this.y <= 450) {
           // group7
-          this.table_position = '6'
+          this.placement = '6'
           this.judgeBlockpart(430, 300, element)
         } else if (this.y >= 450 && this.y <= 600) {
           // group10
-          this.table_position = '3'
+          this.placement = '3'
           this.judgeBlockpart(430, 450, element)
         } else {
           // go back init position
-          this.table_position = ''
+          this.placement = ''
           if (element.id === 'lostPoint') {
             element.style.left = 920 + 'px'
             element.style.top = 320 + 'px'
@@ -236,23 +236,23 @@ export default {
       } else if (this.x >= 580 && this.x <= 730) {
         if (this.y >= 0 && this.y <= 150) {
           // group2
-          this.table_position = '2'
+          this.placement = '2'
           this.judgeBlockpart(580, 0, element)
         } else if (this.y >= 150 && this.y <= 300) {
           // group5
-          this.table_position = '5'
+          this.placement = '5'
           this.judgeBlockpart(580, 150, element)
         } else if (this.y >= 300 && this.y <= 450) {
           // group8
-          this.table_position = '5'
+          this.placement = '5'
           this.judgeBlockpart(580, 300, element)
         } else if (this.y >= 450 && this.y <= 600) {
           // group11
-          this.table_position = '2'
+          this.placement = '2'
           this.judgeBlockpart(580, 450, element)
         } else {
           // go back init position
-          this.table_position = ''
+          this.placement = ''
           if (element.id === 'lostPoint') {
             element.style.left = 920 + 'px'
             element.style.top = 320 + 'px'
@@ -270,23 +270,23 @@ export default {
       } else if (this.x >= 730 && this.x <= 880) {
         if (this.y >= 0 && this.y <= 150) {
           // group3
-          this.table_position = '3'
+          this.placement = '3'
           this.judgeBlockpart(730, 0, element)
         } else if (this.y >= 150 && this.y <= 300) {
           // group6
-          this.table_position = '6'
+          this.placement = '6'
           this.judgeBlockpart(730, 150, element)
         } else if (this.y >= 300 && this.y <= 450) {
           // group9
-          this.table_position = '4'
+          this.placement = '4'
           this.judgeBlockpart(730, 300, element)
         } else if (this.y >= 450 && this.y <= 600) {
           // group12
-          this.table_position = '1'
+          this.placement = '1'
           this.judgeBlockpart(730, 450, element)
         } else {
           // go back init position
-          this.table_position = ''
+          this.placement = ''
           if (element.id === 'lostPoint') {
             element.style.left = 920 + 'px'
             element.style.top = 320 + 'px'
@@ -303,7 +303,7 @@ export default {
         }
       } else {
         // go back init position
-        this.table_position = ''
+        this.placement = ''
         if (element.id === 'lostPoint') {
           element.style.left = 920 + 'px'
           element.style.top = 320 + 'px'

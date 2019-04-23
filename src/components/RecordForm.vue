@@ -93,9 +93,9 @@ export default {
       // get serve, point, forehand, backhand
       this.serve = this.$refs.symbol.serve
       if (this.$refs.symbol.forehand === '1') {
-        this.hand = 'F' + this.$refs.table.prev_table_position
+        this.hand = 'F' + this.$refs.table.prev_placement
       } else if (this.$refs.symbol.backhand === '1') {
-        this.hand = 'B' + this.$refs.table.prev_table_position
+        this.hand = 'B' + this.$refs.table.prev_placement
       } else {
         this.hand = '0'
         this.$refs.table.prev_block_part = '0'
@@ -115,8 +115,8 @@ export default {
         part: this.$refs.table.block_part.substr(4),
         getpoint: this.$refs.table.getpoint ? '1' : '0',
         station: this.$refs.table.station,
-        pos: this.$refs.table.table_position,
-        pos_part: this.$refs.table.prev_block_part
+        placement: this.$refs.table.placement,
+        placement_part: this.$refs.table.prev_block_part
       }
       // console.log(perBall)
       this.oneRound.push(perBall)
@@ -161,6 +161,7 @@ export default {
       this.$refs.table.initialTouch()
       this.$refs.symbol.removeAllchose()
       this.oneRound = []
+      this.$refs.table.drawLine = false
       // init table color
       this.$refs.table.changeColor()
       this.myPoint = 0
@@ -186,6 +187,7 @@ export default {
         // insert game's data
         this.$store.dispatch('insertData', insertData).then(() => {
           this.clearPreviousData()
+          alert('upload success!')
         })
         // init table color
         this.$refs.table.changeColor()
@@ -198,6 +200,7 @@ export default {
       } else {
         console.log('no send')
       }
+      this.$refs.table.drawLine = false
     },
     saveName: function () {
       this.isWhite = false

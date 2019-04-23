@@ -45,6 +45,7 @@ export default new Vuex.Store({
           }
           return db.collection('players').doc(`${name}`).collection('games').get()
         }).then(res => {
+          // console.log(res.docs[0])
           result['games'] = res.docs
           resolve(result)
         })
@@ -54,6 +55,31 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         db.collection('players').doc(`${data.name}`).collection('games').doc(`${data.game}`).get().then(res => {
           resolve(res.data())
+        })
+      })
+    },
+    getPlayerBalls (context, name) {
+      return new Promise((resolve, reject) => {
+        db.collection('players').doc(`${name}`).collection('games').get().then(res => {
+          let promiseGames = []
+          // push pending object into promiseGames for get games' information
+          res.docs.forEach(el => {
+            promiseGames.push(db.collection('players').doc(`${name}`).collection('games').doc(`${el.id}`).get())
+          })
+          return Promise.all(promiseGames)
+        }).then(res => {
+          let Balls = []
+          res.forEach(round1 => {
+            // get attribute "rounds"
+            round1.data().rounds.forEach(round2 => {
+              // get attribute "round"
+              round2.round.forEach(perBall => {
+                // get every balls
+                Balls.push(perBall)
+              })
+            })
+          })
+          console.log(Balls)
         })
       })
     }

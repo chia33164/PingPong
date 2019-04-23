@@ -4,7 +4,7 @@
       <div class="list-item">{{item.score}}</div>
       <div class="list-item">{{item.serve}}</div>
       <div class="list-item">{{item.skill}}</div>
-      <div class="list-item">{{item.pos}}</div>
+      <div class="list-item">{{item.placement}}</div>
     </div>
   </div>
 </template>

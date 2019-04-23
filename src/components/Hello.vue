@@ -18,6 +18,8 @@ export default {
   }
   // computed: {
   //   count () {
+  //     this.$store.dispatch('getPlayerBalls', 'chia').then(res => {
+  //     })
   //     return this.$store.state.players
   //   }
   // }
