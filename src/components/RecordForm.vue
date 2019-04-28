@@ -120,11 +120,33 @@ export default {
       }
       // console.log(perBall)
       this.oneRound.push(perBall)
+      // change hot zone
+      if (perBall.getpoint === '0') {
+        let idx = 12 - parseInt(perBall.placement, 10)
+        this.$refs.table.opacity[idx] += 0.2
+        this.$refs.table.changeHotZone()
+      } else {
+        let idx = parseInt(perBall.placement, 10) - 1
+        this.$refs.table.opacity[idx] += 0.2
+        this.$refs.table.changeHotZone()
+      }
       // initial drag object's position
       this.$refs.table.initialTouch()
       this.$refs.symbol.removeAllchose()
     },
     deletePreviousHand: function () {
+      // init opacity
+      let lastHand = this.oneRound[this.oneRound.length - 1]
+      if (lastHand.getpoint === '0') {
+        let idx = 12 - parseInt(lastHand.placement, 10)
+        this.$refs.table.opacity[idx] -= 0.2
+        this.$refs.table.changeHotZone()
+      } else {
+        let idx = parseInt(lastHand.placement, 10) - 1
+        this.$refs.table.opacity[idx] -= 0.2
+        this.$refs.table.changeHotZone()
+      }
+      // init score
       if (this.oneRound.length === 0) {
         this.myPoint = 0
         this.hisPoint = 0
