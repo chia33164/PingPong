@@ -11,7 +11,24 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  mounted () {
+    let detectOrient = function () {
+      let width = document.documentElement.clientWidth
+      let height = document.documentElement.clientHeight
+      let style = ''
+      if (width < height) { // 豎屏
+        style += 'width:' + height + 'px;'
+        style += 'height:' + width + 'px;'
+        style += '-webkit-transform: rotate(90deg); transform: rotate(90deg);' // 注意旋轉中點的處理
+        style += '-webkit-transform-origin: ' + (width) / 2 + 'px ' + (width) / 2 + 'px;'
+        style += 'transform-origin: ' + (width) / 2 + 'px ' + (width) / 2 + 'px;'
+      }
+      document.getElementById('app').style.cssText = style
+    }
+    window.onresize = detectOrient
+    detectOrient()
+  }
 }
 </script>
 
