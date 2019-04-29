@@ -13,6 +13,7 @@
 export default {
   name: 'app',
   mounted () {
+    // set horizontal screen
     let detectOrient = function () {
       let width = document.documentElement.clientWidth
       let height = document.documentElement.clientHeight

@@ -4,17 +4,25 @@
     <router-link tag="li" to="/recordForm">
       <a>record</a>
     </router-link>
+    <!-- <button @click='showHistory = true'> show </button>
+    <History v-if='showHistory' @close='showHistory = false'></History> -->
     <!-- <div>{{ count }}</div> -->
   </div>
 </template>
 
 <script>
+import History from './recordForm/showHistory'
+
 export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to PingPong'
+      msg: 'Welcome to PingPong',
+      showHistory: false
     }
+  },
+  components: {
+    History
   }
   // computed: {
   //   count () {

@@ -44,8 +44,10 @@
         <button id="btn2" type='button' @click='deletePreviousHand'> Delete </button>
         <button id="btn3" type='button' @click='endRound'> finish </button>
         <button id="btn4" type='button' @click='sendData'> store </button>
+        <button id="btn5" type='button' @click='showHistory = true'> show </button>
       </div>
     </div>
+    <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
   </div>
 </template>
 
@@ -53,12 +55,14 @@
 import sym from './recordForm/symbol'
 import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
+import History from './recordForm/showHistory'
 
 export default {
   components: {
     sym,
     drag,
-    lists
+    lists,
+    History
   },
   data: function () {
     return {
@@ -68,6 +72,7 @@ export default {
       part: '',
       oneRound: [],
       allRounds: [],
+      history: [],
       name1: '',
       name2: '',
       game: '',
@@ -80,7 +85,8 @@ export default {
       x: 0,
       y: 0,
       isWhite: true,
-      NumOfBoard: ''
+      NumOfBoard: '',
+      showHistory: false
     }
   },
   methods: {
@@ -112,22 +118,27 @@ export default {
         score: this.score,
         serve: this.$refs.table.serve_point ? '1' : this.serve,
         skill: this.$refs.table.serve_point ? 'S' : this.hand,
-        part: this.$refs.table.block_part.substr(4),
+        part: this.$refs.table.prev_block_part,
         getpoint: this.$refs.table.getpoint ? '1' : '0',
         station: this.$refs.table.station,
         placement: this.$refs.table.placement,
-        placement_part: this.$refs.table.prev_block_part
+        placement_part: this.$refs.table.block_part.substr(4)
       }
-      // console.log(perBall)
+      console.log(perBall)
       this.oneRound.push(perBall)
+      this.history.push(perBall)
       // change hot zone
       if (perBall.getpoint === '0') {
         let idx = 12 - parseInt(perBall.placement, 10)
-        this.$refs.table.opacity[idx] += 0.2
+        if (this.$refs.table.opacity[idx] < 1) {
+          this.$refs.table.opacity[idx] += 0.2
+        }
         this.$refs.table.changeHotZone()
       } else {
         let idx = parseInt(perBall.placement, 10) - 1
-        this.$refs.table.opacity[idx] += 0.2
+        if (this.$refs.table.opacity[idx] < 1) {
+          this.$refs.table.opacity[idx] += 0.2
+        }
         this.$refs.table.changeHotZone()
       }
       // initial drag object's position
@@ -139,11 +150,15 @@ export default {
       let lastHand = this.oneRound[this.oneRound.length - 1]
       if (lastHand.getpoint === '0') {
         let idx = 12 - parseInt(lastHand.placement, 10)
-        this.$refs.table.opacity[idx] -= 0.2
+        if (this.$refs.table.opacity[idx] > 0) {
+          this.$refs.table.opacity[idx] -= 0.2
+        }
         this.$refs.table.changeHotZone()
       } else {
         let idx = parseInt(lastHand.placement, 10) - 1
-        this.$refs.table.opacity[idx] -= 0.2
+        if (this.$refs.table.opacity[idx] > 0) {
+          this.$refs.table.opacity[idx] -= 0.2
+        }
         this.$refs.table.changeHotZone()
       }
       // init score
@@ -160,6 +175,8 @@ export default {
         this.myPoint = score.split(':')[0]
         this.hisPoint = score.split(':')[1]
       }
+      // delete history
+      this.history.pop()
     },
     clearPreviousData: function () {
       // clear previous data
@@ -167,6 +184,7 @@ export default {
       this.$refs.symbol.removeAllchose()
       this.oneRound = []
       this.allRounds = []
+      this.history = []
       this.isWhite = true
       this.game = ''
       this.name1 = ''
@@ -285,7 +303,7 @@ export default {
   width: 60px;
   height: 60px;
 }
-#btn2, #btn3, #btn4 {
+#btn2, #btn3, #btn4, #btn5 {
   width: 60px;
   height: 60px;
   padding: 10px;
