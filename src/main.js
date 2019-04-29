@@ -5,9 +5,14 @@ import App from './App'
 import router from './router'
 import store from './store'
 import VueFire from 'vuefire'
+import VueTouch from 'vue-touch'
 
 Vue.config.productionTip = false
 Vue.use(VueFire)
+Vue.use(VueTouch, {name: 'v-touch'})
+VueTouch.config.swipe = {
+  threshold: 100
+}
 
 /* eslint-disable no-new */
 new Vue({

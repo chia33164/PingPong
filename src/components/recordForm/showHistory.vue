@@ -4,49 +4,49 @@
         <div class="modal-mask">
         <div class="modal-wrapper">
             <div class="modal-container">
-                <div class="modal-header">
+                <!-- <div class="modal-header">
                     <slot name="header">
                       number
                     </slot>
-                </div>
+                </div> -->
 
                 <div class="modal-body">
                     <slot name="body">
-                      <svg class="history_container" width="450" height="600">
-                        <g>
-                          <Block ref="block1" id="group1" x='0' y='0'></Block>
-                          <Block ref="block2" id="group2" x='150' y='0'></Block>
-                          <Block ref="block3" id="group3" x='300' y='0'></Block>
-                        </g>
-                        <g>
-                          <Block ref="block4" id="group4" x='0' y='150'></Block>
-                          <Block ref="block5" id="group5" x='150' y='150'></Block>
-                          <Block ref="block6" id="group6" x='300' y='150'></Block>
-                        </g>
-                        <g>
-                          <Block ref="block7" id="group7" x='0' y='300'></Block>
-                          <Block ref="block8" id="group8" x='150' y='300'></Block>
-                          <Block ref="block9" id="group9" x='300' y='300'></Block>
-                        </g>
-                        <g>
-                          <Block ref="block10" id="group10" x='0' y='450'></Block>
-                          <Block ref="block11" id="group11" x='150' y='450'></Block>
-                          <Block ref="block12" id="group12" x='300' y='450'></Block>
-                        </g>
-                        <line id='test1' :x1="prev_x" :y1="prev_y" :x2="x" :y2="y" stroke='red'/>
-                        <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
-                        <image xlink:href='../../assets/lostpoint.png' :x="prev_x-20" :y="prev_y-20" height="40px" width="40px" v-if="lost"/>
-                        <image xlink:href='../../assets/getpoint.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="get"/>
-                      </svg>
+                      <v-touch v-on:swipeleft="swipeleft" v-on:swiperight="swiperight">
+                        <svg class="history_container" width="450" height="600">
+                          <g>
+                            <Block ref="block1" id="group1" x='0' y='0'></Block>
+                            <Block ref="block2" id="group2" x='150' y='0'></Block>
+                            <Block ref="block3" id="group3" x='300' y='0'></Block>
+                          </g>
+                          <g>
+                            <Block ref="block4" id="group4" x='0' y='150'></Block>
+                            <Block ref="block5" id="group5" x='150' y='150'></Block>
+                            <Block ref="block6" id="group6" x='300' y='150'></Block>
+                          </g>
+                          <g>
+                            <Block ref="block7" id="group7" x='0' y='300'></Block>
+                            <Block ref="block8" id="group8" x='150' y='300'></Block>
+                            <Block ref="block9" id="group9" x='300' y='300'></Block>
+                          </g>
+                          <g>
+                            <Block ref="block10" id="group10" x='0' y='450'></Block>
+                            <Block ref="block11" id="group11" x='150' y='450'></Block>
+                            <Block ref="block12" id="group12" x='300' y='450'></Block>
+                          </g>
+                          <line id='test1' :x1="prev_x" :y1="prev_y" :x2="x" :y2="y" stroke='red'/>
+                          <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
+                          <image xlink:href='../../assets/lostpoint.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="lost"/>
+                          <image xlink:href='../../assets/getpoint.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="get"/>
+                        </svg>
+                      </v-touch>
                     </slot>
                 </div>
 
                 <div class="modal-footer">
                     <slot name="footer">
-                    default footer
-                    <button class="modal-default-button" @click="$emit('close')">
-                        close
-                    </button>
+                    footer
+                    <button class="modal-default-button" @click="$emit('close')"> close </button>
                     </slot>
                 </div>
             </div>
@@ -68,72 +68,115 @@ export default {
       x: 0,
       y: 0,
       lost: false,
-      get: false
+      get: false,
+      idx: 0
     }
   },
   components: {
     Block
   },
   methods: {
-    getPos: function () {
+    getPos: function (idx) {
+      this.idx = idx
+      // console.log(this.showList)
       if (this.showList.length !== 0) {
-        let end = this.showList[0].placement
-        let endPart = this.showList[0].placement_part
-        let start = this.showList[0].skill.substr(1)
-        let startPart = this.showList[0].part.substr(4)
-        switch (start) {
-          case '1':
-            this.judgePosByPart(0, startPart, 300, 450)
-            break
-          case '2':
-            this.judgePosByPart(0, startPart, 150, 450)
-            break
-          case '3':
-            this.judgePosByPart(0, startPart, 0, 450)
-            break
-          case '4':
-            this.judgePosByPart(0, startPart, 0, 300)
-            break
-          case '5':
-            this.judgePosByPart(0, startPart, 150, 300)
-            break
-          case '6':
-            this.judgePosByPart(0, startPart, 300, 300)
-            break
-          default:
-            break
-        }
-        switch (end) {
-          case '1':
-            this.judgePosByPart(1, endPart, 0, 0)
-            break
-          case '2':
-            this.judgePosByPart(1, endPart, 150, 0)
-            break
-          case '3':
-            this.judgePosByPart(1, endPart, 300, 0)
-            break
-          case '4':
-            this.judgePosByPart(1, endPart, 0, 150)
-            break
-          case '5':
-            this.judgePosByPart(1, endPart, 150, 150)
-            break
-          case '6':
-            this.judgePosByPart(1, endPart, 300, 150)
-            break
-          default:
-            break
-        }
-        if (this.showList[0].getpoint === '1') {
+        let end = this.showList[idx].placement
+        let endPart = this.showList[idx].placement_part
+        let start = this.showList[idx].skill.substr(1)
+        let startPart = this.showList[idx].part.substr(4)
+        if (this.showList[idx].getpoint === '1') {
+          switch (start) {
+            case '1':
+              this.judgePosByPart(0, startPart, 300, 450)
+              break
+            case '2':
+              this.judgePosByPart(0, startPart, 150, 450)
+              break
+            case '3':
+              this.judgePosByPart(0, startPart, 0, 450)
+              break
+            case '4':
+              this.judgePosByPart(0, startPart, 300, 300)
+              break
+            case '5':
+              this.judgePosByPart(0, startPart, 150, 300)
+              break
+            case '6':
+              this.judgePosByPart(0, startPart, 0, 300)
+              break
+            default:
+              break
+          }
+          switch (end) {
+            case '1':
+              this.judgePosByPart(1, endPart, 0, 0)
+              break
+            case '2':
+              this.judgePosByPart(1, endPart, 150, 0)
+              break
+            case '3':
+              this.judgePosByPart(1, endPart, 300, 0)
+              break
+            case '4':
+              this.judgePosByPart(1, endPart, 0, 150)
+              break
+            case '5':
+              this.judgePosByPart(1, endPart, 150, 150)
+              break
+            case '6':
+              this.judgePosByPart(1, endPart, 300, 150)
+              break
+            default:
+              break
+          }
           this.get = true
         } else {
+          switch (start) {
+            case '1':
+              this.judgePosByPart(0, startPart, 0, 0)
+              break
+            case '2':
+              this.judgePosByPart(0, startPart, 150, 0)
+              break
+            case '3':
+              this.judgePosByPart(0, startPart, 300, 0)
+              break
+            case '4':
+              this.judgePosByPart(0, startPart, 0, 150)
+              break
+            case '5':
+              this.judgePosByPart(0, startPart, 150, 150)
+              break
+            case '6':
+              this.judgePosByPart(0, startPart, 300, 150)
+              break
+            default:
+              break
+          }
+          switch (end) {
+            case '1':
+              this.judgePosByPart(1, endPart, 300, 450)
+              break
+            case '2':
+              this.judgePosByPart(1, endPart, 150, 450)
+              break
+            case '3':
+              this.judgePosByPart(1, endPart, 0, 450)
+              break
+            case '4':
+              this.judgePosByPart(1, endPart, 300, 300)
+              break
+            case '5':
+              this.judgePosByPart(1, endPart, 150, 300)
+              break
+            case '6':
+              this.judgePosByPart(1, endPart, 0, 300)
+              break
+            default:
+              break
+          }
           this.lost = true
         }
-        // console.log('prev_x: ', this.prev_x)
-        // console.log('prev_y: ', this.prev_y)
-        // console.log('x: ', this.x)
-        // console.log('y: ', this.y)
       }
     },
     judgePosByPart: function (mode, part, x, y) {
@@ -220,10 +263,22 @@ export default {
             break
         }
       }
+    },
+    swipeleft: function () {
+      this.lost = false
+      this.get = false
+      let leftIdx = this.idx <= 0 ? 0 : this.idx - 1
+      this.getPos(leftIdx)
+    },
+    swiperight: function () {
+      this.lost = false
+      this.get = false
+      let rightIdx = this.idx >= (this.showList.length - 1) ? (this.showList.length - 1) : this.idx + 1
+      this.getPos(rightIdx)
     }
   },
   mounted () {
-    this.getPos()
+    this.getPos(this.idx)
   }
 }
 </script>
@@ -257,7 +312,7 @@ export default {
 .modal-container {
   width: 450px;
   margin: 0px auto;
-  padding: 20px 30px;
+  padding: 5px 5px;
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
@@ -271,7 +326,7 @@ export default {
 }
 
 .modal-body {
-  margin: 20px 0;
+  margin: 5px 0;
 }
 
 .modal-default-button {
