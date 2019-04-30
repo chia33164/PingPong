@@ -12,7 +12,7 @@
         <p id="Name1">{{this.name1}}</p>
         <p id="Name2">{{this.name2}}</p>
         <p id="Game">{{this.game}}</p>
-        <p id="NumOfBoard">{{this.NumOfBoard}}</p>
+        <p id="NumOfBoard"> {{this.allRounds.length + 1}}/{{this.NumOfBoard}} </p>
       </div>
       <div>
         <div class="record">比分</div>
@@ -40,11 +40,11 @@
       </div>
       <br>
       <div class="btn_container">
-        <button id="btn1" type='button' @click='oneHand'> update </button>
-        <button id="btn2" type='button' @click='deletePreviousHand'> Delete </button>
-        <button id="btn3" type='button' @click='endRound'> finish </button>
-        <button id="btn4" type='button' @click='sendData'> store </button>
-        <button id="btn5" type='button' @click='showHistory = true'> show </button>
+        <button id="btn1" type='button' @click='oneHand'> 更新 </button>
+        <button id="btn2" type='button' @click='deletePreviousHand'> 刪除 </button>
+        <button id="btn3" type='button' @click='endRound'> 完局 </button>
+        <button id="btn4" type='button' @click='sendData'> 上傳 </button>
+        <button id="btn5" type='button' @click='showHistory = true'> 回放 </button>
       </div>
     </div>
     <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
@@ -124,7 +124,6 @@ export default {
         placement: this.$refs.table.placement,
         placement_part: this.$refs.table.block_part.substr(4)
       }
-      console.log(perBall)
       this.oneRound.push(perBall)
       this.history.push(perBall)
       // change hot zone
@@ -133,13 +132,13 @@ export default {
         if (this.$refs.table.opacity[idx] < 1) {
           this.$refs.table.opacity[idx] += 0.2
         }
-        this.$refs.table.changeHotZone()
+        this.$refs.table.changeHotZone(perBall.station)
       } else {
         let idx = parseInt(perBall.placement, 10) - 1
         if (this.$refs.table.opacity[idx] < 1) {
           this.$refs.table.opacity[idx] += 0.2
         }
-        this.$refs.table.changeHotZone()
+        this.$refs.table.changeHotZone(perBall.station)
       }
       // initial drag object's position
       this.$refs.table.initialTouch()
@@ -153,13 +152,13 @@ export default {
         if (this.$refs.table.opacity[idx] > 0) {
           this.$refs.table.opacity[idx] -= 0.2
         }
-        this.$refs.table.changeHotZone()
+        this.$refs.table.changeHotZone(lastHand.station)
       } else {
         let idx = parseInt(lastHand.placement, 10) - 1
         if (this.$refs.table.opacity[idx] > 0) {
           this.$refs.table.opacity[idx] -= 0.2
         }
-        this.$refs.table.changeHotZone()
+        this.$refs.table.changeHotZone(lastHand.station)
       }
       // init score
       if (this.oneRound.length === 0) {

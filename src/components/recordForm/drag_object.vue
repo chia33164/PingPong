@@ -35,6 +35,8 @@
       </g>
       <line id='test1' :x1="prev_x-430" :y1="prev_y" :x2="x-430" :y2="y" stroke='red' v-if="drawLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
+      <image xlink:href="../../assets/person1.png" x=0 y=0 width="40px" height="40px" v-if="top"/>
+      <image xlink:href="../../assets/person1.png" x=0 y=560 width="40px" height="40px" v-if="bottom"/>
     </svg>
     <br>
     <div>
@@ -66,7 +68,9 @@ export default {
       pressTimer: null,
       presslong: false,
       drawLine: false,
-      opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      top: false,
+      bottom: false
     }
   },
   components: {
@@ -153,32 +157,95 @@ export default {
       this.$refs.block11.color = 'green'
       this.$refs.block12.color = 'green'
       top.addEventListener('click', (event) => {
-        this.$refs.block1.color = 'blue'
-        this.$refs.block2.color = 'blue'
-        this.$refs.block3.color = 'blue'
-        this.$refs.block4.color = 'blue'
-        this.$refs.block5.color = 'blue'
-        this.$refs.block6.color = 'blue'
-        this.$refs.block7.color = 'green'
-        this.$refs.block8.color = 'green'
-        this.$refs.block9.color = 'green'
-        this.$refs.block10.color = 'green'
-        this.$refs.block11.color = 'green'
-        this.$refs.block12.color = 'green'
+        // this.$refs.block1.color = 'blue'
+        // this.$refs.block2.color = 'blue'
+        // this.$refs.block3.color = 'blue'
+        // this.$refs.block4.color = 'blue'
+        // this.$refs.block5.color = 'blue'
+        // this.$refs.block6.color = 'blue'
+        // this.$refs.block7.color = 'green'
+        // this.$refs.block8.color = 'green'
+        // this.$refs.block9.color = 'green'
+        // this.$refs.block10.color = 'green'
+        // this.$refs.block11.color = 'green'
+        // this.$refs.block12.color = 'green'
+
+        // swap overlap's color according to player's station
+        this.$refs.overlap1.color = 'blue'
+        this.$refs.overlap2.color = 'blue'
+        this.$refs.overlap3.color = 'blue'
+        this.$refs.overlap4.color = 'blue'
+        this.$refs.overlap5.color = 'blue'
+        this.$refs.overlap6.color = 'blue'
+        this.$refs.overlap7.color = 'red'
+        this.$refs.overlap8.color = 'red'
+        this.$refs.overlap9.color = 'red'
+        this.$refs.overlap10.color = 'red'
+        this.$refs.overlap11.color = 'red'
+        this.$refs.overlap12.color = 'red'
+
+        // swap overlap's opacity according to player's station
+        this.$refs.overlap1.opacity = this.opacity[11]
+        this.$refs.overlap2.opacity = this.opacity[10]
+        this.$refs.overlap3.opacity = this.opacity[9]
+        this.$refs.overlap4.opacity = this.opacity[8]
+        this.$refs.overlap5.opacity = this.opacity[7]
+        this.$refs.overlap6.opacity = this.opacity[6]
+        this.$refs.overlap7.opacity = this.opacity[5]
+        this.$refs.overlap8.opacity = this.opacity[4]
+        this.$refs.overlap9.opacity = this.opacity[3]
+        this.$refs.overlap10.opacity = this.opacity[2]
+        this.$refs.overlap11.opacity = this.opacity[1]
+        this.$refs.overlap12.opacity = this.opacity[0]
+
+        // set top true
+        this.top = true
+        this.bottom = false
       })
       bottom.addEventListener('click', (event) => {
-        this.$refs.block1.color = 'green'
-        this.$refs.block2.color = 'green'
-        this.$refs.block3.color = 'green'
-        this.$refs.block4.color = 'green'
-        this.$refs.block5.color = 'green'
-        this.$refs.block6.color = 'green'
-        this.$refs.block7.color = 'blue'
-        this.$refs.block8.color = 'blue'
-        this.$refs.block9.color = 'blue'
-        this.$refs.block10.color = 'blue'
-        this.$refs.block11.color = 'blue'
-        this.$refs.block12.color = 'blue'
+        // this.$refs.block1.color = 'green'
+        // this.$refs.block2.color = 'green'
+        // this.$refs.block3.color = 'green'
+        // this.$refs.block4.color = 'green'
+        // this.$refs.block5.color = 'green'
+        // this.$refs.block6.color = 'green'
+        // this.$refs.block7.color = 'blue'
+        // this.$refs.block8.color = 'blue'
+        // this.$refs.block9.color = 'blue'
+        // this.$refs.block10.color = 'blue'
+        // this.$refs.block11.color = 'blue'
+        // this.$refs.block12.color = 'blue'
+
+        // swap overlap's color according to player's station
+        this.$refs.overlap1.color = 'red'
+        this.$refs.overlap2.color = 'red'
+        this.$refs.overlap3.color = 'red'
+        this.$refs.overlap4.color = 'red'
+        this.$refs.overlap5.color = 'red'
+        this.$refs.overlap6.color = 'red'
+        this.$refs.overlap7.color = 'blue'
+        this.$refs.overlap8.color = 'blue'
+        this.$refs.overlap9.color = 'blue'
+        this.$refs.overlap10.color = 'blue'
+        this.$refs.overlap11.color = 'blue'
+        this.$refs.overlap12.color = 'blue'
+
+        // swap overlap's opacity according to player's station
+        this.$refs.overlap1.opacity = this.opacity[0]
+        this.$refs.overlap2.opacity = this.opacity[1]
+        this.$refs.overlap3.opacity = this.opacity[2]
+        this.$refs.overlap4.opacity = this.opacity[3]
+        this.$refs.overlap5.opacity = this.opacity[4]
+        this.$refs.overlap6.opacity = this.opacity[5]
+        this.$refs.overlap7.opacity = this.opacity[6]
+        this.$refs.overlap8.opacity = this.opacity[7]
+        this.$refs.overlap9.opacity = this.opacity[8]
+        this.$refs.overlap10.opacity = this.opacity[9]
+        this.$refs.overlap11.opacity = this.opacity[10]
+        this.$refs.overlap12.opacity = this.opacity[11]
+        // set bottom true
+        this.bottom = true
+        this.top = false
       })
     },
     check_pressTime: function (event) {
@@ -394,19 +461,34 @@ export default {
       this.$refs.overlap11.opacity = 0
       this.$refs.overlap12.opacity = 0
     },
-    changeHotZone: function () {
-      this.$refs.overlap1.opacity = this.opacity[0]
-      this.$refs.overlap2.opacity = this.opacity[1]
-      this.$refs.overlap3.opacity = this.opacity[2]
-      this.$refs.overlap4.opacity = this.opacity[3]
-      this.$refs.overlap5.opacity = this.opacity[4]
-      this.$refs.overlap6.opacity = this.opacity[5]
-      this.$refs.overlap7.opacity = this.opacity[6]
-      this.$refs.overlap8.opacity = this.opacity[7]
-      this.$refs.overlap9.opacity = this.opacity[8]
-      this.$refs.overlap10.opacity = this.opacity[9]
-      this.$refs.overlap11.opacity = this.opacity[10]
-      this.$refs.overlap12.opacity = this.opacity[11]
+    changeHotZone: function (station) {
+      if (station === 'top') {
+        this.$refs.overlap1.opacity = this.opacity[11]
+        this.$refs.overlap2.opacity = this.opacity[10]
+        this.$refs.overlap3.opacity = this.opacity[9]
+        this.$refs.overlap4.opacity = this.opacity[8]
+        this.$refs.overlap5.opacity = this.opacity[7]
+        this.$refs.overlap6.opacity = this.opacity[6]
+        this.$refs.overlap7.opacity = this.opacity[5]
+        this.$refs.overlap8.opacity = this.opacity[4]
+        this.$refs.overlap9.opacity = this.opacity[3]
+        this.$refs.overlap10.opacity = this.opacity[2]
+        this.$refs.overlap11.opacity = this.opacity[1]
+        this.$refs.overlap12.opacity = this.opacity[0]
+      } else if (station === 'bottom') {
+        this.$refs.overlap1.opacity = this.opacity[0]
+        this.$refs.overlap2.opacity = this.opacity[1]
+        this.$refs.overlap3.opacity = this.opacity[2]
+        this.$refs.overlap4.opacity = this.opacity[3]
+        this.$refs.overlap5.opacity = this.opacity[4]
+        this.$refs.overlap6.opacity = this.opacity[5]
+        this.$refs.overlap7.opacity = this.opacity[6]
+        this.$refs.overlap8.opacity = this.opacity[7]
+        this.$refs.overlap9.opacity = this.opacity[8]
+        this.$refs.overlap10.opacity = this.opacity[9]
+        this.$refs.overlap11.opacity = this.opacity[10]
+        this.$refs.overlap12.opacity = this.opacity[11]
+      }
     }
   },
   mounted () {
@@ -446,6 +528,14 @@ export default {
 .overlap {
   z-index: 2;
   background-color: "red";
+}
+#topPerson, #bottomPerson {
+  background-image: url('../../assets/person1.png');
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50% 50%
 }
 
 </style>

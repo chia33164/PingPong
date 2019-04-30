@@ -45,7 +45,7 @@
 
                 <div class="modal-footer">
                     <slot name="footer">
-                    footer
+                    <p> 第 {{this.idx + 1}} 球</p>
                     <button class="modal-default-button" @click="$emit('close')"> close </button>
                     </slot>
                 </div>
@@ -78,7 +78,6 @@ export default {
   methods: {
     getPos: function (idx) {
       this.idx = idx
-      // console.log(this.showList)
       if (this.showList.length !== 0) {
         let end = this.showList[idx].placement
         let endPart = this.showList[idx].placement_part
