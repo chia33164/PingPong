@@ -41,10 +41,9 @@ export default {
       }
     },
     removeAllchose: function () {
-      for (let i = 1; i < 4; i++) {
+      for (let i = 2; i < 4; i++) {
         document.getElementById(`box${i}`).style.color = ''
       }
-      this.serve = '0'
       this.forehand = '0'
       this.backhand = '0'
     }

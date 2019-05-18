@@ -70,7 +70,8 @@ export default {
       drawLine: false,
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       top: false,
-      bottom: false
+      bottom: false,
+      current_drag: ''
     }
   },
   components: {
@@ -89,6 +90,7 @@ export default {
       lostPoint.style.top = 320 + 'px'
       this.serve_point = false
       this.getpoint = false
+      this.current_drag = ''
     },
     judgeBlockpart: function (x, y, draggable) {
       if (this.x >= x && this.x <= x + 50) {
@@ -144,45 +146,32 @@ export default {
     changeColor: function () {
       let top = document.getElementById('top')
       let bottom = document.getElementById('bottom')
-      this.$refs.block1.color = 'green'
-      this.$refs.block2.color = 'green'
-      this.$refs.block3.color = 'green'
-      this.$refs.block4.color = 'green'
-      this.$refs.block5.color = 'green'
-      this.$refs.block6.color = 'green'
-      this.$refs.block7.color = 'green'
-      this.$refs.block8.color = 'green'
-      this.$refs.block9.color = 'green'
-      this.$refs.block10.color = 'green'
-      this.$refs.block11.color = 'green'
-      this.$refs.block12.color = 'green'
+      this.$refs.block1.color = 'white'
+      this.$refs.block2.color = 'white'
+      this.$refs.block3.color = 'white'
+      this.$refs.block4.color = 'white'
+      this.$refs.block5.color = 'white'
+      this.$refs.block6.color = 'white'
+      this.$refs.block7.color = 'white'
+      this.$refs.block8.color = 'white'
+      this.$refs.block9.color = 'white'
+      this.$refs.block10.color = 'white'
+      this.$refs.block11.color = 'white'
+      this.$refs.block12.color = 'white'
       top.addEventListener('click', (event) => {
-        // this.$refs.block1.color = 'blue'
-        // this.$refs.block2.color = 'blue'
-        // this.$refs.block3.color = 'blue'
-        // this.$refs.block4.color = 'blue'
-        // this.$refs.block5.color = 'blue'
-        // this.$refs.block6.color = 'blue'
-        // this.$refs.block7.color = 'green'
-        // this.$refs.block8.color = 'green'
-        // this.$refs.block9.color = 'green'
-        // this.$refs.block10.color = 'green'
-        // this.$refs.block11.color = 'green'
-        // this.$refs.block12.color = 'green'
-
         // swap overlap's color according to player's station
-        this.$refs.overlap1.color = 'blue'
-        this.$refs.overlap2.color = 'blue'
-        this.$refs.overlap3.color = 'blue'
-        this.$refs.overlap4.color = 'blue'
-        this.$refs.overlap5.color = 'blue'
-        this.$refs.overlap6.color = 'blue'
-        this.$refs.overlap7.color = 'red'
-        this.$refs.overlap8.color = 'red'
-        this.$refs.overlap9.color = 'red'
-        this.$refs.overlap10.color = 'red'
-        this.$refs.overlap11.color = 'red'
-        this.$refs.overlap12.color = 'red'
+        this.$refs.overlap1.color = 'red'
+        this.$refs.overlap2.color = 'red'
+        this.$refs.overlap3.color = 'red'
+        this.$refs.overlap4.color = 'red'
+        this.$refs.overlap5.color = 'red'
+        this.$refs.overlap6.color = 'red'
+        this.$refs.overlap7.color = 'green'
+        this.$refs.overlap8.color = 'green'
+        this.$refs.overlap9.color = 'green'
+        this.$refs.overlap10.color = 'green'
+        this.$refs.overlap11.color = 'green'
+        this.$refs.overlap12.color = 'green'
 
         // swap overlap's opacity according to player's station
         this.$refs.overlap1.opacity = this.opacity[11]
@@ -203,32 +192,19 @@ export default {
         this.bottom = false
       })
       bottom.addEventListener('click', (event) => {
-        // this.$refs.block1.color = 'green'
-        // this.$refs.block2.color = 'green'
-        // this.$refs.block3.color = 'green'
-        // this.$refs.block4.color = 'green'
-        // this.$refs.block5.color = 'green'
-        // this.$refs.block6.color = 'green'
-        // this.$refs.block7.color = 'blue'
-        // this.$refs.block8.color = 'blue'
-        // this.$refs.block9.color = 'blue'
-        // this.$refs.block10.color = 'blue'
-        // this.$refs.block11.color = 'blue'
-        // this.$refs.block12.color = 'blue'
-
         // swap overlap's color according to player's station
-        this.$refs.overlap1.color = 'red'
-        this.$refs.overlap2.color = 'red'
-        this.$refs.overlap3.color = 'red'
-        this.$refs.overlap4.color = 'red'
-        this.$refs.overlap5.color = 'red'
-        this.$refs.overlap6.color = 'red'
-        this.$refs.overlap7.color = 'blue'
-        this.$refs.overlap8.color = 'blue'
-        this.$refs.overlap9.color = 'blue'
-        this.$refs.overlap10.color = 'blue'
-        this.$refs.overlap11.color = 'blue'
-        this.$refs.overlap12.color = 'blue'
+        this.$refs.overlap1.color = 'green'
+        this.$refs.overlap2.color = 'green'
+        this.$refs.overlap3.color = 'green'
+        this.$refs.overlap4.color = 'green'
+        this.$refs.overlap5.color = 'green'
+        this.$refs.overlap6.color = 'green'
+        this.$refs.overlap7.color = 'red'
+        this.$refs.overlap8.color = 'red'
+        this.$refs.overlap9.color = 'red'
+        this.$refs.overlap10.color = 'red'
+        this.$refs.overlap11.color = 'red'
+        this.$refs.overlap12.color = 'red'
 
         // swap overlap's opacity according to player's station
         this.$refs.overlap1.opacity = this.opacity[0]
@@ -249,6 +225,9 @@ export default {
       })
     },
     check_pressTime: function (event) {
+      if (this.current_drag === '') {
+        this.current_drag = event.target.id
+      }
       if (this.pressTimer === null) {
         this.pressTimer = setTimeout(() => {
           this.presslong = true
@@ -268,34 +247,125 @@ export default {
         clearTimeout(this.pressTimer)
         this.pressTimer = null
       }
-      let touch = event.targetTouches[0]
-      let element = event.target
-      // place element where the finger is
-      element.style.left = touch.pageX - 25 + 'px'
-      element.style.top = touch.pageY - 25 + 'px'
-      this.x = touch.pageX - 25
-      this.y = touch.pageY - 25
+      if (this.current_drag === event.target.id || this.current_drag === '') {
+        let touch = event.targetTouches[0]
+        let element = event.target
+        // place element where the finger is
+        element.style.left = touch.pageX - 25 + 'px'
+        element.style.top = touch.pageY - 25 + 'px'
+        this.x = touch.pageX - 25
+        this.y = touch.pageY - 25
+      }
       event.preventDefault()
     },
     move_end_pos: function (event) {
       let element = event.target
-      if (this.x >= 430 && this.x <= 580) {
-        if (this.y >= 0 && this.y <= 150) {
-          // group1
-          this.placement = '1'
-          this.judgeBlockpart(430, 0, element)
-        } else if (this.y >= 150 && this.y <= 300) {
-          // group4
-          this.placement = '4'
-          this.judgeBlockpart(430, 150, element)
-        } else if (this.y >= 300 && this.y <= 450) {
-          // group7
-          this.placement = '6'
-          this.judgeBlockpart(430, 300, element)
-        } else if (this.y >= 450 && this.y <= 600) {
-          // group10
-          this.placement = '3'
-          this.judgeBlockpart(430, 450, element)
+      if (element.id === this.current_drag || this.current_drag === '') {
+        if (this.x >= 430 && this.x <= 580) {
+          if (this.y >= 0 && this.y <= 150) {
+            // group1
+            this.placement = '1'
+            this.judgeBlockpart(430, 0, element)
+          } else if (this.y >= 150 && this.y <= 300) {
+            // group4
+            this.placement = '4'
+            this.judgeBlockpart(430, 150, element)
+          } else if (this.y >= 300 && this.y <= 450) {
+            // group7
+            this.placement = '6'
+            this.judgeBlockpart(430, 300, element)
+          } else if (this.y >= 450 && this.y <= 600) {
+            // group10
+            this.placement = '3'
+            this.judgeBlockpart(430, 450, element)
+          } else {
+            // go back init position
+            this.placement = ''
+            if (element.id === 'lostPoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 320 + 'px'
+            } else if (element.id === 'getPoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 278 + 'px'
+            } else if (element.id === 'servePoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 235 + 'px'
+            }
+            // remove red line
+            this.drawLine = false
+            this.presslong = false
+            this.current_drag = ''
+          }
+        } else if (this.x >= 580 && this.x <= 730) {
+          if (this.y >= 0 && this.y <= 150) {
+            // group2
+            this.placement = '2'
+            this.judgeBlockpart(580, 0, element)
+          } else if (this.y >= 150 && this.y <= 300) {
+            // group5
+            this.placement = '5'
+            this.judgeBlockpart(580, 150, element)
+          } else if (this.y >= 300 && this.y <= 450) {
+            // group8
+            this.placement = '5'
+            this.judgeBlockpart(580, 300, element)
+          } else if (this.y >= 450 && this.y <= 600) {
+            // group11
+            this.placement = '2'
+            this.judgeBlockpart(580, 450, element)
+          } else {
+            // go back init position
+            this.placement = ''
+            if (element.id === 'lostPoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 320 + 'px'
+            } else if (element.id === 'getPoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 278 + 'px'
+            } else if (element.id === 'servePoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 235 + 'px'
+            }
+            // remove red line
+            this.drawLine = false
+            this.presslong = false
+            this.current_drag = ''
+          }
+        } else if (this.x >= 730 && this.x <= 880) {
+          if (this.y >= 0 && this.y <= 150) {
+            // group3
+            this.placement = '3'
+            this.judgeBlockpart(730, 0, element)
+          } else if (this.y >= 150 && this.y <= 300) {
+            // group6
+            this.placement = '6'
+            this.judgeBlockpart(730, 150, element)
+          } else if (this.y >= 300 && this.y <= 450) {
+            // group9
+            this.placement = '4'
+            this.judgeBlockpart(730, 300, element)
+          } else if (this.y >= 450 && this.y <= 600) {
+            // group12
+            this.placement = '1'
+            this.judgeBlockpart(730, 450, element)
+          } else {
+            // go back init position
+            this.placement = ''
+            if (element.id === 'lostPoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 320 + 'px'
+            } else if (element.id === 'getPoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 278 + 'px'
+            } else if (element.id === 'servePoint') {
+              element.style.left = 920 + 'px'
+              element.style.top = 235 + 'px'
+            }
+            // remove red line
+            this.drawLine = false
+            this.presslong = false
+            this.current_drag = ''
+          }
         } else {
           // go back init position
           this.placement = ''
@@ -312,108 +382,25 @@ export default {
           // remove red line
           this.drawLine = false
           this.presslong = false
+          this.current_drag = ''
         }
-      } else if (this.x >= 580 && this.x <= 730) {
-        if (this.y >= 0 && this.y <= 150) {
-          // group2
-          this.placement = '2'
-          this.judgeBlockpart(580, 0, element)
-        } else if (this.y >= 150 && this.y <= 300) {
-          // group5
-          this.placement = '5'
-          this.judgeBlockpart(580, 150, element)
-        } else if (this.y >= 300 && this.y <= 450) {
-          // group8
-          this.placement = '5'
-          this.judgeBlockpart(580, 300, element)
-        } else if (this.y >= 450 && this.y <= 600) {
-          // group11
-          this.placement = '2'
-          this.judgeBlockpart(580, 450, element)
-        } else {
-          // go back init position
-          this.placement = ''
-          if (element.id === 'lostPoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 320 + 'px'
-          } else if (element.id === 'getPoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 278 + 'px'
-          } else if (element.id === 'servePoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 235 + 'px'
-          }
-          // remove red line
-          this.drawLine = false
-          this.presslong = false
-        }
-      } else if (this.x >= 730 && this.x <= 880) {
-        if (this.y >= 0 && this.y <= 150) {
-          // group3
-          this.placement = '3'
-          this.judgeBlockpart(730, 0, element)
-        } else if (this.y >= 150 && this.y <= 300) {
-          // group6
-          this.placement = '6'
-          this.judgeBlockpart(730, 150, element)
-        } else if (this.y >= 300 && this.y <= 450) {
-          // group9
-          this.placement = '4'
-          this.judgeBlockpart(730, 300, element)
-        } else if (this.y >= 450 && this.y <= 600) {
-          // group12
-          this.placement = '1'
-          this.judgeBlockpart(730, 450, element)
-        } else {
-          // go back init position
-          this.placement = ''
-          if (element.id === 'lostPoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 320 + 'px'
-          } else if (element.id === 'getPoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 278 + 'px'
-          } else if (element.id === 'servePoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 235 + 'px'
-          }
-          // remove red line
-          this.drawLine = false
-          this.presslong = false
-        }
-      } else {
-        // go back init position
-        this.placement = ''
         if (element.id === 'lostPoint') {
-          element.style.left = 920 + 'px'
-          element.style.top = 320 + 'px'
+          this.serve_point = false
+          this.getpoint = false
         } else if (element.id === 'getPoint') {
-          element.style.left = 920 + 'px'
-          element.style.top = 278 + 'px'
+          this.serve_point = false
+          this.getpoint = true
         } else if (element.id === 'servePoint') {
-          element.style.left = 920 + 'px'
-          element.style.top = 235 + 'px'
+          this.serve_point = true
+          this.getpoint = true
         }
-        // remove red line
-        this.drawLine = false
-        this.presslong = false
-      }
-      if (element.id === 'lostPoint') {
-        this.serve_point = false
-        this.getpoint = false
-      } else if (element.id === 'getPoint') {
-        this.serve_point = false
-        this.getpoint = true
-      } else if (element.id === 'servePoint') {
-        this.serve_point = true
-        this.getpoint = true
-      }
-      if (this.presslong) {
-        // console.log('prev_x : ', this.prev_x)
-        // console.log('prev_y : ', this.prev_y)
-        // console.log('x : ', this.x)
-        // console.log('y : ', this.y)
-        this.drawLine = true
+        if (this.presslong) {
+          // console.log('prev_x : ', this.prev_x)
+          // console.log('prev_y : ', this.prev_y)
+          // console.log('x : ', this.x)
+          // console.log('y : ', this.y)
+          this.drawLine = true
+        }
       }
       event.preventDefault()
     },
@@ -424,7 +411,7 @@ export default {
 
       // when touchstart
       getPoint.addEventListener('touchstart', this.check_pressTime, false)
-      lostPoint.addEventListener('touchstart', this.check_pressTime, false)
+      servePoint.addEventListener('touchstart', this.check_pressTime, false)
       // when touchmove
       getPoint.addEventListener('touchmove', this.move_with_finger, false)
       lostPoint.addEventListener('touchmove', this.move_with_finger, false)

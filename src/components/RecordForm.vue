@@ -5,14 +5,28 @@
         <input type="text" v-model="name1" id="name1" placeholder="我方">
         <input type="text" v-model="name2" id="name2" placeholder="對方">
         <input type="text" v-model="game" id="game" placeholder="Game">
-        <input type="text" v-model="NumOfBoard" id="NumOfBoard" placeholder="總局數">
         <input type="button" @click="saveName" value="click" id="btn">
       </div>
       <div id="title" v-else>
         <p id="Name1">{{this.name1}}</p>
         <p id="Name2">{{this.name2}}</p>
         <p id="Game">{{this.game}}</p>
-        <p id="NumOfBoard"> {{this.allRounds.length + 1}}/{{this.NumOfBoard}} </p>
+      </div>
+      <div>
+        <input type="checkbox" id="one" value="1" v-model="NumOfBoard">
+        <label for="one">1 局</label>
+        <input type="checkbox" id="two" value="2" v-model="NumOfBoard">
+        <label for="two">2 局</label>
+        <input type="checkbox" id="three" value="3" v-model="NumOfBoard">
+        <label for="three">3 局</label>
+        <input type="checkbox" id="four" value="4" v-model="NumOfBoard">
+        <label for="four">4 局</label>
+        <input type="checkbox" id="five" value="5" v-model="NumOfBoard">
+        <label for="five">5 局</label>
+        <input type="checkbox" id="six" value="6" v-model="NumOfBoard">
+        <label for="six">6 局</label>
+        <input type="checkbox" id="seven" value="7" v-model="NumOfBoard">
+        <label for="seven">7 局</label>
       </div>
       <div>
         <div class="record">比分</div>
@@ -85,8 +99,9 @@ export default {
       x: 0,
       y: 0,
       isWhite: true,
-      NumOfBoard: '',
-      showHistory: false
+      NumOfBoard: [],
+      showHistory: false,
+      showInfo: true
     }
   },
   methods: {
@@ -97,7 +112,15 @@ export default {
         this.$refs.table.drawLine = false
       }
       // get serve, point, forehand, backhand
-      this.serve = this.$refs.symbol.serve
+      if (this.serve === '') {
+        this.serve = this.$refs.symbol.serve
+      } else if (this.myPoint >= 10 && this.hisPoint >= 10) {
+        // when duce, we should change serve side every hand
+        this.serve = this.serve === '0' ? '1' : '0'
+      } else if ((this.myPoint + this.hisPoint) % 2 === 0) {
+        this.serve = this.serve === '0' ? '1' : '0'
+      }
+
       if (this.$refs.symbol.forehand === '1') {
         this.hand = 'F' + this.$refs.table.prev_placement
       } else if (this.$refs.symbol.backhand === '1') {
@@ -218,7 +241,7 @@ export default {
             result: this.winRound > this.loseRound ? 'win' : 'lose',
             scores: `${this.winRound}:${this.loseRound}`,
             date: new Date(),
-            NumOfBoard: this.NumOfBoard,
+            NumOfBoard: this.NumOfBoard[this.NumOfBoard.length - 1],
             competitor: this.name2,
             rounds: this.allRounds
           }
@@ -315,17 +338,30 @@ export default {
   display: flex;
   flex-direction: row
 }
-#name1 ,#name2 ,#game {
+#name1 ,#name2 {
   margin-top: 3%;
   height: 15px;
   width: 60px;
   padding: 5px;
 }
 
-#Name1, #Name2 ,#Game, #NumOfBoard {
+#game {
   margin-top: 3%;
   height: 15px;
-  width: 60px;
+  width: 200px;
+  padding: 5px;
+}
+
+#Name1, #Name2 {
+  margin-top: 3%;
+  height: 15px;
+  width: 65px;
+  padding: 5px;
+}
+#Game {
+  margin-top: 3%;
+  height: 15px;
+  width: 250px;
   padding: 5px;
 }
 #Date {
