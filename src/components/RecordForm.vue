@@ -111,16 +111,17 @@ export default {
         this.$refs.table.presslong = false
         this.$refs.table.drawLine = false
       }
-      // get serve, point, forehand, backhand
-      if (this.serve === '') {
+      // change serve side
+      if (this.oneRound.length === 0) {
         this.serve = this.$refs.symbol.serve
       } else if (this.myPoint >= 10 && this.hisPoint >= 10) {
         // when duce, we should change serve side every hand
         this.serve = this.serve === '0' ? '1' : '0'
-      } else if ((this.myPoint + this.hisPoint) % 2 === 0) {
+      } else if (this.oneRound.length % 2 === 0) {
         this.serve = this.serve === '0' ? '1' : '0'
       }
 
+      // get serve, point, forehand, backhand
       if (this.$refs.symbol.forehand === '1') {
         this.hand = 'F' + this.$refs.table.prev_placement
       } else if (this.$refs.symbol.backhand === '1') {
@@ -196,6 +197,12 @@ export default {
         let score = this.oneRound[this.oneRound.length - 1].score
         this.myPoint = score.split(':')[0]
         this.hisPoint = score.split(':')[1]
+      }
+      // resume serve side
+      if (this.oneRound.length === 0) {
+        this.serve = ''
+      } else {
+        this.serve = this.oneRound[this.oneRound.length - 1].serve
       }
       // delete history
       this.history.pop()
