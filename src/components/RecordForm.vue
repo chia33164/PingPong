@@ -321,7 +321,7 @@ export default {
 .record {
   float: left;
   border: 1px solid black;
-  width: 100px;
+  width: 90px;
   height: 35px;
 }
 #table {

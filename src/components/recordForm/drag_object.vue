@@ -158,6 +158,20 @@ export default {
       this.$refs.block10.color = 'white'
       this.$refs.block11.color = 'white'
       this.$refs.block12.color = 'white'
+      // init hot zone
+      this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      this.$refs.overlap1.opacity = 0
+      this.$refs.overlap2.opacity = 0
+      this.$refs.overlap3.opacity = 0
+      this.$refs.overlap4.opacity = 0
+      this.$refs.overlap5.opacity = 0
+      this.$refs.overlap6.opacity = 0
+      this.$refs.overlap7.opacity = 0
+      this.$refs.overlap8.opacity = 0
+      this.$refs.overlap9.opacity = 0
+      this.$refs.overlap10.opacity = 0
+      this.$refs.overlap11.opacity = 0
+      this.$refs.overlap12.opacity = 0
       top.addEventListener('click', (event) => {
         // swap overlap's color according to player's station
         this.$refs.overlap1.color = 'red'
@@ -411,6 +425,7 @@ export default {
 
       // when touchstart
       getPoint.addEventListener('touchstart', this.check_pressTime, false)
+      lostPoint.addEventListener('touchstart', this.check_pressTime, false)
       servePoint.addEventListener('touchstart', this.check_pressTime, false)
       // when touchmove
       getPoint.addEventListener('touchmove', this.move_with_finger, false)
