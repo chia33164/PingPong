@@ -25,7 +25,7 @@ export default new Router({
       component: Exam
     },
     {
-      path: '/recordform/databoard',
+      path: '/databoard',
       name: 'databoard',
       component: databoard
     }

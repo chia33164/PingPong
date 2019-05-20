@@ -44,7 +44,7 @@
 export default {
   data: function () {
     return {
-      color: 'green',
+      color: 'white',
       opacity: 1
     }
   }

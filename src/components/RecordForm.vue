@@ -225,7 +225,7 @@ export default {
     endRound: function () {
       // check this round is win or not
       this.myPoint > this.hisPoint ? this.winRound++ : this.loseRound++
-      this.allRounds.push({round: this.oneRound})
+      this.allRounds.push({no: this.allRounds.length + 1, round: this.oneRound})
       // clear previous data
       this.$refs.table.initialTouch()
       this.$refs.symbol.removeAllchose()
@@ -239,6 +239,12 @@ export default {
     sendData: function () {
       // alert
       let check = confirm('確定要送出嗎？')
+      let currentDate = new Date()
+      let year = currentDate.getFullYear()
+      let month = currentDate.getMonth()
+      let date = currentDate.getDate()
+      let hour = currentDate.getHours()
+      let min = currentDate.getMinutes()
       if (check === true) {
         let insertData = {
           name: this.name1,
@@ -247,7 +253,7 @@ export default {
           detail: {
             result: this.winRound > this.loseRound ? 'win' : 'lose',
             scores: `${this.winRound}:${this.loseRound}`,
-            date: new Date(),
+            date: `${year}/${month}/${date} ${hour}:${min}`,
             NumOfBoard: this.NumOfBoard[this.NumOfBoard.length - 1],
             competitor: this.name2,
             rounds: this.allRounds

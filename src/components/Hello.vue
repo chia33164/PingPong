@@ -4,6 +4,9 @@
     <router-link tag="li" to="/recordForm">
       <a>record</a>
     </router-link>
+    <router-link tag="li" to="/databoard">
+      <a>databoard</a>
+    </router-link>
     <!-- <button @click='showHistory = true'> show </button>
     <History v-if='showHistory' @close='showHistory = false'></History> -->
     <!-- <div>{{ count }}</div> -->
@@ -53,4 +56,5 @@ li {
 a {
   color: #35495E;
 }
+
 </style>
