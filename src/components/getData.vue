@@ -22,7 +22,7 @@
           <option disabled value=""> Round </option>
           <option v-for="(item, key, index) in rounds" :key="index"> {{item.no}} </option>
         </select>
-        <input type="button" @click="DrawHotZone" value="click" class="btn">
+        <input type="button" @click="DrawHotZone(round)" value="click" class="btn">
       </div>
       <div>
         <button id="historyBtn" @click='showHistory = true' v-if="showBtn"> 回放 </button>
@@ -139,29 +139,69 @@ export default {
         this.score = res.scores
         this.date = res.date
         this.competitor = res.competitor
+        // draw hot zone for game
+        this.DrawHotZone(0)
+
         // append data to web
         this.showGame = true
       })
     },
-    DrawHotZone: function () {
+    DrawHotZone: function (no) {
       this.showHotZone = true
-      let rounds = this.rounds[this.round - 1].round
-      rounds.forEach(element => {
-        this.station = element.station === 'top'
-        if (this.station) {
-          if (element.getpoint === '1') {
-            this.opacity[element.placement - 1] += 0.2
+      // draw hotzone for game
+      if (no === 0) {
+        this.rounds.forEach(everyRound => {
+          everyRound.round.forEach(everyHand => {
+            this.station = everyHand.station === 'top'
+            // accumulate placement time
+            if (this.station) {
+              if (everyHand.getpoint === '1') {
+                this.opacity[everyHand.placement - 1] += 1
+              } else {
+                this.opacity[12 - everyHand.placement] += 1
+              }
+            } else {
+              if (everyHand.getpoint === '1') {
+                this.opacity[everyHand.placement - 1] += 1
+              } else {
+                this.opacity[12 - everyHand.placement] += 1
+              }
+            }
+          })
+        })
+      } else {
+        let rounds = this.rounds[no - 1].round
+        rounds.forEach(element => {
+          this.station = element.station === 'top'
+          // accumulate placement time
+          if (this.station) {
+            if (element.getpoint === '1') {
+              this.opacity[element.placement - 1] += 1
+            } else {
+              this.opacity[12 - element.placement] += 1
+            }
           } else {
-            this.opacity[12 - element.placement] += 0.2
+            if (element.getpoint === '1') {
+              this.opacity[element.placement - 1] += 1
+            } else {
+              this.opacity[12 - element.placement] += 1
+            }
           }
-        } else {
-          if (element.getpoint === '1') {
-            this.opacity[element.placement - 1] += 0.2
-          } else {
-            this.opacity[12 - element.placement] += 0.2
-          }
-        }
-      })
+        })
+        this.history = rounds
+        this.showBtn = true
+      }
+      let topHalf = 0
+      let bottomHalf = 0
+      for (let i = 0; i < 6; i++) {
+        topHalf += this.opacity[i]
+        bottomHalf += this.opacity[i + 6]
+      }
+      for (let i = 0; i < 6; i++) {
+        if (topHalf !== 0) this.opacity[i] /= topHalf
+        if (bottomHalf !== 0) this.opacity[i + 6] /= bottomHalf
+      }
+
       this.$refs.overlap1.color = 'green'
       this.$refs.overlap2.color = 'green'
       this.$refs.overlap3.color = 'green'
@@ -187,8 +227,6 @@ export default {
       this.$refs.overlap11.opacity = this.opacity[10]
       this.$refs.overlap12.opacity = this.opacity[11]
       this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-      this.history = rounds
-      this.showBtn = true
     }
   }
 }

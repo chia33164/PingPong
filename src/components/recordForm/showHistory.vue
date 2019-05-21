@@ -38,6 +38,7 @@
                           <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
                           <image xlink:href='../../assets/lostpoint.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="lost"/>
                           <image xlink:href='../../assets/getpoint.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="get"/>
+                          <image xlink:href='../../assets/serve_point.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="serve"/>
                         </svg>
                       </v-touch>
                     </slot>
@@ -69,6 +70,7 @@ export default {
       y: 0,
       lost: false,
       get: false,
+      serve: false,
       idx: 0
     }
   },
@@ -128,7 +130,8 @@ export default {
             default:
               break
           }
-          this.get = true
+          if (this.showList[idx].skill === 'S') this.serve = true
+          else this.get = true
         } else {
           switch (start) {
             case '1':
@@ -266,12 +269,14 @@ export default {
     swipeleft: function () {
       this.lost = false
       this.get = false
+      this.serve = false
       let leftIdx = this.idx <= 0 ? 0 : this.idx - 1
       this.getPos(leftIdx)
     },
     swiperight: function () {
       this.lost = false
       this.get = false
+      this.serve = false
       let rightIdx = this.idx >= (this.showList.length - 1) ? (this.showList.length - 1) : this.idx + 1
       this.getPos(rightIdx)
     }
