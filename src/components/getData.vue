@@ -2,27 +2,30 @@
   <div id="databoard">
     <div id=select>
       <div id="selectName">
-        <select v-model="name" class="select" @click="showPlayer=false, showGame=false">
+        <select v-model="name" class="select" @click="showPlayer=false, showGame=false, showBtn=false">
           <option disabled value=""> Name </option>
           <option v-for="(item, key, index) in players" :key="index" :value="item.id"> {{item.id}} </option>
         </select>
-        <input type="button" @click="FindByName" value="click" id="btn1">
+        <input type="button" @click="FindByName" value="click" class="btn">
       </div>
       <br>
       <div id="selectGame">
-        <select v-model="game" class="select" @click="showGame=false">
+        <select v-model="game" class="select" @click="showGame=false, showBtn=false">
           <option disabled value=""> Game </option>
           <option v-for="(item, key, index) in games" :key="index"> {{item.id}} </option>
         </select>
-        <input type="button" @click="FindByGame" value="click" id="btn2">
+        <input type="button" @click="FindByGame" value="click" class="btn">
       </div>
       <br>
       <div id="selectRound">
-        <select v-model="round" class="select">
+        <select v-model="round" class="select" @click="showBtn=false">
           <option disabled value=""> Round </option>
           <option v-for="(item, key, index) in rounds" :key="index"> {{item.no}} </option>
         </select>
-        <input type="button" @click="DrawHotZone" value="click" id="btn3">
+        <input type="button" @click="DrawHotZone" value="click" class="btn">
+      </div>
+      <div>
+        <button id="historyBtn" @click='showHistory = true' v-if="showBtn"> 回放 </button>
       </div>
     </div>
     <div id="info">
@@ -76,20 +79,22 @@
           <Block ref="overlap11" id="overlap11" x='150' y='450'></Block>
           <Block ref="overlap12" id="overlap12" x='300' y='450'></Block>
         </g>
-        <image xlink:href="../assets/person1.png" x=0 y=0 width="40px" height="40px" v-if="station"/>
-        <image xlink:href="../assets/person1.png" x=0 y=560 width="40px" height="40px" v-else/>
+        <image xlink:href="../assets/person1.png" x=0 y=560 width="40px" height="40px"/>
       </svg>
     </div>
+    <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
   </div>
 </template>
 
 <script>
 import {db} from '../db.js'
 import Block from './recordForm/perBlock'
+import History from './recordForm/showHistory'
 
 export default {
   components: {
-    Block
+    Block,
+    History
   },
   data: function () {
     return {
@@ -108,7 +113,10 @@ export default {
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       station: false, // bottom: false  top: true
       showPlayer: false,
-      showGame: false
+      showGame: false,
+      showHistory: false,
+      showBtn: false,
+      history: []
     }
   },
   firestore: {
@@ -154,58 +162,33 @@ export default {
           }
         }
       })
-      if (this.station) {
-        this.$refs.overlap1.color = 'red'
-        this.$refs.overlap2.color = 'red'
-        this.$refs.overlap3.color = 'red'
-        this.$refs.overlap4.color = 'red'
-        this.$refs.overlap5.color = 'red'
-        this.$refs.overlap6.color = 'red'
-        this.$refs.overlap7.color = 'green'
-        this.$refs.overlap8.color = 'green'
-        this.$refs.overlap9.color = 'green'
-        this.$refs.overlap10.color = 'green'
-        this.$refs.overlap11.color = 'green'
-        this.$refs.overlap12.color = 'green'
-        this.$refs.overlap1.opacity = this.opacity[11]
-        this.$refs.overlap2.opacity = this.opacity[10]
-        this.$refs.overlap3.opacity = this.opacity[9]
-        this.$refs.overlap4.opacity = this.opacity[8]
-        this.$refs.overlap5.opacity = this.opacity[7]
-        this.$refs.overlap6.opacity = this.opacity[6]
-        this.$refs.overlap7.opacity = this.opacity[5]
-        this.$refs.overlap8.opacity = this.opacity[4]
-        this.$refs.overlap9.opacity = this.opacity[3]
-        this.$refs.overlap10.opacity = this.opacity[2]
-        this.$refs.overlap11.opacity = this.opacity[1]
-        this.$refs.overlap12.opacity = this.opacity[0]
-      } else {
-        this.$refs.overlap1.color = 'green'
-        this.$refs.overlap2.color = 'green'
-        this.$refs.overlap3.color = 'green'
-        this.$refs.overlap4.color = 'green'
-        this.$refs.overlap5.color = 'green'
-        this.$refs.overlap6.color = 'green'
-        this.$refs.overlap7.color = 'red'
-        this.$refs.overlap8.color = 'red'
-        this.$refs.overlap9.color = 'red'
-        this.$refs.overlap10.color = 'red'
-        this.$refs.overlap11.color = 'red'
-        this.$refs.overlap12.color = 'red'
-        this.$refs.overlap1.opacity = this.opacity[0]
-        this.$refs.overlap2.opacity = this.opacity[1]
-        this.$refs.overlap3.opacity = this.opacity[2]
-        this.$refs.overlap4.opacity = this.opacity[3]
-        this.$refs.overlap5.opacity = this.opacity[4]
-        this.$refs.overlap6.opacity = this.opacity[5]
-        this.$refs.overlap7.opacity = this.opacity[6]
-        this.$refs.overlap8.opacity = this.opacity[7]
-        this.$refs.overlap9.opacity = this.opacity[8]
-        this.$refs.overlap10.opacity = this.opacity[9]
-        this.$refs.overlap11.opacity = this.opacity[10]
-        this.$refs.overlap12.opacity = this.opacity[11]
-      }
+      this.$refs.overlap1.color = 'green'
+      this.$refs.overlap2.color = 'green'
+      this.$refs.overlap3.color = 'green'
+      this.$refs.overlap4.color = 'green'
+      this.$refs.overlap5.color = 'green'
+      this.$refs.overlap6.color = 'green'
+      this.$refs.overlap7.color = 'red'
+      this.$refs.overlap8.color = 'red'
+      this.$refs.overlap9.color = 'red'
+      this.$refs.overlap10.color = 'red'
+      this.$refs.overlap11.color = 'red'
+      this.$refs.overlap12.color = 'red'
+      this.$refs.overlap1.opacity = this.opacity[0]
+      this.$refs.overlap2.opacity = this.opacity[1]
+      this.$refs.overlap3.opacity = this.opacity[2]
+      this.$refs.overlap4.opacity = this.opacity[3]
+      this.$refs.overlap5.opacity = this.opacity[4]
+      this.$refs.overlap6.opacity = this.opacity[5]
+      this.$refs.overlap7.opacity = this.opacity[6]
+      this.$refs.overlap8.opacity = this.opacity[7]
+      this.$refs.overlap9.opacity = this.opacity[8]
+      this.$refs.overlap10.opacity = this.opacity[9]
+      this.$refs.overlap11.opacity = this.opacity[10]
+      this.$refs.overlap12.opacity = this.opacity[11]
       this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      this.history = rounds
+      this.showBtn = true
     }
   }
 }
@@ -230,6 +213,11 @@ export default {
   height: 10%;
   top: 5%;
   left: 2%;
+}
+
+.btn {
+  height: 25px;
+  width: 50px;
 }
 
 .select {
