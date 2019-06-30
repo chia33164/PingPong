@@ -4,6 +4,7 @@ import Hello from '@/components/Hello'
 import recordForm from '@/components/RecordForm'
 import Exam from '@/components/Exam'
 import databoard from '@/components/getData'
+import animation from '@/components/Animation'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/databoard',
       name: 'databoard',
       component: databoard
+    },
+    {
+      path: '/animation',
+      name: 'animation',
+      component: animation
     }
   ]
 })

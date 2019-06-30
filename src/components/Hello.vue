@@ -7,9 +7,12 @@
     <router-link tag="li" to="/databoard">
       <a>databoard</a>
     </router-link>
+    <router-link tag="li" to="/animation">
+      <a>animation</a>
+    </router-link>
     <!-- <button @click='showHistory = true'> show </button>
     <History v-if='showHistory' @close='showHistory = false'></History> -->
-    <!-- <div>{{ count }}</div> -->
+    <div>{{ count }}</div>
   </div>
 </template>
 
@@ -20,20 +23,21 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to PingPong',
-      showHistory: false
+      msg: 'Welcome to PingPong'
+      // showHistory: false
     }
   },
   components: {
     History
+  },
+  computed: {
+    count () {
+      // this.$store.dispatch('getPlayerBalls', 'chia').then(res => {
+      // })
+      // return this.$store.state.players
+      this.$store.dispatch('getParsedData').then()
+    }
   }
-  // computed: {
-  //   count () {
-  //     this.$store.dispatch('getPlayerBalls', 'chia').then(res => {
-  //     })
-  //     return this.$store.state.players
-  //   }
-  // }
 }
 </script>
 

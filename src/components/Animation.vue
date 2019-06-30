@@ -1,6 +1,5 @@
 <template>
   <div class="showHistory_container">
-    <v-touch v-on:swipeleft="swipeleft" v-on:swiperight="swiperight">
     <svg class="history_container" width="450" height="600">
         <g>
         <Block ref="block1" id="group1" x='0' y='0'></Block>
@@ -22,12 +21,21 @@
         <Block ref="block11" id="group11" x='150' y='450'></Block>
         <Block ref="block12" id="group12" x='300' y='450'></Block>
         </g>
-        <line id='test1' :x1="prev_x" :y1="prev_y" :x2="x" :y2="y" stroke='red'/>
         <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
-        <image xlink:href='../assets/lostpoint.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="lost"/>
-        <image xlink:href='../assets/getpoint.png' :x="x-20" :y="y-20" height="40px" width="40px" v-if="get"/>
+        <circle cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1">
+          <animateMotion dur="1s" repeatCount="1" path="M-40 -40" fill="freeze" id="Ball" restart="always"/>
+        </circle>
+        <!--image xlink:href='../assets/getpoint.png' :x="move_x-20" :y="move_y-20" height="40px" width="40px" id="ball" transform="translate(100, -200)"/-->
     </svg>
-    </v-touch>
+    <svg width="450" height="50">
+      <a xlink:href="#Ball" @click="startMove"><text x="0" y="30">開始動畫</text></a>
+      <a xlink:href="#Ball" @click="previousMove"><text x="100" y="30">上一球</text></a>
+      <a xlink:href="#Ball" @click="nextMove"><text x="300" y="30">下一球</text></a>
+    </svg>
+    <div>
+      <p v-if="start">第 {{this.pathIdx + 1}} 球</p>
+      <p> 比分 {{this.xPoint}}:{{this.yPoint}} </p>
+    </div>
   </div>
 </template>
 
@@ -35,224 +43,197 @@
 import Block from './recordForm/perBlock'
 
 export default {
-  props: ['showList'],
   data: function () {
     return {
-      prev_x: 0,
-      prev_y: 0,
-      x: 0,
-      y: 0,
-      lost: false,
+      move_x: -40,
+      move_y: -40,
+      xPoint: 0,
+      yPoint: 0,
       get: false,
-      idx: 0
+      idx: 0,
+      startStation: false, // false:top true:bottom
+      path: '',
+      pathList: [],
+      pathIdx: 0,
+      start: false,
+      out: false
     }
   },
   components: {
     Block
   },
   methods: {
-    getPos: function (idx) {
-      this.idx = idx
-      if (this.showList.length !== 0) {
-        let end = this.showList[idx].placement
-        let endPart = this.showList[idx].placement_part
-        let start = this.showList[idx].skill.substr(1)
-        let startPart = this.showList[idx].part.substr(4)
-        if (this.showList[idx].getpoint === '1') {
-          switch (start) {
-            case '1':
-              this.judgePosByPart(0, startPart, 300, 450)
-              break
-            case '2':
-              this.judgePosByPart(0, startPart, 150, 450)
-              break
-            case '3':
-              this.judgePosByPart(0, startPart, 0, 450)
-              break
-            case '4':
-              this.judgePosByPart(0, startPart, 300, 300)
-              break
-            case '5':
-              this.judgePosByPart(0, startPart, 150, 300)
-              break
-            case '6':
-              this.judgePosByPart(0, startPart, 0, 300)
-              break
-            default:
-              break
-          }
-          switch (end) {
-            case '1':
-              this.judgePosByPart(1, endPart, 0, 0)
-              break
-            case '2':
-              this.judgePosByPart(1, endPart, 150, 0)
-              break
-            case '3':
-              this.judgePosByPart(1, endPart, 300, 0)
-              break
-            case '4':
-              this.judgePosByPart(1, endPart, 0, 150)
-              break
-            case '5':
-              this.judgePosByPart(1, endPart, 150, 150)
-              break
-            case '6':
-              this.judgePosByPart(1, endPart, 300, 150)
-              break
-            default:
-              break
-          }
-          this.get = true
-        } else {
-          switch (start) {
-            case '1':
-              this.judgePosByPart(0, startPart, 0, 0)
-              break
-            case '2':
-              this.judgePosByPart(0, startPart, 150, 0)
-              break
-            case '3':
-              this.judgePosByPart(0, startPart, 300, 0)
-              break
-            case '4':
-              this.judgePosByPart(0, startPart, 0, 150)
-              break
-            case '5':
-              this.judgePosByPart(0, startPart, 150, 150)
-              break
-            case '6':
-              this.judgePosByPart(0, startPart, 300, 150)
-              break
-            default:
-              break
-          }
-          switch (end) {
-            case '1':
-              this.judgePosByPart(1, endPart, 300, 450)
-              break
-            case '2':
-              this.judgePosByPart(1, endPart, 150, 450)
-              break
-            case '3':
-              this.judgePosByPart(1, endPart, 0, 450)
-              break
-            case '4':
-              this.judgePosByPart(1, endPart, 300, 300)
-              break
-            case '5':
-              this.judgePosByPart(1, endPart, 150, 300)
-              break
-            case '6':
-              this.judgePosByPart(1, endPart, 0, 300)
-              break
-            default:
-              break
-          }
-          this.lost = true
+    animatation: async function () {
+      let position
+      let ParsedData = await this.$store.dispatch('getParsedData')
+      // console.log(ParsedData)
+
+      ParsedData.forEach(data => {
+        // X's station is on bottom
+        // Y's station is on top
+        switch (data) {
+          case 'X':
+            this.startStation = true
+            this.path = ''
+            break
+          case 'Y':
+            this.startStation = false
+            this.path = ''
+            break
+          case 'S':
+            // getpoint or lost point
+            this.pathList.push(this.path)
+            if (this.out) {
+              if (this.startStation) {
+                this.yPoint++
+              } else {
+                this.xPoint++
+              }
+            } else {
+              if (!this.startStation) {
+                this.yPoint++
+              } else {
+                this.xPoint++
+              }
+            }
+            // console.log(this.pathList)
+            break
+          case 'G':
+            // end Round
+            break
+          case 'M':
+            // end game
+            break
+          default :
+            position = this.getPos(data)
+            if (position !== undefined) {
+              this.setPath(position)
+            }
+            break
         }
-      }
+      })
     },
-    judgePosByPart: function (mode, part, x, y) {
-      if (mode === 0) {
-        switch (part) {
+    getPos: function (data) {
+      // let skill = data.substr(0, 1)
+      let start = data.substr(1, 1)
+      let end = data.substr(2, 1)
+      let startPos = this.judgePosByBlock(this.startStation, start)
+      let endPos = this.judgePosByBlock(!this.startStation, end)
+      let result = []
+      if (endPos[0] === undefined) {
+        // !startStation out
+        // startStation get point
+        this.out = true
+        return
+      }
+      result = startPos.concat(endPos)
+      this.startStation = !this.startStation
+      return result // [startx, starty, endx, endy]
+    },
+    judgePosByBlock: function (mode, block) {
+      // mode:true  ball moving from bottom to top
+      // mode:false ball moving from top to bottom
+      let x, y
+      if (mode) {
+        switch (block) {
           case '1':
-            this.prev_x = x + 25
-            this.prev_y = y + 25
+            x = 375
+            y = 525
             break
           case '2':
-            this.prev_x = x + 25
-            this.prev_y = y + 75
+            x = 225
+            y = 525
             break
           case '3':
-            this.prev_x = x + 25
-            this.prev_y = y + 125
+            x = 75
+            y = 525
             break
           case '4':
-            this.prev_x = x + 75
-            this.prev_y = y + 25
+            x = 375
+            y = 375
             break
           case '5':
-            this.prev_x = x + 75
-            this.prev_y = y + 75
+            x = 225
+            y = 375
             break
           case '6':
-            this.prev_x = x + 75
-            this.prev_y = y + 125
-            break
-          case '7':
-            this.prev_x = x + 125
-            this.prev_y = y + 25
-            break
-          case '8':
-            this.prev_x = x + 125
-            this.prev_y = y + 75
-            break
-          case '9':
-            this.prev_x = x + 125
-            this.prev_y = y + 125
+            x = 75
+            y = 375
             break
           default:
             break
         }
-      } else if (mode === 1) {
-        switch (part) {
+      } else {
+        switch (block) {
           case '1':
-            this.x = x + 25
-            this.y = y + 25
+            x = 75
+            y = 75
             break
           case '2':
-            this.x = x + 25
-            this.y = y + 75
+            x = 225
+            y = 75
             break
           case '3':
-            this.x = x + 25
-            this.y = y + 125
+            x = 375
+            y = 75
             break
           case '4':
-            this.x = x + 75
-            this.y = y + 25
+            x = 75
+            y = 225
             break
           case '5':
-            this.x = x + 75
-            this.y = y + 75
+            x = 225
+            y = 225
             break
           case '6':
-            this.x = x + 75
-            this.y = y + 125
-            break
-          case '7':
-            this.x = x + 125
-            this.y = y + 25
-            break
-          case '8':
-            this.x = x + 125
-            this.y = y + 75
-            break
-          case '9':
-            this.x = x + 125
-            this.y = y + 125
+            x = 375
+            y = 225
             break
           default:
             break
         }
       }
+      return [x, y]
     },
-    swipeleft: function () {
-      this.lost = false
-      this.get = false
-      let leftIdx = this.idx <= 0 ? 0 : this.idx - 1
-      this.getPos(leftIdx)
+    setPath: function (position) {
+      if (this.path === '') {
+        this.path = `M${position[0]} ${position[1]} L${position[2]} ${position[3]} `
+      } else {
+        this.path = this.path.concat(`L${position[2]} ${position[3]} `)
+      }
     },
-    swiperight: function () {
-      this.lost = false
-      this.get = false
-      let rightIdx = this.idx >= (this.showList.length - 1) ? (this.showList.length - 1) : this.idx + 1
-      this.getPos(rightIdx)
+    startMove: function () {
+      console.log(this.pathList)
+      this.start = true
+      let ball = document.getElementById('Ball')
+      let moveTimes = (this.pathList[this.pathIdx].split(' ').length - 1) / 2 - 1
+      let duration = moveTimes * 0.5
+      ball.setAttributeNS(null, 'dur', `${duration}s`)
+      ball.setAttributeNS(null, 'path', this.pathList[this.pathIdx])
+    },
+    nextMove: function () {
+      let ball = document.getElementById('Ball')
+      if (this.pathIdx < this.pathList.length - 1) {
+        this.pathIdx++
+        let moveTimes = (this.pathList[this.pathIdx].split(' ').length - 1) / 2 - 1
+        let duration = moveTimes * 0.5
+        ball.setAttributeNS(null, 'dur', `${duration}s`)
+        ball.setAttributeNS(null, 'path', this.pathList[this.pathIdx])
+      }
+    },
+    previousMove: function () {
+      let ball = document.getElementById('Ball')
+      if (this.pathIdx !== 0) {
+        this.pathIdx--
+        let moveTimes = (this.pathList[this.pathIdx].split(' ').length - 1) / 2 - 1
+        let duration = moveTimes * 0.5
+        ball.setAttributeNS(null, 'dur', `${duration}s`)
+        ball.setAttributeNS(null, 'path', this.pathList[this.pathIdx])
+      }
     }
   },
   mounted () {
-    this.getPos(this.idx)
+    this.animatation()
   }
 }
 </script>
@@ -329,4 +310,5 @@ export default {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
+
 </style>
