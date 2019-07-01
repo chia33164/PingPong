@@ -1,37 +1,39 @@
 <template>
   <div class="showHistory_container">
     <div>
-      <svg class="history_container" width="450" height="600">
+      <svg id="history_container" width="450" height="600">
           <g>
-          <Block ref="block1" id="group1" x='0' y='0'></Block>
-          <Block ref="block2" id="group2" x='150' y='0'></Block>
-          <Block ref="block3" id="group3" x='300' y='0'></Block>
+            <Block ref="block1" id="group1" x='0' y='0'></Block>
+            <Block ref="block2" id="group2" x='150' y='0'></Block>
+            <Block ref="block3" id="group3" x='300' y='0'></Block>
           </g>
           <g>
-          <Block ref="block4" id="group4" x='0' y='150'></Block>
-          <Block ref="block5" id="group5" x='150' y='150'></Block>
-          <Block ref="block6" id="group6" x='300' y='150'></Block>
+            <Block ref="block4" id="group4" x='0' y='150'></Block>
+            <Block ref="block5" id="group5" x='150' y='150'></Block>
+            <Block ref="block6" id="group6" x='300' y='150'></Block>
           </g>
           <g>
-          <Block ref="block7" id="group7" x='0' y='300'></Block>
-          <Block ref="block8" id="group8" x='150' y='300'></Block>
-          <Block ref="block9" id="group9" x='300' y='300'></Block>
+            <Block ref="block7" id="group7" x='0' y='300'></Block>
+            <Block ref="block8" id="group8" x='150' y='300'></Block>
+            <Block ref="block9" id="group9" x='300' y='300'></Block>
           </g>
           <g>
-          <Block ref="block10" id="group10" x='0' y='450'></Block>
-          <Block ref="block11" id="group11" x='150' y='450'></Block>
-          <Block ref="block12" id="group12" x='300' y='450'></Block>
+            <Block ref="block10" id="group10" x='0' y='450'></Block>
+            <Block ref="block11" id="group11" x='150' y='450'></Block>
+            <Block ref="block12" id="group12" x='300' y='450'></Block>
           </g>
           <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
-          <circle cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1">
-            <animateMotion dur="1s" repeatCount="1" path="M-40 -40" fill="freeze" id="Ball" restart="always"/>
+          <circle v-show="start" cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1">
+            <animateMotion begin="0s" dur="1s" repeatCount="1" fill="freeze" id="Ball" restart="always"/>
           </circle>
           <!--image xlink:href='../assets/getpoint.png' :x="move_x-20" :y="move_y-20" height="40px" width="40px" id="ball" transform="translate(100, -200)"/-->
       </svg>
       <svg width="450" height="40">
           <a xlink:href="#Ball" @click="startMove"><text x="0" y="30">開始動畫</text></a>
-          <a xlink:href="#Ball" @click="previousMove"><text x="100" y="30">上一球</text></a>
-          <a xlink:href="#Ball" @click="currentMove"><text x="200" y="30">這一球</text></a>
+          <a xlink:href="#Ball" @click="stopMove" v-if="!playing"><text x="75" y="30">停止</text></a>
+          <a xlink:href="#Ball" @click="stopMove" v-else><text x="75" y="30">繼續</text></a>
+          <a xlink:href="#Ball" @click="previousMove"><text x="150" y="30">上一球</text></a>
+          <a xlink:href="#Ball" @click="currentMove"><text x="225" y="30">這一球</text></a>
           <a xlink:href="#Ball" @click="nextMove"><text x="300" y="30">下一球</text></a>
       </svg>
     </div>
@@ -79,7 +81,8 @@ export default {
       start: false,
       out: false,
       speedList: [0.25, 0.5, 1, 1.5, 2, 2.5, 3],
-      speed: 1
+      speed: 1,
+      playing: false
     }
   },
   components: {
@@ -231,58 +234,77 @@ export default {
       }
     },
     startMove: function () {
-      // console.log(this.roundList)
-      // console.log(this.roundIdx)
       this.pathIdx = 0
       this.start = true
-      console.log(this.speed)
       let ball = document.getElementById('Ball')
+      // let SVGElement = document.getElementById('history_container')
       let pathList = this.roundList[this.roundIdx]
       let path = pathList[this.pathIdx]
       let moveTimes = (path.split(' ').length - 1) / 2 - 1
       let duration = moveTimes * 0.5 / this.speed
 
-      ball.setAttributeNS(null, 'dur', `${duration}s`)
-      ball.setAttributeNS(null, 'path', path)
+      // SVGElement.setCurrentTime(0)
+      ball.setAttribute('dur', `${duration}s`)
+      ball.setAttribute('path', path)
     },
     nextMove: function () {
       let ball = document.getElementById('Ball')
+      // let SVGElement = document.getElementById('history_container')
       let pathList = this.roundList[this.roundIdx]
 
       if (this.pathIdx < pathList.length - 1) {
         this.pathIdx++
         let path = pathList[this.pathIdx]
         let moveTimes = (path.split(' ').length - 1) / 2 - 1
-        console.log(this.speed)
         let duration = moveTimes * 0.5 / this.speed
 
-        ball.setAttributeNS(null, 'dur', `${duration}s`)
-        ball.setAttributeNS(null, 'path', path)
+        // SVGElement.setCurrentTime(0)
+        ball.setAttribute('dur', `${duration}s`)
+        ball.setAttribute('path', path)
       }
     },
     previousMove: function () {
       let ball = document.getElementById('Ball')
+      // let SVGElement = document.getElementById('history_container')
+
       if (this.pathIdx !== 0) {
         this.pathIdx--
         let pathList = this.roundList[this.roundIdx]
         let path = pathList[this.pathIdx]
         let moveTimes = (path.split(' ').length - 1) / 2 - 1
-        console.log(this.speed)
         let duration = moveTimes * 0.5 / this.speed
 
-        ball.setAttributeNS(null, 'dur', `${duration}s`)
-        ball.setAttributeNS(null, 'path', path)
+        // SVGElement.setCurrentTime(0)
+        ball.setAttribute('dur', `${duration}s`)
+        ball.setAttribute('path', path)
       }
     },
     currentMove: function () {
       let ball = document.getElementById('Ball')
+      // let SVGElement = document.getElementById('history_container')
       let pathList = this.roundList[this.roundIdx]
       let path = pathList[this.pathIdx]
       let moveTimes = (path.split(' ').length - 1) / 2 - 1
-      console.log(this.speed)
       let duration = moveTimes * 0.5 / this.speed
-      ball.setAttributeNS(null, 'dur', `${duration}s`)
-      ball.setAttributeNS(null, 'path', path)
+
+      // SVGElement.setCurrentTime(0)
+      ball.setAttribute('dur', `${duration}s`)
+      ball.setAttribute('path', path)
+    },
+    stopMove: function () {
+      let SVGElement = document.getElementById('history_container')
+      if (!this.playing) {
+        let stopTime = SVGElement.getCurrentTime()
+        console.log(stopTime)
+        SVGElement.pauseAnimations()
+        // console.log(SVGElement.animationsPaused())
+      } else {
+        let stopTime = SVGElement.getCurrentTime()
+        console.log(stopTime)
+        // SVGElement.setCurrentTime(0.1)
+        SVGElement.unpauseAnimations()
+      }
+      this.playing = !this.playing
     }
   },
   mounted () {
