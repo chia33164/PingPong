@@ -1,17 +1,49 @@
 <template>
   <div id="app">
-    <!-- <header>
-      <span>PingPong</span>
-    </header> -->
+    <header>
+      <span>PingPong - {{content}}</span>
+    </header>
     <main>
       <router-view></router-view>
     </main>
+    <footer>
+      <router-link tag="li" to="/">
+        <span @click="changeMode" id="0" v-if="mode == 0" style="color:red">首頁</span>
+        <span @click="changeMode" id="0" v-else>首頁</span>
+      </router-link>
+      <router-link tag="li" to="/recordForm">
+        <span @click="changeMode" id="1" v-if="mode == 1" style="color:red">紀錄表</span>
+        <span @click="changeMode" id="1" v-else>紀錄表</span>
+      </router-link>
+      <router-link tag="li" to="/databoard">
+        <span @click="changeMode" id="2" v-if="mode == 2" style="color:red">歷史紀錄</span>
+        <span @click="changeMode" id="2" v-else>歷史紀錄</span>
+      </router-link>
+      <router-link tag="li" to="/animation">
+        <span @click="changeMode" id="3" v-if="mode == 3" style="color:red">歷史動畫</span>
+        <span @click="changeMode" id="3" v-else>歷史動畫</span>
+      </router-link>
+    </footer>
   </div>
 </template>
 
 <script>
 export default {
   name: 'app',
+  data () {
+    return {
+      mode: 0,
+      content: '首頁'
+    }
+  },
+  methods: {
+    changeMode: function (event) {
+      let ID = event.target.id
+      let target = document.getElementById(ID)
+      this.mode = Number(ID)
+      this.content = target.innerText
+    }
+  },
   mounted () {
     // set horizontal screen
     let detectOrient = function () {
@@ -41,14 +73,18 @@ export default {
   color: #2c3e50;
 }
 
-/* main {
+main {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 50px;
 }
 
 header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
   margin: 0;
-  height: 56px;
+  height: 50px;
   padding: 0 16px 0 24px;
   background-color: #35495E;
   color: #ffffff;
@@ -63,5 +99,29 @@ header span {
   font-weight: 400;
   box-sizing: border-box;
   padding-top: 16px;
-} */
+}
+
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  margin: 0;
+  height: 50px;
+  padding: 0 16px 0 24px;
+  background-color: #35495E;
+  color: #ffffff;
+}
+
+footer span {
+  display: block;
+  position: relative;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: .02em;
+  font-weight: 400;
+  box-sizing: border-box;
+  padding-top: 16px;
+}
+
 </style>

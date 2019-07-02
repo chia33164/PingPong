@@ -1,15 +1,6 @@
 <template>
-  <div class="hello">
+  <div class="root">
     <h1>{{ msg }}</h1>
-    <router-link tag="li" to="/recordForm">
-      <a>record</a>
-    </router-link>
-    <router-link tag="li" to="/databoard">
-      <a>databoard</a>
-    </router-link>
-    <router-link tag="li" to="/animation">
-      <a>animation</a>
-    </router-link>
     <!-- <button @click='showHistory = true'> show </button>
     <History v-if='showHistory' @close='showHistory = false'></History> -->
     <div>{{ count }}</div>
@@ -23,7 +14,7 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to PingPong'
+      msg: 'PingPong'
       // showHistory: false
     }
   },
@@ -43,6 +34,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.root {
+  text-align: center;
+}
+
 h1, h2 {
   font-weight: normal;
 }

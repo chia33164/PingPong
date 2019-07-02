@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="record_container">
     <div id="list">
       <div id="title" v-if="isWhite">
         <input type="text" v-model="name1" id="name1" placeholder="我方">
@@ -285,7 +285,7 @@ export default {
 </script>
 
 <style>
-#app {
+#record_container {
   display: flex;
   flex-direction: row;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

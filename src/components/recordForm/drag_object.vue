@@ -33,7 +33,7 @@
         <Block ref="overlap11" id="overlap11" x='150' y='450'></Block>
         <Block ref="overlap12" id="overlap12" x='300' y='450'></Block>
       </g>
-      <line id='test1' :x1="prev_x-430" :y1="prev_y" :x2="x-430" :y2="y" stroke='red' v-if="drawLine"/>
+      <line id='test1' :x1="prev_x-430" :y1="prev_y-45" :x2="x-430" :y2="y-45" stroke='red' v-if="drawLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
       <image xlink:href="../../assets/person1.png" x=0 y=0 width="40px" height="40px" v-if="top"/>
       <image xlink:href="../../assets/person1.png" x=0 y=560 width="40px" height="40px" v-if="bottom"/>
@@ -83,11 +83,11 @@ export default {
       let lostPoint = document.getElementById('lostPoint')
       let servePoint = document.getElementById('servePoint')
       servePoint.style.left = 920 + 'px'
-      servePoint.style.top = 235 + 'px'
+      servePoint.style.top = 280 + 'px'
       getPoint.style.left = 920 + 'px'
-      getPoint.style.top = 278 + 'px'
+      getPoint.style.top = 323 + 'px'
       lostPoint.style.left = 920 + 'px'
-      lostPoint.style.top = 320 + 'px'
+      lostPoint.style.top = 365 + 'px'
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
@@ -276,34 +276,34 @@ export default {
       let element = event.target
       if (element.id === this.current_drag || this.current_drag === '') {
         if (this.x >= 430 && this.x <= 580) {
-          if (this.y >= 0 && this.y <= 150) {
+          if (this.y >= 45 && this.y <= 195) {
             // group1
             this.placement = '1'
-            this.judgeBlockpart(430, 0, element)
-          } else if (this.y >= 150 && this.y <= 300) {
+            this.judgeBlockpart(430, 45, element)
+          } else if (this.y >= 195 && this.y <= 345) {
             // group4
             this.placement = '4'
-            this.judgeBlockpart(430, 150, element)
-          } else if (this.y >= 300 && this.y <= 450) {
+            this.judgeBlockpart(430, 195, element)
+          } else if (this.y >= 345 && this.y <= 495) {
             // group7
             this.placement = '6'
-            this.judgeBlockpart(430, 300, element)
-          } else if (this.y >= 450 && this.y <= 600) {
+            this.judgeBlockpart(430, 345, element)
+          } else if (this.y >= 495 && this.y <= 645) {
             // group10
             this.placement = '3'
-            this.judgeBlockpart(430, 450, element)
+            this.judgeBlockpart(430, 495, element)
           } else {
             // go back init position
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 320 + 'px'
+              element.style.top = 365 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 278 + 'px'
+              element.style.top = 323 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 235 + 'px'
+              element.style.top = 280 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -311,34 +311,34 @@ export default {
             this.current_drag = ''
           }
         } else if (this.x >= 580 && this.x <= 730) {
-          if (this.y >= 0 && this.y <= 150) {
+          if (this.y >= 45 && this.y <= 195) {
             // group2
             this.placement = '2'
-            this.judgeBlockpart(580, 0, element)
-          } else if (this.y >= 150 && this.y <= 300) {
+            this.judgeBlockpart(580, 45, element)
+          } else if (this.y >= 195 && this.y <= 345) {
             // group5
             this.placement = '5'
-            this.judgeBlockpart(580, 150, element)
-          } else if (this.y >= 300 && this.y <= 450) {
+            this.judgeBlockpart(580, 195, element)
+          } else if (this.y >= 345 && this.y <= 495) {
             // group8
             this.placement = '5'
-            this.judgeBlockpart(580, 300, element)
-          } else if (this.y >= 450 && this.y <= 600) {
+            this.judgeBlockpart(580, 345, element)
+          } else if (this.y >= 495 && this.y <= 645) {
             // group11
             this.placement = '2'
-            this.judgeBlockpart(580, 450, element)
+            this.judgeBlockpart(580, 495, element)
           } else {
             // go back init position
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 320 + 'px'
+              element.style.top = 365 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 278 + 'px'
+              element.style.top = 323 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 235 + 'px'
+              element.style.top = 280 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -346,34 +346,34 @@ export default {
             this.current_drag = ''
           }
         } else if (this.x >= 730 && this.x <= 880) {
-          if (this.y >= 0 && this.y <= 150) {
+          if (this.y >= 45 && this.y <= 195) {
             // group3
             this.placement = '3'
-            this.judgeBlockpart(730, 0, element)
-          } else if (this.y >= 150 && this.y <= 300) {
+            this.judgeBlockpart(730, 45, element)
+          } else if (this.y >= 195 && this.y <= 345) {
             // group6
             this.placement = '6'
-            this.judgeBlockpart(730, 150, element)
-          } else if (this.y >= 300 && this.y <= 450) {
+            this.judgeBlockpart(730, 195, element)
+          } else if (this.y >= 345 && this.y <= 495) {
             // group9
             this.placement = '4'
-            this.judgeBlockpart(730, 300, element)
-          } else if (this.y >= 450 && this.y <= 600) {
+            this.judgeBlockpart(730, 345, element)
+          } else if (this.y >= 495 && this.y <= 645) {
             // group12
             this.placement = '1'
-            this.judgeBlockpart(730, 450, element)
+            this.judgeBlockpart(730, 495, element)
           } else {
             // go back init position
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 320 + 'px'
+              element.style.top = 365 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 278 + 'px'
+              element.style.top = 323 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 235 + 'px'
+              element.style.top = 280 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -385,13 +385,13 @@ export default {
           this.placement = ''
           if (element.id === 'lostPoint') {
             element.style.left = 920 + 'px'
-            element.style.top = 320 + 'px'
+            element.style.top = 365 + 'px'
           } else if (element.id === 'getPoint') {
             element.style.left = 920 + 'px'
-            element.style.top = 278 + 'px'
+            element.style.top = 323 + 'px'
           } else if (element.id === 'servePoint') {
             element.style.left = 920 + 'px'
-            element.style.top = 235 + 'px'
+            element.style.top = 280 + 'px'
           }
           // remove red line
           this.drawLine = false
@@ -515,17 +515,17 @@ export default {
 #getPoint {
   position:absolute;
   left: 920px;
-  top: 278px;
+  top: 323px;
 }
 #lostPoint {
   position:absolute;
   left: 920px;
-  top: 320px;
+  top: 365px;
 }
 #servePoint {
   position:absolute;
   left: 920px;
-  top: 235px;
+  top: 280px;
 }
 .overlap {
   z-index: 2;
