@@ -79,7 +79,7 @@
           <Block ref="overlap11" id="overlap11" x='150' y='450'></Block>
           <Block ref="overlap12" id="overlap12" x='300' y='450'></Block>
         </g>
-        <image xlink:href="../assets/person1.png" x=0 y=560 width="40px" height="40px"/>
+        <image xlink:href="../assets/person.png" x=0 y=560 width="40px" height="40px"/>
       </svg>
     </div>
     <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>

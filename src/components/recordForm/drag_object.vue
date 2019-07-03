@@ -35,8 +35,8 @@
       </g>
       <line id='test1' :x1="prev_x-430" :y1="prev_y-45" :x2="x-430" :y2="y-45" stroke='red' v-if="drawLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
-      <image xlink:href="../../assets/person1.png" x=0 y=0 width="40px" height="40px" v-if="top"/>
-      <image xlink:href="../../assets/person1.png" x=0 y=560 width="40px" height="40px" v-if="bottom"/>
+      <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-if="top"/>
+      <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-if="bottom"/>
     </svg>
     <br>
     <div>
@@ -83,11 +83,11 @@ export default {
       let lostPoint = document.getElementById('lostPoint')
       let servePoint = document.getElementById('servePoint')
       servePoint.style.left = 920 + 'px'
-      servePoint.style.top = 280 + 'px'
+      servePoint.style.top = 250 + 'px'
       getPoint.style.left = 920 + 'px'
-      getPoint.style.top = 323 + 'px'
+      getPoint.style.top = 293 + 'px'
       lostPoint.style.left = 920 + 'px'
-      lostPoint.style.top = 365 + 'px'
+      lostPoint.style.top = 335 + 'px'
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
@@ -297,13 +297,13 @@ export default {
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 365 + 'px'
+              element.style.top = 335 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 323 + 'px'
+              element.style.top = 293 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 280 + 'px'
+              element.style.top = 250 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -332,13 +332,13 @@ export default {
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 365 + 'px'
+              element.style.top = 335 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 323 + 'px'
+              element.style.top = 293 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 280 + 'px'
+              element.style.top = 250 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -367,13 +367,13 @@ export default {
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 365 + 'px'
+              element.style.top = 335 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 323 + 'px'
+              element.style.top = 293 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 920 + 'px'
-              element.style.top = 280 + 'px'
+              element.style.top = 250 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -385,13 +385,13 @@ export default {
           this.placement = ''
           if (element.id === 'lostPoint') {
             element.style.left = 920 + 'px'
-            element.style.top = 365 + 'px'
+            element.style.top = 335 + 'px'
           } else if (element.id === 'getPoint') {
             element.style.left = 920 + 'px'
-            element.style.top = 323 + 'px'
+            element.style.top = 293 + 'px'
           } else if (element.id === 'servePoint') {
             element.style.left = 920 + 'px'
-            element.style.top = 280 + 'px'
+            element.style.top = 250 + 'px'
           }
           // remove red line
           this.drawLine = false
@@ -510,29 +510,28 @@ export default {
 .dragBlock {
   width: 60px;
   height: 40px;
-  border: 1px solid black;
 }
 #getPoint {
   position:absolute;
   left: 920px;
-  top: 323px;
+  top: 293px;
 }
 #lostPoint {
   position:absolute;
   left: 920px;
-  top: 365px;
+  top: 335px;
 }
 #servePoint {
   position:absolute;
   left: 920px;
-  top: 280px;
+  top: 250px;
 }
 .overlap {
   z-index: 2;
   background-color: "red";
 }
 #topPerson, #bottomPerson {
-  background-image: url('../../assets/person1.png');
+  background-image: url('../../assets/person.png');
   width: 40px;
   height: 40px;
   background-repeat: no-repeat;

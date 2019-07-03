@@ -42,7 +42,6 @@
     <div>
       <sym ref="symbol"></sym>
       <br>
-      <br>
       <div class="dragBlock">
         <div width="40px" height="40px" id="servePoint"></div>
       </div>
@@ -52,7 +51,6 @@
       <div class="dragBlock">
         <div width="40px" height="40px" id="lostPoint"></div>
       </div>
-      <br>
       <div class="btn_container">
         <button id="btn1" type='button' @click='oneHand'> 更新 </button>
         <button id="btn2" type='button' @click='deletePreviousHand'> 刪除 </button>
