@@ -1,16 +1,11 @@
 <template>
   <div id="record_container">
     <div id="list">
-      <div id="title" v-if="isWhite">
-        <input type="text" v-model="name1" id="name1" placeholder="我方">
-        <input type="text" v-model="name2" id="name2" placeholder="對方">
-        <input type="text" v-model="game" id="game" placeholder="Game">
-        <input type="button" @click="saveName" value="click" id="btn">
-      </div>
-      <div id="title" v-else>
+      <div id="title">
         <p id="Name1">{{this.name1}}</p>
         <p id="Name2">{{this.name2}}</p>
         <p id="Game">{{this.game}}</p>
+        <button width="40px" height="40px" @click="changeInfo"></button>
       </div>
       <div>
         <input type="checkbox" id="one" value="1" v-model="NumOfBoard">
@@ -60,6 +55,7 @@
       </div>
     </div>
     <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
+    <InputModal @getInfo="getModalInfo"></InputModal>
   </div>
 </template>
 
@@ -68,13 +64,15 @@ import sym from './recordForm/symbol'
 import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
 import History from './recordForm/showHistory'
+import InputModal from './recordForm/input_modal'
 
 export default {
   components: {
     sym,
     drag,
     lists,
-    History
+    History,
+    InputModal
   },
   data: function () {
     return {
@@ -111,7 +109,6 @@ export default {
       }
       // change serve side
       if (this.oneRound.length === 0) {
-        this.serve = this.$refs.symbol.serve
       } else if (this.myPoint >= 10 && this.hisPoint >= 10) {
         // when duce, we should change serve side every hand
         this.serve = this.serve === '0' ? '1' : '0'
@@ -277,7 +274,22 @@ export default {
     },
     saveName: function () {
       this.isWhite = false
+    },
+    getModalInfo: function (data) {
+      console.log(data)
+      this.game = data[0]
+      this.name1 = data[1]
+      this.name2 = data[2]
+      this.station = data[3]
+      this.serve = data[4]
+      this.$refs.table.changeHotZone(this.station)
+    },
+    changeInfo: function () {
+      this.$bvModal.show('modal-1')
     }
+  },
+  mounted () {
+    this.$bvModal.show('modal-1')
   }
 }
 </script>

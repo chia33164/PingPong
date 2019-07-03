@@ -35,16 +35,9 @@
       </g>
       <line id='test1' :x1="prev_x-430" :y1="prev_y-45" :x2="x-430" :y2="y-45" stroke='red' v-if="drawLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
-      <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-if="top"/>
-      <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-if="bottom"/>
+      <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-if="station === 'top'"/>
+      <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-if="station === 'bottom'"/>
     </svg>
-    <br>
-    <div>
-      <input type="radio" id="top" value="top" v-model="station">
-      <label for="top">top</label>
-      <input type="radio" id="bottom" value="bottom" v-model="station">
-      <label for="bottom">bottom</label>
-    </div>
   </div>
 </template>
 
@@ -69,8 +62,6 @@ export default {
       presslong: false,
       drawLine: false,
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      top: false,
-      bottom: false,
       current_drag: ''
     }
   },
@@ -82,12 +73,12 @@ export default {
       let getPoint = document.getElementById('getPoint')
       let lostPoint = document.getElementById('lostPoint')
       let servePoint = document.getElementById('servePoint')
-      servePoint.style.left = 920 + 'px'
-      servePoint.style.top = 250 + 'px'
-      getPoint.style.left = 920 + 'px'
-      getPoint.style.top = 293 + 'px'
-      lostPoint.style.left = 920 + 'px'
-      lostPoint.style.top = 335 + 'px'
+      servePoint.style.left = 930 + 'px'
+      servePoint.style.top = 150 + 'px'
+      getPoint.style.left = 930 + 'px'
+      getPoint.style.top = 193 + 'px'
+      lostPoint.style.left = 930 + 'px'
+      lostPoint.style.top = 235 + 'px'
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
@@ -144,8 +135,11 @@ export default {
       }
     },
     changeColor: function () {
-      let top = document.getElementById('top')
-      let bottom = document.getElementById('bottom')
+      if (this.station === 'top') {
+        this.station = 'bottom'
+      } else if (this.station === 'bottom') {
+        this.station = 'top'
+      }
       this.$refs.block1.color = 'white'
       this.$refs.block2.color = 'white'
       this.$refs.block3.color = 'white'
@@ -172,71 +166,6 @@ export default {
       this.$refs.overlap10.opacity = 0
       this.$refs.overlap11.opacity = 0
       this.$refs.overlap12.opacity = 0
-      top.addEventListener('click', (event) => {
-        // swap overlap's color according to player's station
-        this.$refs.overlap1.color = 'red'
-        this.$refs.overlap2.color = 'red'
-        this.$refs.overlap3.color = 'red'
-        this.$refs.overlap4.color = 'red'
-        this.$refs.overlap5.color = 'red'
-        this.$refs.overlap6.color = 'red'
-        this.$refs.overlap7.color = 'green'
-        this.$refs.overlap8.color = 'green'
-        this.$refs.overlap9.color = 'green'
-        this.$refs.overlap10.color = 'green'
-        this.$refs.overlap11.color = 'green'
-        this.$refs.overlap12.color = 'green'
-
-        // swap overlap's opacity according to player's station
-        this.$refs.overlap1.opacity = this.opacity[11]
-        this.$refs.overlap2.opacity = this.opacity[10]
-        this.$refs.overlap3.opacity = this.opacity[9]
-        this.$refs.overlap4.opacity = this.opacity[8]
-        this.$refs.overlap5.opacity = this.opacity[7]
-        this.$refs.overlap6.opacity = this.opacity[6]
-        this.$refs.overlap7.opacity = this.opacity[5]
-        this.$refs.overlap8.opacity = this.opacity[4]
-        this.$refs.overlap9.opacity = this.opacity[3]
-        this.$refs.overlap10.opacity = this.opacity[2]
-        this.$refs.overlap11.opacity = this.opacity[1]
-        this.$refs.overlap12.opacity = this.opacity[0]
-
-        // set top true
-        this.top = true
-        this.bottom = false
-      })
-      bottom.addEventListener('click', (event) => {
-        // swap overlap's color according to player's station
-        this.$refs.overlap1.color = 'green'
-        this.$refs.overlap2.color = 'green'
-        this.$refs.overlap3.color = 'green'
-        this.$refs.overlap4.color = 'green'
-        this.$refs.overlap5.color = 'green'
-        this.$refs.overlap6.color = 'green'
-        this.$refs.overlap7.color = 'red'
-        this.$refs.overlap8.color = 'red'
-        this.$refs.overlap9.color = 'red'
-        this.$refs.overlap10.color = 'red'
-        this.$refs.overlap11.color = 'red'
-        this.$refs.overlap12.color = 'red'
-
-        // swap overlap's opacity according to player's station
-        this.$refs.overlap1.opacity = this.opacity[0]
-        this.$refs.overlap2.opacity = this.opacity[1]
-        this.$refs.overlap3.opacity = this.opacity[2]
-        this.$refs.overlap4.opacity = this.opacity[3]
-        this.$refs.overlap5.opacity = this.opacity[4]
-        this.$refs.overlap6.opacity = this.opacity[5]
-        this.$refs.overlap7.opacity = this.opacity[6]
-        this.$refs.overlap8.opacity = this.opacity[7]
-        this.$refs.overlap9.opacity = this.opacity[8]
-        this.$refs.overlap10.opacity = this.opacity[9]
-        this.$refs.overlap11.opacity = this.opacity[10]
-        this.$refs.overlap12.opacity = this.opacity[11]
-        // set bottom true
-        this.bottom = true
-        this.top = false
-      })
     },
     check_pressTime: function (event) {
       if (this.current_drag === '') {
@@ -296,14 +225,14 @@ export default {
             // go back init position
             this.placement = ''
             if (element.id === 'lostPoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 335 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 235 + 'px'
             } else if (element.id === 'getPoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 293 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 193 + 'px'
             } else if (element.id === 'servePoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 250 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 150 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -331,14 +260,14 @@ export default {
             // go back init position
             this.placement = ''
             if (element.id === 'lostPoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 335 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 235 + 'px'
             } else if (element.id === 'getPoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 293 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 193 + 'px'
             } else if (element.id === 'servePoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 250 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 150 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -366,14 +295,14 @@ export default {
             // go back init position
             this.placement = ''
             if (element.id === 'lostPoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 335 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 235 + 'px'
             } else if (element.id === 'getPoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 293 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 193 + 'px'
             } else if (element.id === 'servePoint') {
-              element.style.left = 920 + 'px'
-              element.style.top = 250 + 'px'
+              element.style.left = 930 + 'px'
+              element.style.top = 150 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -384,14 +313,14 @@ export default {
           // go back init position
           this.placement = ''
           if (element.id === 'lostPoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 335 + 'px'
+            element.style.left = 930 + 'px'
+            element.style.top = 235 + 'px'
           } else if (element.id === 'getPoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 293 + 'px'
+            element.style.left = 930 + 'px'
+            element.style.top = 193 + 'px'
           } else if (element.id === 'servePoint') {
-            element.style.left = 920 + 'px'
-            element.style.top = 250 + 'px'
+            element.style.left = 930 + 'px'
+            element.style.top = 150 + 'px'
           }
           // remove red line
           this.drawLine = false
@@ -464,7 +393,23 @@ export default {
       this.$refs.overlap12.opacity = 0
     },
     changeHotZone: function (station) {
+      this.station = station
       if (station === 'top') {
+        // swap overlap's color according to player's station
+        this.$refs.overlap1.color = 'red'
+        this.$refs.overlap2.color = 'red'
+        this.$refs.overlap3.color = 'red'
+        this.$refs.overlap4.color = 'red'
+        this.$refs.overlap5.color = 'red'
+        this.$refs.overlap6.color = 'red'
+        this.$refs.overlap7.color = 'green'
+        this.$refs.overlap8.color = 'green'
+        this.$refs.overlap9.color = 'green'
+        this.$refs.overlap10.color = 'green'
+        this.$refs.overlap11.color = 'green'
+        this.$refs.overlap12.color = 'green'
+
+        // swap overlap's opacity according to player's station
         this.$refs.overlap1.opacity = this.opacity[11]
         this.$refs.overlap2.opacity = this.opacity[10]
         this.$refs.overlap3.opacity = this.opacity[9]
@@ -478,6 +423,21 @@ export default {
         this.$refs.overlap11.opacity = this.opacity[1]
         this.$refs.overlap12.opacity = this.opacity[0]
       } else if (station === 'bottom') {
+        // swap overlap's color according to player's station
+        this.$refs.overlap1.color = 'green'
+        this.$refs.overlap2.color = 'green'
+        this.$refs.overlap3.color = 'green'
+        this.$refs.overlap4.color = 'green'
+        this.$refs.overlap5.color = 'green'
+        this.$refs.overlap6.color = 'green'
+        this.$refs.overlap7.color = 'red'
+        this.$refs.overlap8.color = 'red'
+        this.$refs.overlap9.color = 'red'
+        this.$refs.overlap10.color = 'red'
+        this.$refs.overlap11.color = 'red'
+        this.$refs.overlap12.color = 'red'
+
+        // swap overlap's opacity according to player's station
         this.$refs.overlap1.opacity = this.opacity[0]
         this.$refs.overlap2.opacity = this.opacity[1]
         this.$refs.overlap3.opacity = this.opacity[2]
@@ -513,18 +473,18 @@ export default {
 }
 #getPoint {
   position:absolute;
-  left: 920px;
-  top: 293px;
+  left: 930px;
+  top: 193px;
 }
 #lostPoint {
   position:absolute;
-  left: 920px;
-  top: 335px;
+  left: 930px;
+  top: 235px;
 }
 #servePoint {
   position:absolute;
-  left: 920px;
-  top: 250px;
+  left: 930px;
+  top: 150px;
 }
 .overlap {
   z-index: 2;

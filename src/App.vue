@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <header>
+    <header id="root_header">
       <span>PingPong - {{content}}</span>
     </header>
     <main>
       <router-view></router-view>
     </main>
-    <footer>
+    <footer id="root_footer">
       <router-link tag="li" to="/">
         <span @click="changeMode" id="0" v-if="mode == 0" style="color:#35495E">首頁</span>
         <span @click="changeMode" id="0" v-else>首頁</span>
@@ -78,7 +78,7 @@ main {
   margin-top: 50px;
 }
 
-header {
+#root_header {
   position: fixed;
   left: 0;
   top: 0;
@@ -90,7 +90,7 @@ header {
   color: #ffffff;
 }
 
-header span {
+#root_header span {
   display: block;
   position: relative;
   font-size: 20px;
@@ -101,7 +101,7 @@ header span {
   padding-top: 16px;
 }
 
-footer {
+#root_footer {
   position: fixed;
   left: 0;
   bottom: 0;
@@ -114,7 +114,7 @@ footer {
   border-top: 1px  #969696  solid;
 }
 
-footer span {
+#root_footer span {
   display: block;
   position: relative;
   font-size: 20px;
