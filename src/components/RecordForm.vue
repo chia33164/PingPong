@@ -37,6 +37,8 @@
     <div>
       <sym ref="symbol"></sym>
       <br>
+      <br>
+      <br>
       <div class="dragBlock">
         <div width="40px" height="40px" id="servePoint"></div>
       </div>
@@ -47,11 +49,11 @@
         <div width="40px" height="40px" id="lostPoint"></div>
       </div>
       <div class="btn_container">
-        <button id="btn1" type='button' @click='oneHand'> 更新 </button>
-        <button id="btn2" type='button' @click='deletePreviousHand'> 刪除 </button>
-        <button id="btn3" type='button' @click='endRound'> 完局 </button>
-        <button id="btn4" type='button' @click='sendData'> 上傳 </button>
-        <button id="btn5" type='button' @click='showHistory = true'> 回放 </button>
+        <b-button id="btn1" variant="outline-primary" @click='oneHand'> 更新 </b-button>
+        <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
+        <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
+        <b-button id="btn4" variant="outline-primary" @click='sendData'> 上傳 </b-button>
+        <b-button id="btn5" variant="outline-primary" @click='showHistory = true'> 回放 </b-button>
       </div>
     </div>
     <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
@@ -276,7 +278,6 @@ export default {
       this.isWhite = false
     },
     getModalInfo: function (data) {
-      console.log(data)
       this.game = data[0]
       this.name1 = data[1]
       this.name2 = data[2]

@@ -2,47 +2,30 @@
   <div id="databoard">
     <div id=select>
       <div id="selectName">
-        <select v-model="name" class="select" @click="showPlayer=false, showGame=false, showBtn=false">
-          <option disabled value=""> Name </option>
-          <option v-for="(item, key, index) in players" :key="index" :value="item.id"> {{item.id}} </option>
-        </select>
-        <input type="button" @click="FindByName" value="click" class="btn">
+        <b-form-select v-model="name" :options="option1" @click="showPlayer=false, showGame=false, showBtn=false" @change="FindByName">
+          <template slot="first">
+            <option :value="''" disabled>選手</option>
+          </template>
+        </b-form-select>
       </div>
       <br>
       <div id="selectGame">
-        <select v-model="game" class="select" @click="showGame=false, showBtn=false">
-          <option disabled value=""> Game </option>
-          <option v-for="(item, key, index) in games" :key="index"> {{item.id}} </option>
-        </select>
-        <input type="button" @click="FindByGame" value="click" class="btn">
+        <b-form-select v-model="game" :options="option2" @click="showGame=false, showBtn=false" @change="FindByGame">
+          <template slot="first">
+            <option :value="''" disabled>比賽</option>
+          </template>
+        </b-form-select>
       </div>
       <br>
       <div id="selectRound">
-        <select v-model="round" class="select" @click="showBtn=false">
-          <option disabled value=""> Round </option>
-          <option v-for="(item, key, index) in rounds" :key="index"> {{item.no}} </option>
-        </select>
-        <input type="button" @click="DrawHotZone(round)" value="click" class="btn">
+        <b-form-select v-model="round" :options="option3" @click="showBtn=false" @change="DrawHotZone(round)">
+          <template slot="first">
+            <option :value="''" disabled>局</option>
+          </template>
+        </b-form-select>
       </div>
       <div>
         <button id="historyBtn" @click='showHistory = true' v-if="showBtn"> 回放 </button>
-      </div>
-    </div>
-    <div id="info">
-      <div>
-        <h1> 選手訊息 </h1>
-      </div>
-      <div v-if="showPlayer">
-        <h1> {{this.name}} </h1>
-        <li> win   : {{this.win}}</li>
-        <li> lose  : {{this.lose}}</li>
-      </div>
-      <div v-if="showGame">
-        <h1> {{this.game}}</h1>
-        <li> result: {{this.result}}</li>
-        <li> score : {{this.score}}</li>
-        <li> competitor : {{this.competitor}}</li>
-        <li> date : {{this.date}}</li>
       </div>
     </div>
     <div id="hotZone">
@@ -82,6 +65,23 @@
         <image xlink:href="../assets/person.png" x=0 y=560 width="40px" height="40px"/>
       </svg>
     </div>
+    <div id="info">
+      <div>
+        <h1> 選手訊息 </h1>
+      </div>
+      <div v-if="showPlayer">
+        <h1> {{this.name}} </h1>
+        <li> win   : {{this.win}}</li>
+        <li> lose  : {{this.lose}}</li>
+      </div>
+      <div v-if="showGame">
+        <h1> {{this.game}}</h1>
+        <li> result: {{this.result}}</li>
+        <li> score : {{this.score}}</li>
+        <li> competitor : {{this.competitor}}</li>
+        <li> date : {{this.date}}</li>
+      </div>
+    </div>
     <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
   </div>
 </template>
@@ -116,7 +116,10 @@ export default {
       showGame: false,
       showHistory: false,
       showBtn: false,
-      history: []
+      history: [],
+      option1: [],
+      option2: [],
+      option3: []
     }
   },
   firestore: {
@@ -129,6 +132,12 @@ export default {
         this.lose = res.lose
         this.games = res.games
         this.showPlayer = true
+        // set select list
+        this.SetOption(2)
+        // init game
+        this.game = ''
+        // init round
+        this.round = ''
       })
     },
     FindByGame: function () {
@@ -139,11 +148,14 @@ export default {
         this.score = res.scores
         this.date = res.date
         this.competitor = res.competitor
+        // set select list
+        this.SetOption(3)
         // draw hot zone for game
         this.DrawHotZone(0)
-
         // append data to web
         this.showGame = true
+        // init round
+        this.round = ''
       })
     },
     DrawHotZone: function (no) {
@@ -227,7 +239,48 @@ export default {
       this.$refs.overlap11.opacity = this.opacity[10]
       this.$refs.overlap12.opacity = this.opacity[11]
       this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    SetOption: async function (mode) {
+      // mode
+      // 1 for option1
+      // 2 for option2
+      // 3 for option3
+      switch (mode) {
+        case 1:
+          let players = await this.$store.dispatch('getPlayers')
+          this.option1 = players.map((data) => {
+            let obj = {}
+            obj['value'] = data
+            obj['text'] = data
+            return obj
+          })
+          break
+        case 2:
+          this.option2 = this.games.map((data) => {
+            let obj = {}
+            obj['value'] = data.id
+            obj['text'] = data.id
+            return obj
+          })
+          break
+        case 3:
+          this.option3 = this.rounds.map((data) => {
+            let obj = {}
+            obj['value'] = data.no
+            obj['text'] = data.no
+            return obj
+          })
+          break
+        default:
+          break
+      }
+    },
+    test: function () {
+      console.log(123)
     }
+  },
+  async mounted () {
+    this.SetOption(1)
   }
 }
 </script>
@@ -267,8 +320,8 @@ export default {
   position: relative;
   width: 300px;
   height: 100%;
-  top: 5%;
   left: 8%;
+  padding: 10px;
 }
 
 </style>

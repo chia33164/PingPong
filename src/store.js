@@ -92,6 +92,13 @@ export default new Vuex.Store({
         let result = token.match(pattern)
         resolve(result)
       })
+    },
+    async getPlayers (context) {
+      let res = await db.collection('players').get()
+      let players = res.docs.map((data) => {
+        return data.id
+      })
+      return players
     }
   },
   mutations: {

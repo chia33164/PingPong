@@ -74,11 +74,11 @@ export default {
       let lostPoint = document.getElementById('lostPoint')
       let servePoint = document.getElementById('servePoint')
       servePoint.style.left = 930 + 'px'
-      servePoint.style.top = 150 + 'px'
+      servePoint.style.top = 180 + 'px'
       getPoint.style.left = 930 + 'px'
-      getPoint.style.top = 193 + 'px'
+      getPoint.style.top = 223 + 'px'
       lostPoint.style.left = 930 + 'px'
-      lostPoint.style.top = 235 + 'px'
+      lostPoint.style.top = 265 + 'px'
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
@@ -226,13 +226,13 @@ export default {
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 235 + 'px'
+              element.style.top = 265 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 193 + 'px'
+              element.style.top = 223 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 150 + 'px'
+              element.style.top = 180 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -261,13 +261,13 @@ export default {
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 235 + 'px'
+              element.style.top = 265 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 193 + 'px'
+              element.style.top = 223 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 150 + 'px'
+              element.style.top = 180 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -296,13 +296,13 @@ export default {
             this.placement = ''
             if (element.id === 'lostPoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 235 + 'px'
+              element.style.top = 265 + 'px'
             } else if (element.id === 'getPoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 193 + 'px'
+              element.style.top = 223 + 'px'
             } else if (element.id === 'servePoint') {
               element.style.left = 930 + 'px'
-              element.style.top = 150 + 'px'
+              element.style.top = 180 + 'px'
             }
             // remove red line
             this.drawLine = false
@@ -314,13 +314,13 @@ export default {
           this.placement = ''
           if (element.id === 'lostPoint') {
             element.style.left = 930 + 'px'
-            element.style.top = 235 + 'px'
+            element.style.top = 265 + 'px'
           } else if (element.id === 'getPoint') {
             element.style.left = 930 + 'px'
-            element.style.top = 193 + 'px'
+            element.style.top = 223 + 'px'
           } else if (element.id === 'servePoint') {
             element.style.left = 930 + 'px'
-            element.style.top = 150 + 'px'
+            element.style.top = 180 + 'px'
           }
           // remove red line
           this.drawLine = false
@@ -474,17 +474,17 @@ export default {
 #getPoint {
   position:absolute;
   left: 930px;
-  top: 193px;
+  top: 223px;
 }
 #lostPoint {
   position:absolute;
   left: 930px;
-  top: 235px;
+  top: 265px;
 }
 #servePoint {
   position:absolute;
   left: 930px;
-  top: 150px;
+  top: 180px;
 }
 .overlap {
   z-index: 2;

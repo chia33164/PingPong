@@ -39,9 +39,11 @@
       required></b-form-input>
       <b-form-invalid-feedback id="input-live-feedback"> 必填 </b-form-invalid-feedback>
       
-      <b-form-group label="首局站位">
+      <b-form-group label="首局站位" :state="radioState">
         <b-form-radio v-model="selected" name="some-radios" value="top">上方</b-form-radio>
         <b-form-radio v-model="selected" name="some-radios" value="bottom">下方</b-form-radio>
+        <b-form-invalid-feedback :state="radioState">必填</b-form-invalid-feedback>
+        <b-form-valid-feedback :state="radioState">ok</b-form-valid-feedback>
       </b-form-group>
 
       <label>是否發球</label>
@@ -67,8 +69,13 @@ export default {
       name1: '',
       name2: '',
       game: '',
-      selected: '',
+      selected: null,
       serve: '0'
+    }
+  },
+  computed: {
+    radioState () {
+      return Boolean(this.selected)
     }
   },
   methods: {

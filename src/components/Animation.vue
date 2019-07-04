@@ -26,7 +26,6 @@
           <circle v-show="start" cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1">
             <animateMotion begin="0s" dur="1s" repeatCount="1" fill="freeze" id="Ball" restart="always"/>
           </circle>
-          <!--image xlink:href='../assets/getpoint.png' :x="move_x-20" :y="move_y-20" height="40px" width="40px" id="ball" transform="translate(100, -200)"/-->
       </svg>
       <svg width="450" height="40">
           <a xlink:href="#Ball" @click="startMove"><text x="0" y="30">開始動畫</text></a>
@@ -39,19 +38,21 @@
     </div>
     <div>
       <div>
-        <select v-model="roundIdx" class="select">
-          <option disabled value="0"> Round </option>
-          <option v-for="(item, key, index) in roundList" :key="index"> {{key}} </option>
-        </select>
+        <b-form-select v-model="roundIdx" :options="option">
+          <template slot="first">
+            <option :value="-1" disabled>局</option>
+          </template>
+        </b-form-select>
       </div>
       <div>
-        <select v-model="speed" class="select">
-          <option disabled value="1"> Speed </option>
-          <option v-for="(item, key, index) in speedList" :key="index"> {{item}} </option>
-        </select>
+        <b-form-select v-model="speed" :options="speedList">
+          <template slot="first">
+            <option :value="0" disabled>速度</option>
+          </template>
+        </b-form-select>
       </div>
       <div>
-        <p v-if="start">第 {{Number(this.roundIdx) + 1}} 局</p>
+        <p v-if="start">第 {{this.roundIdx + 1}} 局</p>
         <p v-if="start">第 {{this.pathIdx + 1}} 球</p>
         <p v-if="start"> 比分 {{this.roundScore[this.roundIdx]}} </p>
       </div>
@@ -76,13 +77,22 @@ export default {
       pathList: [],
       pathIdx: 0,
       roundList: [],
-      roundIdx: 0,
+      roundIdx: -1,
       roundScore: [],
       start: false,
       out: false,
-      speedList: [0.25, 0.5, 1, 1.5, 2, 2.5, 3],
-      speed: 1,
-      playing: false
+      speedList: [
+        {value: 0.25, text: 0.25},
+        {value: 0.5, text: 0.5},
+        {value: 1, text: 1},
+        {value: 1.5, text: 1.5},
+        {value: 2, text: 2},
+        {value: 2.5, text: 2.5},
+        {value: 3, text: 3}
+      ],
+      speed: 0,
+      playing: false,
+      option: []
     }
   },
   components: {
@@ -134,6 +144,7 @@ export default {
             break
           case 'M':
             // end game
+            this.setOption()
             break
           default :
             position = this.getPos(data)
@@ -305,6 +316,15 @@ export default {
         SVGElement.unpauseAnimations()
       }
       this.playing = !this.playing
+    },
+    setOption: function () {
+      let roundNum = this.roundList.length
+      for (let idx = 0; idx < roundNum; idx++) {
+        this.option.push({
+          value: idx,
+          text: idx + 1
+        })
+      }
     }
   },
   mounted () {
@@ -316,7 +336,9 @@ export default {
 <style>
 .showHistory_container {
   display: flex;
-  flex-direction: row
+  flex-direction: row;
+  padding: 10px;
+  justify-content: center;
 }
 .showHistory_container > div {
   display: flex;
