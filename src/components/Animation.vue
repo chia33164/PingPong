@@ -23,6 +23,7 @@
             <Block ref="block12" id="group12" x='300' y='450'></Block>
           </g>
           <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
+          <image xlink:href="../assets/person.png" x=0 y=560 width="40px" height="40px"/>
           <circle v-show="start" cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1">
             <animateMotion begin="0s" dur="1s" repeatCount="1" fill="freeze" id="Ball" restart="always"/>
           </circle>
@@ -57,6 +58,39 @@
         <p v-if="start"> 比分 {{this.roundScore[this.roundIdx]}} </p>
       </div>
     </div>
+    <div>
+          <b-button variant="outline-primary" @click="showAnalysis"> show </b-button>
+          <b-modal v-model="showAna" title="統計">
+            <b-form-group>
+              <b-form-radio-group
+                v-model="analysisMode"
+                :options="analysisOptions"
+                buttons
+                button-variant="outline-primary"
+              ></b-form-radio-group>
+            </b-form-group>
+            <div v-if="analysisMode == 'round'">
+              <h5>反手失分</h5>
+              <b-progress :value="BL" :max="max1" show-value class="mb-3"></b-progress>
+              <h5>正手失分</h5>
+              <b-progress :value="FL" :max="max1" show-value class="mb-3"></b-progress>
+              <h5>反手得分</h5>
+              <b-progress :value="BW" :max="max2" show-value class="mb-3"></b-progress>
+              <h5>正手得分</h5>
+              <b-progress :value="FW" :max="max2" show-value class="mb-3"></b-progress>
+            </div>
+             <div v-else>
+              <h5>反手失分</h5>
+              <b-progress :value="ABL" :max="Amax1" show-value class="mb-3"></b-progress>
+              <h5>正手失分</h5>
+              <b-progress :value="AFL" :max="Amax1" show-value class="mb-3"></b-progress>
+              <h5>反手得分</h5>
+              <b-progress :value="ABW" :max="Amax2" show-value class="mb-3"></b-progress>
+              <h5>正手得分</h5>
+              <b-progress :value="AFW" :max="Amax2" show-value class="mb-3"></b-progress>
+            </div>
+          </b-modal>
+    </div>
   </div>
 </template>
 
@@ -79,6 +113,7 @@ export default {
       roundList: [],
       roundIdx: -1,
       roundScore: [],
+      roundStatus: [[0, 0, 0, 0]], // [[lose point back hand, lose point forward hand, get point back hand, get point forward hand], [], ...]
       start: false,
       out: false,
       speedList: [
@@ -92,7 +127,26 @@ export default {
       ],
       speed: 0,
       playing: false,
-      option: []
+      option: [],
+      skill: '',
+      showAna: false,
+      max1: 1,
+      max2: 1,
+      Amax1: 0,
+      Amax2: 0,
+      BL: 0,
+      FL: 0,
+      BW: 0,
+      FW: 0,
+      ABL: 0,
+      AFL: 0,
+      ABW: 0,
+      AFW: 0,
+      analysisMode: 'round',
+      analysisOptions: [
+        {text: '本局', value: 'round'},
+        {text: '整場', value: 'game'}
+      ]
     }
   },
   components: {
@@ -121,14 +175,18 @@ export default {
             if (this.out) {
               if (!this.startStation) {
                 this.yPoint++
+                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][0]++ : this.roundStatus[this.roundStatus.length - 1][1]++
               } else {
                 this.xPoint++
+                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][2]++ : this.roundStatus[this.roundStatus.length - 1][3]++
               }
             } else {
               if (this.startStation) {
                 this.yPoint++
+                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][0]++ : this.roundStatus[this.roundStatus.length - 1][1]++
               } else {
                 this.xPoint++
+                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][2]++ : this.roundStatus[this.roundStatus.length - 1][3]++
               }
             }
             this.out = false
@@ -136,6 +194,7 @@ export default {
             break
           case 'G':
             // end Round
+            this.roundStatus.push([0, 0, 0, 0])
             this.roundList.push(this.pathList)
             this.roundScore.push(`${this.xPoint}:${this.yPoint}`)
             this.pathList = []
@@ -156,12 +215,12 @@ export default {
       })
     },
     getPos: function (data) {
-      // let skill = data.substr(0, 1)
       let start = data.substr(1, 1)
       let end = data.substr(2, 1)
       let startPos = this.judgePosByBlock(this.startStation, start)
       let endPos = this.judgePosByBlock(!this.startStation, end)
       let result = []
+      this.skill = data.substr(0, 1)
       if (endPos[0] === undefined) {
         // !startStation out
         // startStation get point
@@ -325,6 +384,23 @@ export default {
           text: idx + 1
         })
       }
+    },
+    showAnalysis: function () {
+      this.BL = this.roundStatus[this.roundIdx][0]
+      this.FL = this.roundStatus[this.roundIdx][1]
+      this.BW = this.roundStatus[this.roundIdx][2]
+      this.FW = this.roundStatus[this.roundIdx][3]
+      this.max1 = this.roundStatus[this.roundIdx][0] + this.roundStatus[this.roundIdx][1]
+      this.max2 = this.roundStatus[this.roundIdx][2] + this.roundStatus[this.roundIdx][3]
+      this.roundStatus.forEach(el => {
+        this.ABL += el[0]
+        this.AFL += el[1]
+        this.ABW += el[2]
+        this.AFW += el[3]
+      })
+      this.Amax1 = this.ABL + this.AFL
+      this.Amax2 = this.ABW + this.AFW
+      this.showAna = true
     }
   },
   mounted () {
