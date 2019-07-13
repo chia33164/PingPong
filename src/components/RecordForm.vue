@@ -35,7 +35,19 @@
     </div>
     <drag id="table" ref="table"></drag>
     <div>
-      <sym ref="symbol"></sym>
+      <div class="symbol_container">
+        <div id="box">
+          <b-form-radio-group
+              v-model="skill"
+              :options="options"
+              buttons
+              button-variant="outline-primary"
+              size="sm"
+              stacked
+              name="radio-btn-outline"
+            ></b-form-radio-group>
+        </div>
+      </div>
       <br>
       <br>
       <br>
@@ -53,7 +65,7 @@
         <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
         <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
         <b-button id="btn4" variant="outline-primary" @click='sendData'> 上傳 </b-button>
-        <b-button id="btn5" variant="outline-primary" @click='showHistory = true'> 回放 </b-button>
+        <!--b-button id="btn5" variant="outline-primary" @click='showHistory = true'> 回放 </b-button-->
       </div>
     </div>
     <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
@@ -62,7 +74,6 @@
 </template>
 
 <script>
-import sym from './recordForm/symbol'
 import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
 import History from './recordForm/showHistory'
@@ -70,7 +81,6 @@ import InputModal from './recordForm/input_modal'
 
 export default {
   components: {
-    sym,
     drag,
     lists,
     History,
@@ -99,7 +109,12 @@ export default {
       isWhite: true,
       NumOfBoard: [],
       showHistory: false,
-      showInfo: true
+      showInfo: true,
+      skill: '',
+      options: [
+        {text: '正手擊球', value: '1'},
+        {text: '反手擊球', value: '0'}
+      ]
     }
   },
   methods: {
@@ -119,9 +134,9 @@ export default {
       }
 
       // get serve, point, forehand, backhand
-      if (this.$refs.symbol.forehand === '1') {
+      if (this.skill === '1') {
         this.hand = 'F' + this.$refs.table.prev_placement
-      } else if (this.$refs.symbol.backhand === '1') {
+      } else if (this.skill === '0') {
         this.hand = 'B' + this.$refs.table.prev_placement
       } else {
         this.hand = '0'
@@ -163,7 +178,7 @@ export default {
       }
       // initial drag object's position
       this.$refs.table.initialTouch()
-      this.$refs.symbol.removeAllchose()
+      this.skill = ''
     },
     deletePreviousHand: function () {
       // init opacity
@@ -402,5 +417,15 @@ export default {
 #title2 {
   margin-left: 335px;
   position: fixed;
+}
+.symbol_container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-top: 60px;
+}
+#box {
+  height: 10px;
+  width: 100px;
 }
 </style>

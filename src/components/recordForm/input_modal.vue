@@ -46,13 +46,12 @@
         <b-form-valid-feedback :state="radioState">ok</b-form-valid-feedback>
       </b-form-group>
 
-      <label>是否發球</label>
       <b-form-checkbox
       v-model="serve"
       value = "1"
       unchecked-value = "0"
       >
-        發球
+        先發球
       </b-form-checkbox>
     </form>
     </b-modal>
