@@ -59,7 +59,6 @@ export default {
       getpoint: false,
       serve_point: false,
       pressTimer: null,
-      presslong: false,
       drawLine: false,
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       current_drag: ''
@@ -82,6 +81,12 @@ export default {
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
+      this.clearLine()
+    },
+    clearLine: function () {
+      this.prev_x = 0
+      this.prev_y = 0
+      this.drawLine = false
     },
     judgeBlockpart: function (x, y, draggable) {
       if (this.x >= x && this.x <= x + 50) {
@@ -167,29 +172,18 @@ export default {
       this.$refs.overlap11.opacity = 0
       this.$refs.overlap12.opacity = 0
     },
-    check_pressTime: function (event) {
+    start_mov: function (event) {
       if (this.current_drag === '') {
         this.current_drag = event.target.id
-      }
-      if (this.pressTimer === null) {
-        this.pressTimer = setTimeout(() => {
-          this.presslong = true
-          // vibrate screen for presslong
-          // window.navigator.vibrate(200)
-          // record prev x and prev y
-          this.prev_x = this.x
-          this.prev_y = this.y
-          this.prev_placement = this.placement
-          this.prev_block_part = this.block_part
-          console.log('presslong')
-        }, 1000)
+      } else {
+        // record prev x and prev y
+        this.prev_x = this.x
+        this.prev_y = this.y
+        this.prev_placement = this.placement
+        this.prev_block_part = this.block_part
       }
     },
     move_with_finger: function (event) {
-      if (this.pressTimer !== null) {
-        clearTimeout(this.pressTimer)
-        this.pressTimer = null
-      }
       if (this.current_drag === event.target.id || this.current_drag === '') {
         let touch = event.targetTouches[0]
         let element = event.target
@@ -235,8 +229,7 @@ export default {
               element.style.top = 180 + 'px'
             }
             // remove red line
-            this.drawLine = false
-            this.presslong = false
+            this.clearLine()
             this.current_drag = ''
           }
         } else if (this.x >= 580 && this.x <= 730) {
@@ -270,8 +263,7 @@ export default {
               element.style.top = 180 + 'px'
             }
             // remove red line
-            this.drawLine = false
-            this.presslong = false
+            this.clearLine()
             this.current_drag = ''
           }
         } else if (this.x >= 730 && this.x <= 880) {
@@ -305,8 +297,7 @@ export default {
               element.style.top = 180 + 'px'
             }
             // remove red line
-            this.drawLine = false
-            this.presslong = false
+            this.clearLine()
             this.current_drag = ''
           }
         } else {
@@ -323,8 +314,7 @@ export default {
             element.style.top = 180 + 'px'
           }
           // remove red line
-          this.drawLine = false
-          this.presslong = false
+          this.clearLine()
           this.current_drag = ''
         }
         if (element.id === 'lostPoint') {
@@ -337,13 +327,7 @@ export default {
           this.serve_point = true
           this.getpoint = true
         }
-        if (this.presslong) {
-          // console.log('prev_x : ', this.prev_x)
-          // console.log('prev_y : ', this.prev_y)
-          // console.log('x : ', this.x)
-          // console.log('y : ', this.y)
-          this.drawLine = true
-        }
+        if (this.prev_x !== 0 && this.prev_y !== 0) this.drawLine = true
       }
       event.preventDefault()
     },
@@ -353,9 +337,9 @@ export default {
       let servePoint = document.getElementById('servePoint')
 
       // when touchstart
-      getPoint.addEventListener('touchstart', this.check_pressTime, false)
-      lostPoint.addEventListener('touchstart', this.check_pressTime, false)
-      servePoint.addEventListener('touchstart', this.check_pressTime, false)
+      getPoint.addEventListener('touchstart', this.start_mov, false)
+      lostPoint.addEventListener('touchstart', this.start_mov, false)
+      servePoint.addEventListener('touchstart', this.start_mov, false)
       // when touchmove
       getPoint.addEventListener('touchmove', this.move_with_finger, false)
       lostPoint.addEventListener('touchmove', this.move_with_finger, false)

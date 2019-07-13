@@ -143,12 +143,10 @@ export default {
         this.$refs.table.prev_block_part = '0'
       }
       // add score
-      if (this.$refs.table.getpoint) {
-        this.myPoint++
-      } else {
-        this.hisPoint++
-      }
+      this.$refs.table.getpoint ? this.myPoint++ : this.hisPoint++
+
       this.score = `${this.myPoint}:${this.hisPoint}`
+
       // record every round
       let perBall = {
         score: this.score,
@@ -162,6 +160,7 @@ export default {
       }
       this.oneRound.push(perBall)
       this.history.push(perBall)
+
       // change hot zone
       if (perBall.getpoint === '0') {
         let idx = 12 - parseInt(perBall.placement, 10)
@@ -176,6 +175,7 @@ export default {
         }
         this.$refs.table.changeHotZone(perBall.station)
       }
+
       // initial drag object's position
       this.$refs.table.initialTouch()
       this.skill = ''
@@ -288,9 +288,6 @@ export default {
         console.log('no send')
       }
       this.$refs.table.drawLine = false
-    },
-    saveName: function () {
-      this.isWhite = false
     },
     getModalInfo: function (data) {
       this.game = data[0]
