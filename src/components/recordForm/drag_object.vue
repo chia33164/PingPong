@@ -58,7 +58,6 @@ export default {
       y: 0,
       getpoint: false,
       serve_point: false,
-      pressTimer: null,
       drawLine: false,
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       current_drag: ''
@@ -81,6 +80,10 @@ export default {
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
+      this.placement = ''
+      this.prev_placement = ''
+      this.block_part = '0'
+      this.prev_block_part = '0'
       this.clearLine()
     },
     clearLine: function () {

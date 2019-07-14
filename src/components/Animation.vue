@@ -23,15 +23,18 @@
             <Block ref="block12" id="group12" x='300' y='450'></Block>
           </g>
           <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
+          <line id='first' :x1="lastThreeXY[0]" :y1="lastThreeXY[1]" :x2="lastThreeXY[2]" :y2="lastThreeXY[3]" stroke-width="2" stroke='red' v-show="lineNum >= 1"/>
+          <line id='second' :x1="lastThreeXY[2]" :y1="lastThreeXY[3]" :x2="lastThreeXY[4]" :y2="lastThreeXY[5]" stroke-width="1" stroke='red' v-show="lineNum >= 2"/>
+          <line id='third' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
           <image xlink:href="../assets/person.png" x=0 y=560 width="40px" height="40px"/>
-          <circle v-show="start" cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1">
+          <circle v-show="start" cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1" id="ballon">
             <animateMotion begin="0s" dur="1s" repeatCount="1" fill="freeze" id="Ball" restart="always"/>
           </circle>
       </svg>
       <svg width="450" height="40">
           <a xlink:href="#Ball" @click="startMove"><text x="0" y="30">開始動畫</text></a>
-          <a xlink:href="#Ball" @click="stopMove" v-if="!playing"><text x="75" y="30">停止</text></a>
-          <a xlink:href="#Ball" @click="stopMove" v-else><text x="75" y="30">繼續</text></a>
+          <!--a xlink:href="#Ball" @click="stopMove" v-if="!playing"><text x="75" y="30">停止</text></a>
+          <a xlink:href="#Ball" @click="stopMove" v-else><text x="75" y="30">繼續</text></a-->
           <a xlink:href="#Ball" @click="previousMove"><text x="150" y="30">上一球</text></a>
           <a xlink:href="#Ball" @click="currentMove"><text x="225" y="30">這一球</text></a>
           <a xlink:href="#Ball" @click="nextMove"><text x="300" y="30">下一球</text></a>
@@ -55,41 +58,44 @@
       <div>
         <p v-if="start">第 {{this.roundIdx + 1}} 局</p>
         <p v-if="start">第 {{this.pathIdx + 1}} 球</p>
-        <p v-if="start"> 比分 {{this.roundScore[this.roundIdx]}} </p>
+        <p v-if="start"> 比分 {{this.roundStatus[this.roundIdx][2]+this.roundStatus[this.roundIdx][3]}}:{{this.roundStatus[this.roundIdx][0]+this.roundStatus[this.roundIdx][1]}} </p>
       </div>
     </div>
     <div>
-          <b-button variant="outline-primary" @click="showAnalysis"> show </b-button>
-          <b-modal v-model="showAna" title="統計">
-            <b-form-group>
-              <b-form-radio-group
-                v-model="analysisMode"
-                :options="analysisOptions"
-                buttons
-                button-variant="outline-primary"
-              ></b-form-radio-group>
-            </b-form-group>
-            <div v-if="analysisMode == 'round'">
-              <h5>反手失分</h5>
-              <b-progress :value="BL" :max="max1" show-value class="mb-3"></b-progress>
-              <h5>正手失分</h5>
-              <b-progress :value="FL" :max="max1" show-value class="mb-3"></b-progress>
-              <h5>反手得分</h5>
-              <b-progress :value="BW" :max="max2" show-value class="mb-3"></b-progress>
-              <h5>正手得分</h5>
-              <b-progress :value="FW" :max="max2" show-value class="mb-3"></b-progress>
-            </div>
-             <div v-else>
-              <h5>反手失分</h5>
-              <b-progress :value="ABL" :max="Amax1" show-value class="mb-3"></b-progress>
-              <h5>正手失分</h5>
-              <b-progress :value="AFL" :max="Amax1" show-value class="mb-3"></b-progress>
-              <h5>反手得分</h5>
-              <b-progress :value="ABW" :max="Amax2" show-value class="mb-3"></b-progress>
-              <h5>正手得分</h5>
-              <b-progress :value="AFW" :max="Amax2" show-value class="mb-3"></b-progress>
-            </div>
-          </b-modal>
+      <b-button variant="outline-primary" @click="showAnalysis" id="showAnalysis"> 顯示 </b-button>
+      <p>{{ballStatus}}</p>
+
+      <b-modal v-model="showAna" title="統計" ok-only>
+        <b-form-group>
+          <b-form-radio-group
+            v-model="analysisMode"
+            :options="analysisOptions"
+            buttons
+            button-variant="outline-primary"
+            id="toggle-btn"
+          ></b-form-radio-group>
+        </b-form-group>
+        <div v-if="analysisMode == 'round'">
+          <h5>反手失分</h5>
+          <b-progress :value="BL" :max="max1" show-value class="mb-3"></b-progress>
+          <h5>正手失分</h5>
+          <b-progress :value="FL" :max="max1" show-value class="mb-3"></b-progress>
+          <h5>反手得分</h5>
+          <b-progress :value="BW" :max="max2" show-value class="mb-3"></b-progress>
+          <h5>正手得分</h5>
+          <b-progress :value="FW" :max="max2" show-value class="mb-3"></b-progress>
+        </div>
+          <div v-else>
+          <h5>反手失分</h5>
+          <b-progress :value="ABL" :max="Amax1" show-value class="mb-3"></b-progress>
+          <h5>正手失分</h5>
+          <b-progress :value="AFL" :max="Amax1" show-value class="mb-3"></b-progress>
+          <h5>反手得分</h5>
+          <b-progress :value="ABW" :max="Amax2" show-value class="mb-3"></b-progress>
+          <h5>正手得分</h5>
+          <b-progress :value="AFW" :max="Amax2" show-value class="mb-3"></b-progress>
+        </div>
+      </b-modal>
     </div>
   </div>
 </template>
@@ -104,7 +110,6 @@ export default {
       move_y: -40,
       xPoint: 0,
       yPoint: 0,
-      get: false,
       idx: 0,
       startStation: false, // false:top true:bottom
       path: '',
@@ -112,8 +117,9 @@ export default {
       pathIdx: 0,
       roundList: [],
       roundIdx: -1,
-      roundScore: [],
-      roundStatus: [[0, 0, 0, 0]], // [[lose point back hand, lose point forward hand, get point back hand, get point forward hand], [], ...]
+      roundStatus: [], // [[lose point back hand, lose point forward hand, get point back hand, get point forward hand], [], ...]
+      status: [0, 0, 0, 0],
+      BallStatus: [],
       start: false,
       out: false,
       speedList: [
@@ -146,18 +152,23 @@ export default {
       analysisOptions: [
         {text: '本局', value: 'round'},
         {text: '整場', value: 'game'}
-      ]
+      ],
+      ballStatus: '',
+      isGetPoint: false,
+      lastThreeXY: [0, 0, 0, 0, 0, 0],
+      lineNum: 0
     }
   },
   components: {
     Block
   },
   methods: {
-    animatation: async function () {
+    setData: async function () {
       let position
       let ParsedData = await this.$store.dispatch('getParsedData')
 
-      ParsedData.forEach(data => {
+      for (let i = 0; i < ParsedData.length; i++) {
+        let data = ParsedData[i]
         // X's station is on bottom
         // Y's station is on top
         switch (data) {
@@ -170,36 +181,60 @@ export default {
             this.path = ''
             break
           case 'S':
+            // get last 3 ball
+            let lastThree = []
+            let obj = {}
+            for (let j = 1; j < 4; j++) {
+              if (ParsedData[i - j] === 'X' || ParsedData[i - j] === 'Y' || ParsedData[i - j] === 'S' || ParsedData[i - j] === 'G' || ParsedData[i - j] === 'M') break
+              lastThree.push(ParsedData[i - j])
+            }
+            obj['lastThree'] = lastThree
             // getpoint or lost point
-            this.pathList.push(this.path)
             if (this.out) {
               if (!this.startStation) {
                 this.yPoint++
-                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][0]++ : this.roundStatus[this.roundStatus.length - 1][1]++
+                this.skill === 'B' ? this.status[0]++ : this.status[1]++
+                obj['status'] = '出界或掛網'
+                obj['point'] = false
               } else {
                 this.xPoint++
-                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][2]++ : this.roundStatus[this.roundStatus.length - 1][3]++
+                this.skill === 'B' ? this.status[2]++ : this.status[3]++
+                obj['status'] = '出界或掛網'
+                obj['point'] = true
               }
             } else {
-              if (this.startStation) {
+              // add last ball to path
+              this.startStation = !this.startStation
+              position = this.getPos(ParsedData[i - 1])
+              this.path = this.path.concat(`L${position[2]} ${position[3]}`)
+
+              if (!this.startStation) {
                 this.yPoint++
-                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][0]++ : this.roundStatus[this.roundStatus.length - 1][1]++
+                this.skill === 'B' ? this.status[0]++ : this.status[1]++
+                obj['status'] = '沒接到'
+                obj['point'] = false
               } else {
                 this.xPoint++
-                this.skill === 'B' ? this.roundStatus[this.roundStatus.length - 1][2]++ : this.roundStatus[this.roundStatus.length - 1][3]++
+                this.skill === 'B' ? this.status[2]++ : this.status[3]++
+                obj['status'] = '沒接到'
+                obj['point'] = true
               }
             }
             this.out = false
+            this.BallStatus.push(obj)
+            this.pathList.push(this.path)
             // console.log(this.pathList)
             break
           case 'G':
             // end Round
-            this.roundStatus.push([0, 0, 0, 0])
+            this.status.push(this.BallStatus)
+            this.roundStatus.push(this.status)
             this.roundList.push(this.pathList)
-            this.roundScore.push(`${this.xPoint}:${this.yPoint}`)
             this.pathList = []
             this.xPoint = 0
             this.yPoint = 0
+            this.BallStatus = []
+            this.status = [0, 0, 0, 0]
             break
           case 'M':
             // end game
@@ -207,12 +242,10 @@ export default {
             break
           default :
             position = this.getPos(data)
-            if (position !== undefined) {
-              this.setPath(position)
-            }
+            this.setPath(position)
             break
         }
-      })
+      }
     },
     getPos: function (data) {
       let start = data.substr(1, 1)
@@ -221,14 +254,15 @@ export default {
       let endPos = this.judgePosByBlock(!this.startStation, end)
       let result = []
       this.skill = data.substr(0, 1)
+      this.startStation = !this.startStation
+
       if (endPos[0] === undefined) {
         // !startStation out
         // startStation get point
         this.out = true
-        return
+        return startPos
       }
       result = startPos.concat(endPos)
-      this.startStation = !this.startStation
       return result // [startx, starty, endx, endy]
     },
     judgePosByBlock: function (mode, block) {
@@ -297,11 +331,7 @@ export default {
       return [x, y]
     },
     setPath: function (position) {
-      if (this.path === '') {
-        this.path = `M${position[0]} ${position[1]} L${position[2]} ${position[3]} `
-      } else {
-        this.path = this.path.concat(`L${position[2]} ${position[3]} `)
-      }
+      this.path = this.path === '' ? `M${position[0]} ${position[1]} ` : this.path.concat(`L${position[0]} ${position[1]} `)
     },
     startMove: function () {
       this.pathIdx = 0
@@ -316,10 +346,15 @@ export default {
       // SVGElement.setCurrentTime(0)
       ball.setAttribute('dur', `${duration}s`)
       ball.setAttribute('path', path)
+      this.ballStatus = this.roundStatus[this.roundIdx][4][this.pathIdx].status
+      this.isGetPoint = this.roundStatus[this.roundIdx][4][this.pathIdx].point
+      this.changeBallColor()
+      this.clearLine()
+      this.drawLastThreeLine()
     },
     nextMove: function () {
       let ball = document.getElementById('Ball')
-      // let SVGElement = document.getElementById('history_container')
+      let SVGElement = document.getElementById('history_container')
       let pathList = this.roundList[this.roundIdx]
 
       if (this.pathIdx < pathList.length - 1) {
@@ -329,8 +364,14 @@ export default {
         let duration = moveTimes * 0.5 / this.speed
 
         // SVGElement.setCurrentTime(0)
+        console.log(SVGElement.getCurrentTime())
         ball.setAttribute('dur', `${duration}s`)
         ball.setAttribute('path', path)
+        this.ballStatus = this.roundStatus[this.roundIdx][4][this.pathIdx].status
+        this.isGetPoint = this.roundStatus[this.roundIdx][4][this.pathIdx].point
+        this.changeBallColor()
+        this.clearLine()
+        this.drawLastThreeLine()
       }
     },
     previousMove: function () {
@@ -347,6 +388,11 @@ export default {
         // SVGElement.setCurrentTime(0)
         ball.setAttribute('dur', `${duration}s`)
         ball.setAttribute('path', path)
+        this.ballStatus = this.roundStatus[this.roundIdx][4][this.pathIdx].status
+        this.isGetPoint = this.roundStatus[this.roundIdx][4][this.pathIdx].point
+        this.changeBallColor()
+        this.clearLine()
+        this.drawLastThreeLine()
       }
     },
     currentMove: function () {
@@ -356,10 +402,14 @@ export default {
       let path = pathList[this.pathIdx]
       let moveTimes = (path.split(' ').length - 1) / 2 - 1
       let duration = moveTimes * 0.5 / this.speed
-
       // SVGElement.setCurrentTime(0)
       ball.setAttribute('dur', `${duration}s`)
       ball.setAttribute('path', path)
+      this.ballStatus = this.roundStatus[this.roundIdx][4][this.pathIdx].status
+      this.isGetPoint = this.roundStatus[this.roundIdx][4][this.pathIdx].point
+      this.changeBallColor()
+      this.clearLine()
+      this.drawLastThreeLine()
     },
     stopMove: function () {
       let SVGElement = document.getElementById('history_container')
@@ -401,10 +451,52 @@ export default {
       this.Amax1 = this.ABL + this.AFL
       this.Amax2 = this.ABW + this.AFW
       this.showAna = true
+    },
+    changeBallColor: function () {
+      let ball = document.getElementById('ballon')
+      this.isGetPoint ? ball.setAttribute('fill', 'red') : ball.setAttribute('fill', 'blue')
+    },
+    drawLastThreeLine: function () {
+      let status = this.roundStatus[this.roundIdx][4][this.pathIdx]
+      let getPoint = status.point
+      let ballstatus = status.status
+      let idx = 0
+      let pos
+      this.startStation = !getPoint
+      if (ballstatus === '出界或掛網') {
+        // outside ball
+        status.lastThree.forEach(ball => {
+          pos = this.getPos(ball)
+          this.lastThreeXY[idx] = pos[0]
+          this.lastThreeXY[idx + 1] = pos[1]
+          idx += 2
+        })
+      } else {
+        // do not catch
+        for (let i = 0; i < status.lastThree.length; i++) {
+          pos = this.getPos(status.lastThree[i])
+          if (i === 0) {
+            this.lastThreeXY[idx] = pos[2]
+            this.lastThreeXY[idx + 1] = pos[3]
+            this.lastThreeXY[idx + 2] = pos[0]
+            this.lastThreeXY[idx + 3] = pos[1]
+            idx += 4
+          } else {
+            this.lastThreeXY[idx] = pos[0]
+            this.lastThreeXY[idx + 1] = pos[1]
+            idx += 2
+          }
+          if (idx === 6) break
+        }
+      }
+      this.lineNum = status.lastThree.length === 3 ? 2 : 1
+    },
+    clearLine: function () {
+      this.lastThreeXY = [0, 0, 0, 0, 0, 0]
     }
   },
   mounted () {
-    this.animatation()
+    this.setData()
   }
 }
 </script>
@@ -482,6 +574,16 @@ export default {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+#showAnalysis {
+  width: 100px;
+  height: 50px;
+}
+
+#toggle-btn {
+  width: 200px;
+  height: 35px;
 }
 
 </style>

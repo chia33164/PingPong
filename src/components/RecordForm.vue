@@ -5,7 +5,7 @@
         <p id="Name1">{{this.name1}}</p>
         <p id="Name2">{{this.name2}}</p>
         <p id="Game">{{this.game}}</p>
-        <button width="40px" height="40px" @click="changeInfo"></button>
+        <b-button size="sm" variant="outline-primary" id='infoBox' @click="changeInfo">資訊</b-button>
       </div>
       <div>
         <input type="checkbox" id="one" value="1" v-model="NumOfBoard">
@@ -34,18 +34,18 @@
       </div>
     </div>
     <drag id="table" ref="table"></drag>
-    <div>
+    <div class="rightPart">
       <div class="symbol_container">
         <div id="box">
           <b-form-radio-group
-              v-model="skill"
-              :options="options"
-              buttons
-              button-variant="outline-primary"
-              size="sm"
-              stacked
-              name="radio-btn-outline"
-            ></b-form-radio-group>
+            v-model="skill"
+            :options="options"
+            buttons
+            button-variant="outline-primary"
+            size="sm"
+            stacked
+            name="radio-btn-outline"
+          ></b-form-radio-group>
         </div>
       </div>
       <br>
@@ -397,7 +397,7 @@ export default {
 #Game {
   margin-top: 3%;
   height: 15px;
-  width: 250px;
+  width: 200px;
   padding: 5px;
 }
 #Date {
@@ -422,7 +422,13 @@ export default {
   margin-top: 60px;
 }
 #box {
-  height: 10px;
+  height: 60px;
   width: 100px;
 }
+
+#infoBox {
+  height: 50px;
+  width: 40px;
+}
+
 </style>
