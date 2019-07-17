@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <svg class="table_container" width="450" height="600">
+    <svg id="table_container" width="450" height="600">
       <g>
         <Block ref="block1" id="group1" x='0' y='0'></Block>
         <Block ref="block2" id="group2" x='150' y='0'></Block>
@@ -33,10 +33,13 @@
         <Block ref="overlap11" id="overlap11" x='150' y='450'></Block>
         <Block ref="overlap12" id="overlap12" x='300' y='450'></Block>
       </g>
-      <line id='test1' :x1="prev_x-430" :y1="prev_y-45" :x2="x-430" :y2="y-45" stroke='red' v-if="drawLine"/>
-      <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
-      <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-if="station === 'top'"/>
-      <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-if="station === 'bottom'"/>
+      <g>
+
+      </g>
+      <line id='test1' :x1="prev_x-442" :y1="prev_y-60" :x2="x-442" :y2="y-60" stroke='red' v-if="drawLine"/>
+      <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>
+      <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-show="station === 'top'"/>
+      <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-show="station === 'bottom'"/>
     </svg>
   </div>
 </template>
@@ -74,9 +77,9 @@ export default {
       servePoint.style.left = 930 + 'px'
       servePoint.style.top = 180 + 'px'
       getPoint.style.left = 930 + 'px'
-      getPoint.style.top = 223 + 'px'
+      getPoint.style.top = 240 + 'px'
       lostPoint.style.left = 930 + 'px'
-      lostPoint.style.top = 265 + 'px'
+      lostPoint.style.top = 300 + 'px'
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
@@ -91,55 +94,23 @@ export default {
       this.prev_y = 0
       this.drawLine = false
     },
-    judgeBlockpart: function (x, y, draggable) {
-      if (this.x >= x && this.x <= x + 50) {
-        draggable.style.left = (x + 25) + 'px'
-        this.x = x + 25
-        if (this.y >= y && this.y <= y + 50) {
-          this.block_part = 'part1'
-          draggable.style.top = (y + 25) + 'px'
-          this.y = y + 25
-        } else if (this.y > y + 50 && this.y <= y + 100) {
-          this.block_part = 'part2'
-          draggable.style.top = (y + 75) + 'px'
-          this.y = y + 75
-        } else if (this.y > y + 100 && this.y <= y + 150) {
-          this.block_part = 'part3'
-          draggable.style.top = (y + 125) + 'px'
-          this.y = y + 125
-        }
-      } else if (this.x >= x + 50 && this.x <= x + 100) {
-        draggable.style.left = (x + 75) + 'px'
-        this.x = x + 75
-        if (this.y >= y && this.y <= y + 50) {
-          this.block_part = 'part4'
-          draggable.style.top = (y + 25) + 'px'
-          this.y = y + 25
-        } else if (this.y > y + 50 && this.y <= y + 100) {
-          this.block_part = 'part5'
-          draggable.style.top = (y + 75) + 'px'
-          this.y = y + 75
-        } else if (this.y > y + 100 && this.y <= y + 150) {
-          this.block_part = 'part6'
-          draggable.style.top = (y + 125) + 'px'
-          this.y = y + 125
-        }
-      } else if (this.x >= x + 100 && this.x <= x + 150) {
-        draggable.style.left = (x + 125) + 'px'
-        this.x = x + 125
-        if (this.y >= y && this.y <= y + 50) {
-          this.block_part = 'part7'
-          draggable.style.top = (y + 25) + 'px'
-          this.y = y + 25
-        } else if (this.y > y + 50 && this.y <= y + 100) {
-          this.block_part = 'part8'
-          draggable.style.top = (y + 75) + 'px'
-          this.y = y + 75
-        } else if (this.y > y + 100 && this.y <= y + 150) {
-          this.block_part = 'part9'
-          draggable.style.top = (y + 125) + 'px'
-          this.y = y + 125
-        }
+    getNewPos: function (numOfPartX, numOfPartY) {
+      let svgBox = this.getSVGPosition()
+      let blockWidth = svgBox.boxWidth / 9
+      let partRow = numOfPartY % 3
+      let partCol = numOfPartX % 3
+      let blockCol = Math.floor(numOfPartY / 3) // (0~11 / 3) => (0~3)
+      let blockRow = Math.floor(numOfPartX / 3) // (0~8 / 3) => (0~2)
+      let OffsetX = blockWidth * numOfPartX
+      let OffsetY = blockWidth * numOfPartY
+      let isValid = !(OffsetX < 0 || OffsetX > 400 || OffsetY < 0 || OffsetY > 550)
+
+      return {
+        newOffsetX: (isValid) ? (blockWidth * numOfPartX + blockWidth / 2) : null,
+        newOffsetY: (isValid) ? (blockWidth * numOfPartY + blockWidth / 2) : null,
+        part: (isValid) ? (partRow * 3 + partCol + 1) : null,
+        block: (isValid) ? (blockCol * 3 + blockRow + 1) : null,
+        isValid: isValid
       }
     },
     changeColor: function () {
@@ -190,149 +161,52 @@ export default {
       if (this.current_drag === event.target.id || this.current_drag === '') {
         let touch = event.targetTouches[0]
         let element = event.target
+
+        element.setAttribute('center-offsetx', touch.target.clientWidth / 2)
+        element.setAttribute('center-offsety', touch.target.clientHeight / 2)
+
         // place element where the finger is
-        element.style.left = touch.pageX - 25 + 'px'
-        element.style.top = touch.pageY - 25 + 'px'
-        this.x = touch.pageX - 25
-        this.y = touch.pageY - 25
+        element.style.left = touch.pageX - touch.target.clientWidth / 2 + 'px'
+        element.style.top = touch.pageY - touch.target.clientHeight / 2 + 'px'
+        this.x = touch.pageX - touch.target.clientWidth / 2
+        this.y = touch.pageY - touch.target.clientHeight / 2
       }
       event.preventDefault()
     },
-    move_end_pos: function (event) {
+    moveStop: function (event) {
       let element = event.target
+      let currentNode = event.changedTouches[0]
+      let svgBox = this.getSVGPosition()
+      let divX
+      let divY
+      let newPos
+      let centerOffsetX = Number(element.getAttribute('center-offsetx'))
+      let centerOffsetY = Number(element.getAttribute('center-offsety'))
+
       if (element.id === this.current_drag || this.current_drag === '') {
-        if (this.x >= 430 && this.x <= 580) {
-          if (this.y >= 45 && this.y <= 195) {
-            // group1
-            this.placement = '1'
-            this.judgeBlockpart(430, 45, element)
-          } else if (this.y >= 195 && this.y <= 345) {
-            // group4
-            this.placement = '4'
-            this.judgeBlockpart(430, 195, element)
-          } else if (this.y >= 345 && this.y <= 495) {
-            // group7
-            this.placement = '6'
-            this.judgeBlockpart(430, 345, element)
-          } else if (this.y >= 495 && this.y <= 645) {
-            // group10
-            this.placement = '3'
-            this.judgeBlockpart(430, 495, element)
-          } else {
-            // go back init position
-            this.placement = ''
-            if (element.id === 'lostPoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 265 + 'px'
-            } else if (element.id === 'getPoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 223 + 'px'
-            } else if (element.id === 'servePoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 180 + 'px'
-            }
-            // remove red line
-            this.clearLine()
-            this.current_drag = ''
-          }
-        } else if (this.x >= 580 && this.x <= 730) {
-          if (this.y >= 45 && this.y <= 195) {
-            // group2
-            this.placement = '2'
-            this.judgeBlockpart(580, 45, element)
-          } else if (this.y >= 195 && this.y <= 345) {
-            // group5
-            this.placement = '5'
-            this.judgeBlockpart(580, 195, element)
-          } else if (this.y >= 345 && this.y <= 495) {
-            // group8
-            this.placement = '5'
-            this.judgeBlockpart(580, 345, element)
-          } else if (this.y >= 495 && this.y <= 645) {
-            // group11
-            this.placement = '2'
-            this.judgeBlockpart(580, 495, element)
-          } else {
-            // go back init position
-            this.placement = ''
-            if (element.id === 'lostPoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 265 + 'px'
-            } else if (element.id === 'getPoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 223 + 'px'
-            } else if (element.id === 'servePoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 180 + 'px'
-            }
-            // remove red line
-            this.clearLine()
-            this.current_drag = ''
-          }
-        } else if (this.x >= 730 && this.x <= 880) {
-          if (this.y >= 45 && this.y <= 195) {
-            // group3
-            this.placement = '3'
-            this.judgeBlockpart(730, 45, element)
-          } else if (this.y >= 195 && this.y <= 345) {
-            // group6
-            this.placement = '6'
-            this.judgeBlockpart(730, 195, element)
-          } else if (this.y >= 345 && this.y <= 495) {
-            // group9
-            this.placement = '4'
-            this.judgeBlockpart(730, 345, element)
-          } else if (this.y >= 495 && this.y <= 645) {
-            // group12
-            this.placement = '1'
-            this.judgeBlockpart(730, 495, element)
-          } else {
-            // go back init position
-            this.placement = ''
-            if (element.id === 'lostPoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 265 + 'px'
-            } else if (element.id === 'getPoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 223 + 'px'
-            } else if (element.id === 'servePoint') {
-              element.style.left = 930 + 'px'
-              element.style.top = 180 + 'px'
-            }
-            // remove red line
-            this.clearLine()
-            this.current_drag = ''
-          }
+        divX = (currentNode.pageX - svgBox.absX) / (svgBox.boxWidth / 9)
+        divY = (currentNode.pageY - svgBox.absY) / (svgBox.boxHeight / 12)
+        newPos = this.getNewPos(Math.floor(divX), Math.floor(divY))
+
+        if (newPos.isValid) {
+          element.style.left = newPos.newOffsetX + svgBox.absX - centerOffsetX + 'px'
+          element.style.top = newPos.newOffsetY + svgBox.absY - centerOffsetY + 'px'
+
+          this.x = newPos.newOffsetX + svgBox.absX
+          this.y = newPos.newOffsetY + svgBox.absY
+          this.block_part = `part${this.part}`
+          this.placement = newPos.block > 6 ? `${13 - newPos.block}` : `${newPos.block}`
         } else {
-          // go back init position
-          this.placement = ''
-          if (element.id === 'lostPoint') {
-            element.style.left = 930 + 'px'
-            element.style.top = 265 + 'px'
-          } else if (element.id === 'getPoint') {
-            element.style.left = 930 + 'px'
-            element.style.top = 223 + 'px'
-          } else if (element.id === 'servePoint') {
-            element.style.left = 930 + 'px'
-            element.style.top = 180 + 'px'
-          }
-          // remove red line
-          this.clearLine()
-          this.current_drag = ''
+          this.initialTouch()
         }
-        if (element.id === 'lostPoint') {
-          this.serve_point = false
-          this.getpoint = false
-        } else if (element.id === 'getPoint') {
-          this.serve_point = false
-          this.getpoint = true
-        } else if (element.id === 'servePoint') {
-          this.serve_point = true
-          this.getpoint = true
-        }
-        if (this.prev_x !== 0 && this.prev_y !== 0) this.drawLine = true
+
+        this.serve_point = (element.id === 'servePoint')
+        this.getpoint = (element.id === 'getPoint') || (element.id === 'servePoint')
+        this.drawLine = (this.prev_x !== 0 && this.prev_y !== 0)
+
+        // console.log(newPos)
+        event.preventDefault()
       }
-      event.preventDefault()
     },
     initTouch: function () {
       let getPoint = document.getElementById('getPoint')
@@ -349,9 +223,9 @@ export default {
       servePoint.addEventListener('touchmove', this.move_with_finger, false)
 
       // when touchend
-      getPoint.addEventListener('touchend', this.move_end_pos, false)
-      lostPoint.addEventListener('touchend', this.move_end_pos, false)
-      servePoint.addEventListener('touchend', this.move_end_pos, false)
+      getPoint.addEventListener('touchend', this.moveStop, false)
+      lostPoint.addEventListener('touchend', this.moveStop, false)
+      servePoint.addEventListener('touchend', this.moveStop, false)
     },
     initHotZone: function () {
       this.$refs.overlap1.color = 'red'
@@ -438,6 +312,15 @@ export default {
         this.$refs.overlap11.opacity = this.opacity[10]
         this.$refs.overlap12.opacity = this.opacity[11]
       }
+    },
+    getSVGPosition: function () {
+      let svgBox = document.getElementById('table_container').getBoundingClientRect()
+      return {
+        boxHeight: svgBox.height,
+        boxWidth: svgBox.width,
+        absX: svgBox.x,
+        absY: svgBox.y
+      }
     }
   },
   mounted () {
@@ -461,12 +344,12 @@ export default {
 #getPoint {
   position:absolute;
   left: 930px;
-  top: 223px;
+  top: 240px;
 }
 #lostPoint {
   position:absolute;
   left: 930px;
-  top: 265px;
+  top: 300px;
 }
 #servePoint {
   position:absolute;

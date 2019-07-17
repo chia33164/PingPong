@@ -51,15 +51,17 @@
       <br>
       <br>
       <br>
-      <div class="dragBlock">
-        <div width="40px" height="40px" id="servePoint"></div>
+      <div class="toolList" >
+        <div class="toolNode serve" id="servePoint"> 發球得分 </div>
+        <div class="toolNode getPoint" id="getPoint"> 得分 </div>
+        <div class="toolNode lostPoint" id="lostPoint"> 失分 </div>
       </div>
-      <div class="dragBlock">
-        <div width="40px" height="40px" id="getPoint"></div>
-      </div>
-      <div class="dragBlock">
-        <div width="40px" height="40px" id="lostPoint"></div>
-      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
       <div class="btn_container">
         <b-button id="btn1" variant="outline-primary" @click='oneHand'> 更新 </b-button>
         <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
@@ -317,29 +319,62 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
+
+.toolNode {
+  width: 4em;
+  height: 4em;
+  border-radius: 100%;
+  border: 2px solid;
+  font-size: .75em;
+  margin: .25em 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  font-weight: bold;
+  outline: 0px solid lightseagreen;
+  outline-offset: 0em;
+  transition: box-shadow ease-in-out .25s;
+}
+
+.toolNode.serve {
+  border-color: orange;
+  display: inline-grid;
+}
+
+.toolNode.getPoint {
+  border-color: red;
+  display: inline-grid;
+}
+
+.toolNode.lostPoint {
+  border-color: blue;
+  display: inline-grid;
+}
+
 #lostPoint {
-  background-image:url("../assets/lostpoint.png");
-  width: 40px;
-  height: 40px;
-  background-repeat: no-repeat;
+  /* background-image:url("../assets/lostpoint.png"); */
+  /* width: 40px;
+  height: 40px; */
+  /* background-repeat: no-repeat;
   background-position: 50% 50%;
-  background-size: contain;
+  background-size: contain; */
 }
 #servePoint {
-  width: 40px;
-  height: 40px;
-  background-image: url("../assets/serve_point.png");
+  /* width: 40px;
+  height: 40px; */
+  /* background-image: url("../assets/serve_point.png");
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  background-size: contain;
+  background-size: contain; */
 }
 #getPoint {
-  background-image:url("../assets/getpoint.png");
-  width: 40px;
-  height: 40px;
-  background-repeat: no-repeat;
+  /* background-image:url("../assets/getpoint.png"); */
+  /* width: 40px;
+  height: 40px; */
+  /* background-repeat: no-repeat;
   background-position: 50% 50%;
-  background-size: contain;
+  background-size: contain; */
 }
 #list {
   display: flex;
@@ -428,7 +463,7 @@ export default {
 
 #infoBox {
   height: 50px;
-  width: 40px;
+  width: 60px;
 }
 
 </style>

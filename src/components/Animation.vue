@@ -212,12 +212,12 @@ export default {
                 this.yPoint++
                 this.skill === 'B' ? this.status[0]++ : this.status[1]++
                 obj['status'] = '沒接到'
-                obj['point'] = false
+                obj['point'] = true
               } else {
                 this.xPoint++
                 this.skill === 'B' ? this.status[2]++ : this.status[3]++
                 obj['status'] = '沒接到'
-                obj['point'] = true
+                obj['point'] = false
               }
             }
             this.out = false
