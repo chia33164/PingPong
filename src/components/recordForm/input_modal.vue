@@ -49,8 +49,8 @@
 
         <b-form-checkbox
         v-model="serve"
-        value = "1"
-        unchecked-value = "0"
+        value = 'true'
+        unchecked-value = 'false'
         >
           先發球
         </b-form-checkbox>
@@ -70,7 +70,7 @@ export default {
       name2: '',
       game: '',
       selected: null,
-      serve: '0'
+      serve: 'false'
     }
   },
   computed: {

@@ -38,7 +38,7 @@
       <div class="symbol_container">
         <div id="box">
           <b-form-radio-group
-            v-model="skill"
+            v-model="hand"
             :options="options"
             buttons
             button-variant="outline-primary"
@@ -67,6 +67,7 @@
         <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
         <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
         <b-button id="btn4" variant="outline-primary" @click='sendData'> 上傳 </b-button>
+        <b-button id="btn5" variant="outline-primary" @click='save'> stop </b-button>
         <!--b-button id="btn5" variant="outline-primary" @click='showHistory = true'> 回放 </b-button-->
       </div>
     </div>
@@ -90,165 +91,135 @@ export default {
   },
   data: function () {
     return {
-      serve: '',
-      point: '',
-      hand: '',
-      part: '',
-      oneRound: [],
-      allRounds: [],
-      history: [],
+      serve: null,
       name1: '',
       name2: '',
       game: '',
-      winRound: 0,
-      loseRound: 0,
-      myPoint: 0,
-      hisPoint: 0,
-      result: '',
-      score: '',
-      x: 0,
-      y: 0,
-      isWhite: true,
+      station: '',
+      oneRound: [],
+      allRounds: [],
+      history: [],
+      roundScore: [0, 0], // win , lose
+      currentScore: [0, 0], // my point , the other side point
+      hand: '',
       NumOfBoard: [],
       showHistory: false,
-      showInfo: true,
+      inputData: null,
       skill: '',
       options: [
-        {text: '正手擊球', value: '1'},
-        {text: '反手擊球', value: '0'}
+        {text: '正手擊球', value: '正手'},
+        {text: '反手擊球', value: '反手'}
       ]
     }
   },
   methods: {
     oneHand: function () {
-      if (this.$refs.table.presslong) {
-        // reset presslong
-        this.$refs.table.presslong = false
-        this.$refs.table.drawLine = false
+      if (this.inputData === null || this.inputData[0] === '' || this.inputData[1] === '' || this.inputData[2] === '' || this.inputData[3] === null) {
+        alert('請先填寫資訊')
+        this.$bvModal.show('modal-1')
+        this.skill = ''
+        this.$refs.table.initialTouch()
+        return
       }
-      // change serve side
-      if (this.oneRound.length === 0) {
-      } else if (this.myPoint >= 10 && this.hisPoint >= 10) {
-        // when duce, we should change serve side every hand
-        this.serve = this.serve === '0' ? '1' : '0'
-      } else if (this.oneRound.length % 2 === 0) {
-        this.serve = this.serve === '0' ? '1' : '0'
+
+      if (this.hand === '') {
+        alert('請選擇正反手！！')
+        this.$refs.table.initialTouch()
+        return
       }
 
       // get serve, point, forehand, backhand
-      if (this.skill === '1') {
-        this.hand = 'F' + this.$refs.table.prev_placement
-      } else if (this.skill === '0') {
-        this.hand = 'B' + this.$refs.table.prev_placement
-      } else {
-        this.hand = '0'
-        this.$refs.table.prev_block_part = '0'
-      }
-      // add score
-      this.$refs.table.getpoint ? this.myPoint++ : this.hisPoint++
+      this.skill = (this.hand === '正手') ? 'F' + this.$refs.table.prev_placement : 'B' + this.$refs.table.prev_placement
 
-      this.score = `${this.myPoint}:${this.hisPoint}`
+      // add score
+      this.$refs.table.getpoint ? this.currentScore[0]++ : this.currentScore[1]++
+
+      // change serve side
+      if (this.oneRound.length === 0) {
+      } else if (this.currentScore[0] >= 10 && this.currentScore[1] >= 10) {
+        // when duce, we should change serve side every hand
+        this.serve = !this.serve
+      } else if (this.oneRound.length % 2 === 0) {
+        this.serve = !this.serve
+      }
 
       // record every round
       let perBall = {
-        score: this.score,
-        serve: this.$refs.table.serve_point ? '1' : this.serve,
-        skill: this.$refs.table.serve_point ? 'S' : this.hand,
+        score: `${this.currentScore[0]}:${this.currentScore[1]}`,
+        serve: this.serve ? '1' : '0',
+        skill: this.$refs.table.serve_point ? 'S' : this.skill,
         part: this.$refs.table.prev_block_part,
-        getpoint: this.$refs.table.getpoint ? '1' : '0',
+        getpoint: this.$refs.table.getpoint,
         station: this.$refs.table.station,
         placement: this.$refs.table.placement,
         placement_part: this.$refs.table.block_part.substr(4)
       }
+
       this.oneRound.push(perBall)
       this.history.push(perBall)
 
       // change hot zone
-      if (perBall.getpoint === '0') {
-        let idx = 12 - parseInt(perBall.placement, 10)
-        if (this.$refs.table.opacity[idx] < 1) {
-          this.$refs.table.opacity[idx] += 0.2
-        }
-        this.$refs.table.changeHotZone(perBall.station)
-      } else {
-        let idx = parseInt(perBall.placement, 10) - 1
-        if (this.$refs.table.opacity[idx] < 1) {
-          this.$refs.table.opacity[idx] += 0.2
-        }
-        this.$refs.table.changeHotZone(perBall.station)
-      }
+      let idx = (perBall.getpoint) ? (parseInt(perBall.placement, 10) - 1) : (12 - parseInt(perBall.placement, 10))
+      this.$refs.table.opacity[idx] += (this.$refs.table.opacity[idx] < 1) ? 0.2 : 0
+      this.$refs.table.changeHotZone(perBall.station)
 
       // initial drag object's position
       this.$refs.table.initialTouch()
-      this.skill = ''
+      this.hand = ''
     },
     deletePreviousHand: function () {
-      // init opacity
       let lastHand = this.oneRound[this.oneRound.length - 1]
-      if (lastHand.getpoint === '0') {
-        let idx = 12 - parseInt(lastHand.placement, 10)
-        if (this.$refs.table.opacity[idx] > 0) {
-          this.$refs.table.opacity[idx] -= 0.2
-        }
-        this.$refs.table.changeHotZone(lastHand.station)
-      } else {
-        let idx = parseInt(lastHand.placement, 10) - 1
-        if (this.$refs.table.opacity[idx] > 0) {
-          this.$refs.table.opacity[idx] -= 0.2
-        }
-        this.$refs.table.changeHotZone(lastHand.station)
-      }
+      let idx = lastHand.getpoint ? (parseInt(lastHand.placement, 10) - 1) : (12 - parseInt(lastHand.placement, 10))
+
+      // resume previous opacity
+      this.$refs.table.opacity[idx] -= (this.$refs.table.opacity[idx] > 0) ? 0.2 : 0
+      this.$refs.table.changeHotZone(lastHand.station)
+
       // init score
       if (this.oneRound.length === 0) {
-        this.myPoint = 0
-        this.hisPoint = 0
+        this.currentScore = [0, 0]
       } else if (this.oneRound.length === 1) {
         this.oneRound.pop()
-        this.myPoint = 0
-        this.hisPoint = 0
+        this.currentScore = [0, 0]
       } else {
         this.oneRound.pop()
         let score = this.oneRound[this.oneRound.length - 1].score
-        this.myPoint = score.split(':')[0]
-        this.hisPoint = score.split(':')[1]
+        let myPoint = score.split(':')[0]
+        let hisPoint = score.split(':')[1]
+        this.currentScore = [myPoint, hisPoint]
       }
+
       // resume serve side
-      if (this.oneRound.length === 0) {
-        this.serve = ''
-      } else {
-        this.serve = this.oneRound[this.oneRound.length - 1].serve
-      }
+      this.serve = (this.oneRound.length === 0) ? (this.inputData[4] === 'true') : this.oneRound[this.oneRound.length - 1].serve
+
       // delete history
       this.history.pop()
     },
     clearPreviousData: function () {
       // clear previous data
       this.$refs.table.initialTouch()
-      this.$refs.symbol.removeAllchose()
+      this.initInfo()
       this.oneRound = []
       this.allRounds = []
       this.history = []
-      this.isWhite = true
-      this.game = ''
-      this.name1 = ''
-      this.name2 = ''
       this.NumOfBoard = ''
-      this.winRound = 0
-      this.loseRound = 0
+      this.roundScore = [0, 0]
     },
     endRound: function () {
       // check this round is win or not
-      this.myPoint > this.hisPoint ? this.winRound++ : this.loseRound++
+      this.currentScore[0] > this.currentScore[1] ? this.roundScore[0]++ : this.roundScore[1]++
       this.allRounds.push({no: this.allRounds.length + 1, round: this.oneRound})
+
       // clear previous data
       this.$refs.table.initialTouch()
-      this.$refs.symbol.removeAllchose()
+      this.$refs.table.clearLine()
       this.oneRound = []
-      this.$refs.table.drawLine = false
+
       // init table color
       this.$refs.table.changeColor()
-      this.myPoint = 0
-      this.hisPoint = 0
+
+      // init score
+      this.currentScore = [0, 0]
     },
     sendData: function () {
       // alert
@@ -262,49 +233,113 @@ export default {
       if (check === true) {
         let insertData = {
           name: this.name1,
-          isWin: this.winRound > this.loseRound,
+          isWin: this.roundScore[0] > this.roundScore[1],
           game: this.game,
           detail: {
-            result: this.winRound > this.loseRound ? 'win' : 'lose',
-            scores: `${this.winRound}:${this.loseRound}`,
+            result: this.roundScore[0] > this.roundScore[1] ? 'win' : 'lose',
+            scores: `${this.roundScore[0]}:${this.roundScore[1]}`,
             date: `${year}/${month}/${date} ${hour}:${min}`,
             NumOfBoard: this.NumOfBoard[this.NumOfBoard.length - 1],
             competitor: this.name2,
             rounds: this.allRounds
           }
         }
+
         // insert game's data
         this.$store.dispatch('insertData', insertData).then(() => {
           this.clearPreviousData()
           alert('upload success!')
         })
+
         // init table color
         this.$refs.table.changeColor()
-        this.myPoint = 0
-        this.hisPoint = 0
+
+        // init score
+        this.currentScore = [0, 0]
+
         // reset table to green
         for (let i = 1; i <= 12; i++) {
           document.getElementById(`group${i}`).style.background = 'green'
         }
       } else {
-        console.log('no send')
+        alert('取消上傳')
       }
-      this.$refs.table.drawLine = false
+
+      this.$refs.table.clearLine()
     },
     getModalInfo: function (data) {
+      this.inputData = data
       this.game = data[0]
       this.name1 = data[1]
       this.name2 = data[2]
       this.station = data[3]
-      this.serve = data[4]
+      this.serve = (data[4] === 'true')
       this.$refs.table.changeHotZone(this.station)
+    },
+    initInfo: function () {
+      this.inputData = null
+      this.game = ''
+      this.name1 = ''
+      this.name2 = ''
+      this.station = ''
+      this.serve = null
     },
     changeInfo: function () {
       this.$bvModal.show('modal-1')
+    },
+    save: function () {
+      let status = {
+        serve: this.serve,
+        name1: this.name1,
+        name2: this.name2,
+        game: this.game,
+        station: this.station,
+        oneRound: this.oneRound,
+        allRounds: this.allRounds,
+        history: this.history,
+        roundScore: this.roundScore,
+        currentScore: this.currentScore,
+        NumOfBoard: this.NumOfBoard,
+        inputData: this.inputData
+      }
+      localStorage.setItem('status', JSON.stringify(status))
+    },
+    load: function (prevStatus) {
+      localStorage.setItem('status', null)
+      this.serve = prevStatus.serve
+      this.name1 = prevStatus.name1
+      this.name2 = prevStatus.name2
+      this.game = prevStatus.game
+      this.station = prevStatus.station
+      this.oneRound = prevStatus.oneRound
+      this.allRounds = prevStatus.allRounds
+      this.history = prevStatus.history
+      this.roundScore = prevStatus.roundScore
+      this.currentScore = prevStatus.currentScore
+      this.NumOfBoard = prevStatus.NumOfBoard
+      this.inputData = prevStatus.inputData
+
+      // change hot zone
+      this.oneRound.forEach(data => {
+        let idx = (data.getpoint) ? (parseInt(data.placement, 10) - 1) : (12 - parseInt(data.placement, 10))
+        this.$refs.table.opacity[idx] += (this.$refs.table.opacity[idx] < 1) ? 0.2 : 0
+        this.$refs.table.changeHotZone(data.station)
+      })
     }
   },
   mounted () {
-    this.$bvModal.show('modal-1')
+    let prevStatus = JSON.parse(localStorage.getItem('status'))
+
+    if (prevStatus === null) {
+      this.$bvModal.show('modal-1')
+    } else {
+      if (confirm('要恢復先前狀態嗎？')) {
+        this.load(prevStatus)
+      } else {
+        localStorage.setItem('status', null)
+        this.$bvModal.show('modal-1')
+      }
+    }
   }
 }
 </script>
@@ -352,30 +387,6 @@ export default {
   display: inline-grid;
 }
 
-#lostPoint {
-  /* background-image:url("../assets/lostpoint.png"); */
-  /* width: 40px;
-  height: 40px; */
-  /* background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-size: contain; */
-}
-#servePoint {
-  /* width: 40px;
-  height: 40px; */
-  /* background-image: url("../assets/serve_point.png");
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-size: contain; */
-}
-#getPoint {
-  /* background-image:url("../assets/getpoint.png"); */
-  /* width: 40px;
-  height: 40px; */
-  /* background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-size: contain; */
-}
 #list {
   display: flex;
   flex-direction: column;

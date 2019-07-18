@@ -18,7 +18,7 @@
         <div class="list-item">{{item.placement}}</div>
       </div>
       <div>
-        <button class="changeItem" @click="change = !change">改</button>
+        <b-button size="sm" variant="outline-primary" class="changeItem" @click="change = !change">改</b-button>
       </div>
     </div>
   </div>
@@ -59,6 +59,7 @@ export default {
 .changeItem {
   width: 25px;
   height: 25px;
+  align-content: center;
 }
 
 .inputItem {

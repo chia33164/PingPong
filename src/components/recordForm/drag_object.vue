@@ -36,7 +36,7 @@
       <g>
 
       </g>
-      <line id='test1' :x1="prev_x-442" :y1="prev_y-60" :x2="x-442" :y2="y-60" stroke='red' v-if="drawLine"/>
+      <line id='test1' :x1="prev_x-442" :y1="prev_y-60" :x2="x-442" :y2="y-60" stroke='red' v-show="showLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>
       <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-show="station === 'top'"/>
       <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-show="station === 'bottom'"/>
@@ -61,7 +61,7 @@ export default {
       y: 0,
       getpoint: false,
       serve_point: false,
-      drawLine: false,
+      showLine: false,
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       current_drag: ''
     }
@@ -92,7 +92,27 @@ export default {
     clearLine: function () {
       this.prev_x = 0
       this.prev_y = 0
-      this.drawLine = false
+      this.showLine = false
+    },
+    drawLine: function () {
+      this.showLine = true
+    },
+    /*
+    computeRingXY: function (currentX, currentY) {
+      let dist = this.getDist(this.prev_x, this.prev_y, currentX, currentY)
+      let element = document.getElementsByClassName('moving')[0]
+      let radius = Number(element.getAttribute('radius'))
+      console.log(dist)
+      console.log(radius)
+      // 用相似形計算
+      return {
+        RingX: currentX - (currentX - this.prev_x) * (radius / dist),
+        RingY: currentY - (currentY - this.prev_y) * (radius / dist)
+      }
+    },
+    */
+    getDist: function (x1, y1, x2, y2) {
+      return Math.pow((Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2)), 0.5)
     },
     getNewPos: function (numOfPartX, numOfPartY) {
       let svgBox = this.getSVGPosition()
@@ -155,21 +175,27 @@ export default {
         this.prev_y = this.y
         this.prev_placement = this.placement
         this.prev_block_part = this.block_part
+        this.drawLine()
       }
+
+      let element = event.target
+      let touch = event.targetTouches[0]
+      element.setAttribute('radius', touch.radiusX)
+      element.setAttribute('center-offsetx', touch.target.clientWidth / 2)
+      element.setAttribute('center-offsety', touch.target.clientHeight / 2)
+      element.classList.add('moving')
     },
     move_with_finger: function (event) {
       if (this.current_drag === event.target.id || this.current_drag === '') {
         let touch = event.targetTouches[0]
         let element = event.target
-
-        element.setAttribute('center-offsetx', touch.target.clientWidth / 2)
-        element.setAttribute('center-offsety', touch.target.clientHeight / 2)
+        // let updatePos = this.computeRingXY(touch.pageX, touch.pageY)
 
         // place element where the finger is
         element.style.left = touch.pageX - touch.target.clientWidth / 2 + 'px'
         element.style.top = touch.pageY - touch.target.clientHeight / 2 + 'px'
-        this.x = touch.pageX - touch.target.clientWidth / 2
-        this.y = touch.pageY - touch.target.clientHeight / 2
+        this.x = touch.pageX
+        this.y = touch.pageY
       }
       event.preventDefault()
     },
@@ -194,7 +220,7 @@ export default {
 
           this.x = newPos.newOffsetX + svgBox.absX
           this.y = newPos.newOffsetY + svgBox.absY
-          this.block_part = `part${this.part}`
+          this.block_part = `part${newPos.part}`
           this.placement = newPos.block > 6 ? `${13 - newPos.block}` : `${newPos.block}`
         } else {
           this.initialTouch()
@@ -202,9 +228,10 @@ export default {
 
         this.serve_point = (element.id === 'servePoint')
         this.getpoint = (element.id === 'getPoint') || (element.id === 'servePoint')
-        this.drawLine = (this.prev_x !== 0 && this.prev_y !== 0)
+        if (this.prev_x !== 0 && this.prev_y !== 0) this.drawLine()
 
         // console.log(newPos)
+        element.classList.remove('moving')
         event.preventDefault()
       }
     },
@@ -337,10 +364,6 @@ export default {
 </script>
 
 <style>
-.dragBlock {
-  width: 60px;
-  height: 40px;
-}
 #getPoint {
   position:absolute;
   left: 930px;
