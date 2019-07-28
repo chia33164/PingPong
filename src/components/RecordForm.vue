@@ -36,21 +36,9 @@
     <drag id="table" ref="table"></drag>
     <div class="rightPart">
       <div class="symbol_container">
-        <div id="box">
-          <b-form-radio-group
-            v-model="hand"
-            :options="options"
-            buttons
-            button-variant="outline-primary"
-            size="sm"
-            stacked
-            name="radio-btn-outline"
-          ></b-form-radio-group>
-        </div>
+        <b-button id="skill1" variant="outline-primary" @click='hand="正手"'> 正手 </b-button>
+        <b-button id="skill2" variant="outline-primary" @click='hand="反手"'> 反手 </b-button>
       </div>
-      <br>
-      <br>
-      <br>
       <div class="toolList" >
         <div class="toolNode serve" id="servePoint"> 發球得分 </div>
         <div class="toolNode getPoint" id="getPoint"> 得分 </div>
@@ -66,13 +54,23 @@
         <b-button id="btn1" variant="outline-primary" @click='oneHand'> 更新 </b-button>
         <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
         <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
-        <b-button id="btn4" variant="outline-primary" @click='sendData'> 上傳 </b-button>
-        <b-button id="btn5" variant="outline-primary" @click='save'> stop </b-button>
+        <b-button id="btn5" variant="outline-primary" @click='save'> 緩存 </b-button>
+        <b-button id="btn6" variant="outline-primary" @click='showModal'> 暫停 </b-button>
         <!--b-button id="btn5" variant="outline-primary" @click='showHistory = true'> 回放 </b-button-->
       </div>
     </div>
     <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
     <InputModal @getInfo="getModalInfo"></InputModal>
+
+    <b-modal ref="my-modal" hide-footer title="暫停">
+      <div class="d-block text-center">
+        <h3>誰要求暫停？</h3>
+      </div>
+      <b-button class="mt-3" variant="outline-danger" block @click="callStop(1)" v-if="stopBtn[0]">{{name1}}</b-button>
+      <b-button class="mt-3" variant="outline-danger" block @click="callStop(1)" v-else disabled>{{name1}}</b-button>
+      <b-button class="mt-2" variant="outline-danger" block @click="callStop(2)" v-if="stopBtn[1]">{{name2}}</b-button>
+      <b-button class="mt-2" variant="outline-danger" block @click="callStop(2)" v-else disabled>{{name2}}</b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -106,10 +104,8 @@ export default {
       showHistory: false,
       inputData: null,
       skill: '',
-      options: [
-        {text: '正手擊球', value: '正手'},
-        {text: '反手擊球', value: '反手'}
-      ]
+      stopTimes: 0,
+      stopBtn: [true, true]
     }
   },
   methods: {
@@ -139,7 +135,7 @@ export default {
       } else if (this.currentScore[0] >= 10 && this.currentScore[1] >= 10) {
         // when duce, we should change serve side every hand
         this.serve = !this.serve
-      } else if (this.oneRound.length % 2 === 0) {
+      } else if ((this.oneRound.length - this.stopTimes) % 2 === 0) {
         this.serve = !this.serve
       }
 
@@ -169,28 +165,47 @@ export default {
     },
     deletePreviousHand: function () {
       let lastHand = this.oneRound[this.oneRound.length - 1]
-      let idx = lastHand.getpoint ? (parseInt(lastHand.placement, 10) - 1) : (12 - parseInt(lastHand.placement, 10))
+      let idx
 
-      // resume previous opacity
-      this.$refs.table.opacity[idx] -= (this.$refs.table.opacity[idx] > 0) ? 0.2 : 0
-      this.$refs.table.changeHotZone(lastHand.station)
-
-      // init score
-      if (this.oneRound.length === 0) {
-        this.currentScore = [0, 0]
-      } else if (this.oneRound.length === 1) {
+      if (lastHand.stop) {
         this.oneRound.pop()
-        this.currentScore = [0, 0]
+        this.stopTimes--
       } else {
-        this.oneRound.pop()
-        let score = this.oneRound[this.oneRound.length - 1].score
-        let myPoint = score.split(':')[0]
-        let hisPoint = score.split(':')[1]
-        this.currentScore = [myPoint, hisPoint]
-      }
+        idx = lastHand.getpoint ? (parseInt(lastHand.placement, 10) - 1) : (12 - parseInt(lastHand.placement, 10))
 
-      // resume serve side
-      this.serve = (this.oneRound.length === 0) ? (this.inputData[4] === 'true') : this.oneRound[this.oneRound.length - 1].serve
+        // resume previous opacity
+        this.$refs.table.opacity[idx] -= (this.$refs.table.opacity[idx] > 0) ? 0.2 : 0
+        this.$refs.table.changeHotZone(lastHand.station)
+
+        // init score
+        if (this.oneRound.length === 0) {
+          this.currentScore = [0, 0]
+        } else if (this.oneRound.length === 1) {
+          this.oneRound.pop()
+          this.currentScore = [0, 0]
+        } else {
+          this.oneRound.pop()
+          let score = this.oneRound[this.oneRound.length - 1].score
+          let iter = 0
+
+          // skip timeout
+          while (score === undefined) {
+            iter++
+            score = this.oneRound[this.oneRound.length - 1 - iter].score
+            // stop and turn serve side
+            if ((this.oneRound.length - this.stopTimes) % 2 === 0) this.serve = !this.serve
+          }
+
+          let myPoint = score.split(':')[0]
+          let hisPoint = score.split(':')[1]
+          this.currentScore = [myPoint, hisPoint]
+        }
+
+        // resume serve side
+        let previousServe = this.oneRound[this.oneRound.length - 1].serve
+        this.serve = (this.oneRound.length === 0) ? (this.inputData[4] === 'true') : (previousServe === undefined) ? this.serve : (previousServe === '1')
+        console.log(this.serve)
+      }
 
       // delete history
       this.history.pop()
@@ -204,52 +219,20 @@ export default {
       this.history = []
       this.NumOfBoard = ''
       this.roundScore = [0, 0]
+      this.stopTimes = 0
     },
     endRound: function () {
-      // check this round is win or not
-      this.currentScore[0] > this.currentScore[1] ? this.roundScore[0]++ : this.roundScore[1]++
-      this.allRounds.push({no: this.allRounds.length + 1, round: this.oneRound})
+      let check = confirm('要上傳資料嗎？')
 
-      // clear previous data
-      this.$refs.table.initialTouch()
-      this.$refs.table.clearLine()
-      this.oneRound = []
+      if (check) {
+        // check this round is win or not
+        this.currentScore[0] > this.currentScore[1] ? this.roundScore[0]++ : this.roundScore[1]++
+        this.allRounds.push({no: this.allRounds.length + 1, round: this.oneRound})
 
-      // init table color
-      this.$refs.table.changeColor()
-
-      // init score
-      this.currentScore = [0, 0]
-    },
-    sendData: function () {
-      // alert
-      let check = confirm('確定要送出嗎？')
-      let currentDate = new Date()
-      let year = currentDate.getFullYear()
-      let month = currentDate.getMonth()
-      let date = currentDate.getDate()
-      let hour = currentDate.getHours()
-      let min = currentDate.getMinutes()
-      if (check === true) {
-        let insertData = {
-          name: this.name1,
-          isWin: this.roundScore[0] > this.roundScore[1],
-          game: this.game,
-          detail: {
-            result: this.roundScore[0] > this.roundScore[1] ? 'win' : 'lose',
-            scores: `${this.roundScore[0]}:${this.roundScore[1]}`,
-            date: `${year}/${month}/${date} ${hour}:${min}`,
-            NumOfBoard: this.NumOfBoard[this.NumOfBoard.length - 1],
-            competitor: this.name2,
-            rounds: this.allRounds
-          }
-        }
-
-        // insert game's data
-        this.$store.dispatch('insertData', insertData).then(() => {
-          this.clearPreviousData()
-          alert('upload success!')
-        })
+        // clear previous data
+        this.$refs.table.initialTouch()
+        this.$refs.table.clearLine()
+        this.oneRound = []
 
         // init table color
         this.$refs.table.changeColor()
@@ -257,12 +240,48 @@ export default {
         // init score
         this.currentScore = [0, 0]
 
-        // reset table to green
-        for (let i = 1; i <= 12; i++) {
-          document.getElementById(`group${i}`).style.background = 'green'
-        }
+        this.sendData()
       } else {
         alert('取消上傳')
+      }
+    },
+    sendData: function () {
+      // alert
+      let currentDate = new Date()
+      let year = currentDate.getFullYear()
+      let month = currentDate.getMonth()
+      let date = currentDate.getDate()
+      let hour = currentDate.getHours()
+      let min = currentDate.getMinutes()
+      let insertData = {
+        name: this.name1,
+        isWin: this.roundScore[0] > this.roundScore[1],
+        game: this.game,
+        detail: {
+          result: this.roundScore[0] > this.roundScore[1] ? 'win' : 'lose',
+          scores: `${this.roundScore[0]}:${this.roundScore[1]}`,
+          date: `${year}/${month}/${date} ${hour}:${min}`,
+          NumOfBoard: this.NumOfBoard[this.NumOfBoard.length - 1],
+          competitor: this.name2,
+          rounds: this.allRounds
+        }
+      }
+
+      // insert game's data
+      this.$store.dispatch('insertData', insertData).then(() => {
+        this.clearPreviousData()
+        alert('upload success!')
+      })
+
+      // init table color
+      this.$refs.table.changeColor()
+
+      // init score
+      this.currentScore = [0, 0]
+
+      // reset table to green
+      for (let i = 1; i <= 12; i++) {
+        document.getElementById(`group${i}`).style.background = 'green'
       }
 
       this.$refs.table.clearLine()
@@ -300,7 +319,8 @@ export default {
         roundScore: this.roundScore,
         currentScore: this.currentScore,
         NumOfBoard: this.NumOfBoard,
-        inputData: this.inputData
+        inputData: this.inputData,
+        stopTimes: this.stopTimes
       }
       localStorage.setItem('status', JSON.stringify(status))
     },
@@ -318,6 +338,7 @@ export default {
       this.currentScore = prevStatus.currentScore
       this.NumOfBoard = prevStatus.NumOfBoard
       this.inputData = prevStatus.inputData
+      this.stopTimes = prevStatus.stopTimes
 
       // change hot zone
       this.oneRound.forEach(data => {
@@ -325,6 +346,22 @@ export default {
         this.$refs.table.opacity[idx] += (this.$refs.table.opacity[idx] < 1) ? 0.2 : 0
         this.$refs.table.changeHotZone(data.station)
       })
+    },
+    callStop: function (no) {
+      let stop = {
+        stop: true,
+        player: no === 1 ? this.name1 : this.name2
+      }
+      this.stopTimes++
+      this.oneRound.push(stop)
+      this.hideModal()
+      this.stopBtn[no - 1] = false
+    },
+    showModal: function () {
+      this.$refs['my-modal'].show()
+    },
+    hideModal: function () {
+      this.$refs['my-modal'].hide()
     }
   },
   mounted () {
@@ -407,7 +444,7 @@ export default {
   width: 60px;
   height: 60px;
 }
-#btn2, #btn3, #btn4, #btn5 {
+#btn2, #btn3, #btn4, #btn5, #btn6, #skill1, #skill2 {
   width: 60px;
   height: 60px;
   padding: 10px;
@@ -465,11 +502,13 @@ export default {
   display: flex;
   flex-direction: column;
   text-align: left;
-  margin-top: 60px;
+  margin-top: 10px;
+  height: 150px;
+  width: 100px;
 }
 #box {
-  height: 60px;
-  width: 100px;
+  height: 150px;
+  width: 100px; 
 }
 
 #infoBox {

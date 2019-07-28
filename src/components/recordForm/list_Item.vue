@@ -1,6 +1,12 @@
 <template>
   <div class="list_container">
-    <div>
+    <div v-if="item.stop">
+      <div class="list-item list_stop">{{item.player}}</div>
+      <div class="list-item list_stop">TIME</div>
+      <div class="list-item list_stop">OUT</div>
+      <div class="list-item list_stop"></div>
+    </div>
+    <div v-else>
       <div v-if="!change">
         <div class="list-item">{{item.score}}</div>
         <div class="list-item">{{item.serve}}</div>
@@ -42,6 +48,11 @@ export default {
   height: 25px;
   text-align: center;
 }
+
+.list_stop {
+  background-color: red;
+}
+
 .list_container {
   display: flex;
   flex-direction: column
