@@ -2,9 +2,9 @@
   <div id="record_container">
     <div id="list">
       <div id="title">
-        <p id="Name1">{{this.name1}}</p>
-        <p id="Name2">{{this.name2}}</p>
-        <p id="Game">{{this.game}}</p>
+        <div id="Name1">{{this.name1}}</div>
+        <div id="Name2">{{this.name2}}</div>
+        <div id="Game">{{this.game}}</div>
         <b-button size="sm" variant="outline-primary" id='infoBox' @click="changeInfo">資訊</b-button>
       </div>
       <div>
@@ -457,37 +457,16 @@ export default {
   display: flex;
   flex-direction: row
 }
-#name1 ,#name2 {
-  margin-top: 3%;
-  height: 15px;
-  width: 60px;
-  padding: 5px;
-}
-
-#game {
-  margin-top: 3%;
-  height: 15px;
-  width: 200px;
-  padding: 5px;
-}
 
 #Name1, #Name2 {
-  margin-top: 3%;
-  height: 15px;
+  height: 50px;
   width: 65px;
-  padding: 5px;
+  text-align: center;
 }
 #Game {
-  margin-top: 3%;
-  height: 15px;
+  height: 50px;
   width: 200px;
-  padding: 5px;
-}
-#Date {
-  margin-top: 3%;
-  height: 15px;
-  width: 120px;
-  padding: 5px;
+  text-align: center;
 }
 #btn {
   border-top: 10px;
