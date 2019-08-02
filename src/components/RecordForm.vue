@@ -393,8 +393,8 @@ export default {
 }
 
 .toolNode {
-  width: 4em;
-  height: 4em;
+  width: 4.5em;
+  height: 4.5em;
   border-radius: 100%;
   border: 2px solid;
   font-size: .75em;

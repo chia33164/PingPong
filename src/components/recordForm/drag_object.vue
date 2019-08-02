@@ -366,18 +366,18 @@ export default {
 <style>
 #getPoint {
   position:absolute;
-  left: 930px;
-  top: 240px;
+  left: 927px;
+  top: 236.5px;
 }
 #lostPoint {
   position:absolute;
-  left: 930px;
-  top: 300px;
+  left: 927px;
+  top: 295px;
 }
 #servePoint {
   position:absolute;
-  left: 930px;
-  top: 180px;
+  left: 927px;
+  top: 178px;
 }
 .overlap {
   z-index: 2;
