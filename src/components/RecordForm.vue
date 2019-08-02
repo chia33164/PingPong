@@ -8,22 +8,6 @@
         <b-button size="sm" variant="outline-primary" id='infoBox' @click="changeInfo">資訊</b-button>
       </div>
       <div>
-        <input type="checkbox" id="one" value="1" v-model="NumOfBoard">
-        <label for="one">1 局</label>
-        <input type="checkbox" id="two" value="2" v-model="NumOfBoard">
-        <label for="two">2 局</label>
-        <input type="checkbox" id="three" value="3" v-model="NumOfBoard">
-        <label for="three">3 局</label>
-        <input type="checkbox" id="four" value="4" v-model="NumOfBoard">
-        <label for="four">4 局</label>
-        <input type="checkbox" id="five" value="5" v-model="NumOfBoard">
-        <label for="five">5 局</label>
-        <input type="checkbox" id="six" value="6" v-model="NumOfBoard">
-        <label for="six">6 局</label>
-        <input type="checkbox" id="seven" value="7" v-model="NumOfBoard">
-        <label for="seven">7 局</label>
-      </div>
-      <div>
         <div class="record">比分</div>
         <div class="record">發球方</div>
         <div class="record">擊球技術</div>
@@ -100,7 +84,7 @@ export default {
       roundScore: [0, 0], // win , lose
       currentScore: [0, 0], // my point , the other side point
       hand: '',
-      NumOfBoard: [],
+      NumOfBoard: '',
       showHistory: false,
       inputData: null,
       skill: '',
@@ -204,7 +188,6 @@ export default {
         // resume serve side
         let previousServe = this.oneRound[this.oneRound.length - 1].serve
         this.serve = (this.oneRound.length === 0) ? (this.inputData[4] === 'true') : (previousServe === undefined) ? this.serve : (previousServe === '1')
-        console.log(this.serve)
       }
 
       // delete history
@@ -222,28 +205,36 @@ export default {
       this.stopTimes = 0
     },
     endRound: function () {
-      let check = confirm('要上傳資料嗎？')
+      // check this round is win or not
+      this.currentScore[0] > this.currentScore[1] ? this.roundScore[0]++ : this.roundScore[1]++
+      this.allRounds.push({no: this.allRounds.length + 1, round: this.oneRound})
 
-      if (check) {
-        // check this round is win or not
-        this.currentScore[0] > this.currentScore[1] ? this.roundScore[0]++ : this.roundScore[1]++
-        this.allRounds.push({no: this.allRounds.length + 1, round: this.oneRound})
+      // clear previous data
+      this.$refs.table.initialTouch()
+      this.$refs.table.clearLine()
+      this.oneRound = []
 
-        // clear previous data
-        this.$refs.table.initialTouch()
-        this.$refs.table.clearLine()
-        this.oneRound = []
+      // init table color
+      this.$refs.table.changeColor()
 
-        // init table color
-        this.$refs.table.changeColor()
+      // init score
+      this.currentScore = [0, 0]
 
-        // init score
-        this.currentScore = [0, 0]
-
-        this.sendData()
-      } else {
-        alert('取消上傳')
+      if (this.isFinished()) {
+        let winer = this.roundScore[0] > Number(this.NumOfBoard) / 2 ? this.name1 : this.name2
+        let check = confirm(`${winer} 獲勝\n 要上傳資料嗎？`)
+        if (check) {
+          this.sendData()
+        } else {
+          alert('no send')
+        }
       }
+    },
+    isFinished: function () {
+      let NumOfBoard = Number(this.NumOfBoard)
+      return this.roundScore.find(function (item, idx, array) {
+        return item > NumOfBoard / 2
+      })
     },
     sendData: function () {
       // alert
@@ -261,7 +252,7 @@ export default {
           result: this.roundScore[0] > this.roundScore[1] ? 'win' : 'lose',
           scores: `${this.roundScore[0]}:${this.roundScore[1]}`,
           date: `${year}/${month}/${date} ${hour}:${min}`,
-          NumOfBoard: this.NumOfBoard[this.NumOfBoard.length - 1],
+          NumOfBoard: this.NumOfBoard,
           competitor: this.name2,
           rounds: this.allRounds
         }
@@ -293,6 +284,7 @@ export default {
       this.name2 = data[2]
       this.station = data[3]
       this.serve = (data[4] === 'true')
+      this.NumOfBoard = data[5]
       this.$refs.table.changeHotZone(this.station)
     },
     initInfo: function () {
@@ -302,6 +294,7 @@ export default {
       this.name2 = ''
       this.station = ''
       this.serve = null
+      this.NumOfBoard = ''
     },
     changeInfo: function () {
       this.$bvModal.show('modal-1')

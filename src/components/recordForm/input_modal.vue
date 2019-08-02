@@ -40,11 +40,20 @@
         required></b-form-input>
         <b-form-invalid-feedback id="input-live-feedback"> 必填 </b-form-invalid-feedback>
         
-        <b-form-group label="首局站位" :state="radioState">
+        <b-form-group label="" :state="roundState">
+          <b-form-radio v-model="numOfBoards" value="1"> 1 局 </b-form-radio>
+          <b-form-radio v-model="numOfBoards" value="3"> 3 局 </b-form-radio>
+          <b-form-radio v-model="numOfBoards" value="5"> 5 局 </b-form-radio>
+          <b-form-radio v-model="numOfBoards" value="7"> 7 局 </b-form-radio>
+          <b-form-invalid-feedback :state="roundState">必填</b-form-invalid-feedback>
+          <b-form-valid-feedback :state="roundState">ok</b-form-valid-feedback>
+        </b-form-group>
+
+        <b-form-group label="首局站位" :state="stationState">
           <b-form-radio v-model="selected" name="some-radios" value="top">上方</b-form-radio>
           <b-form-radio v-model="selected" name="some-radios" value="bottom">下方</b-form-radio>
-          <b-form-invalid-feedback :state="radioState">必填</b-form-invalid-feedback>
-          <b-form-valid-feedback :state="radioState">ok</b-form-valid-feedback>
+          <b-form-invalid-feedback :state="stationState">必填</b-form-invalid-feedback>
+          <b-form-valid-feedback :state="stationState">ok</b-form-valid-feedback>
         </b-form-group>
 
         <b-form-checkbox
@@ -70,12 +79,16 @@ export default {
       name2: '',
       game: '',
       selected: null,
+      numOfBoards: null,
       serve: 'false'
     }
   },
   computed: {
-    radioState () {
+    stationState () {
       return Boolean(this.selected)
+    },
+    roundState () {
+      return Boolean(this.numOfBoards)
     }
   },
   methods: {
@@ -105,6 +118,7 @@ export default {
       sendData.push(this.name2)
       sendData.push(this.selected)
       sendData.push(this.serve)
+      sendData.push(this.numOfBoards)
 
       this.$emit('getInfo', sendData)
       // Hide the modal manually
