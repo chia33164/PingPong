@@ -167,13 +167,13 @@ export default {
             this.station = everyHand.station === 'top'
             // accumulate placement time
             if (this.station) {
-              if (everyHand.getpoint === '1') {
+              if (everyHand.getpoint) {
                 this.opacity[everyHand.placement - 1] += 1
               } else {
                 this.opacity[12 - everyHand.placement] += 1
               }
             } else {
-              if (everyHand.getpoint === '1') {
+              if (everyHand.getpoint) {
                 this.opacity[everyHand.placement - 1] += 1
               } else {
                 this.opacity[12 - everyHand.placement] += 1
@@ -187,13 +187,13 @@ export default {
           this.station = element.station === 'top'
           // accumulate placement time
           if (this.station) {
-            if (element.getpoint === '1') {
+            if (element.getpoint) {
               this.opacity[element.placement - 1] += 1
             } else {
               this.opacity[12 - element.placement] += 1
             }
           } else {
-            if (element.getpoint === '1') {
+            if (element.getpoint) {
               this.opacity[element.placement - 1] += 1
             } else {
               this.opacity[12 - element.placement] += 1
