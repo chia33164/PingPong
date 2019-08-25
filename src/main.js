@@ -7,12 +7,14 @@ import store from './store'
 import VueFire from 'vuefire'
 import VueTouch from 'vue-touch'
 import BootstrapVue from 'bootstrap-vue'
+import VueResource from 'vue-resource'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueFire)
+Vue.use(VueResource)
 Vue.use(VueTouch, {name: 'v-touch'})
 VueTouch.config.swipe = {
   threshold: 100

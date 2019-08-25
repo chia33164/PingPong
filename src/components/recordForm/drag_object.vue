@@ -1,6 +1,12 @@
 <template>
   <div class="container">
     <svg id="table_container" width="450" height="600">
+      <defs>
+        <marker id='arrow-head' orient="auto" markerWidth='50' markerHeight='100' refX='10' refY='5'>
+            <!-- triangle pointing (+x) -->
+            <path d='M0,0 V10 L10,5 Z' fill="red" />
+        </marker>
+      </defs>
       <g>
         <Block ref="block1" id="group1" x='0' y='0'></Block>
         <Block ref="block2" id="group2" x='150' y='0'></Block>
@@ -36,7 +42,7 @@
       <g>
 
       </g>
-      <line id='test1' :x1="prev_x-442" :y1="prev_y-60" :x2="x-442" :y2="y-60" stroke='red' v-show="showLine"/>
+      <line id='test1' :x1="prev_x-442" :y1="prev_y-60" :x2="x-442" :y2="y-60" stroke='red' marker-end="url(#arrow-head)" v-show="showLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>
       <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-show="station === 'top'"/>
       <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-show="station === 'bottom'"/>
@@ -97,20 +103,16 @@ export default {
     drawLine: function () {
       this.showLine = true
     },
-    /*
     computeRingXY: function (currentX, currentY) {
       let dist = this.getDist(this.prev_x, this.prev_y, currentX, currentY)
       let element = document.getElementsByClassName('moving')[0]
       let radius = Number(element.getAttribute('radius'))
-      console.log(dist)
-      console.log(radius)
       // 用相似形計算
       return {
         RingX: currentX - (currentX - this.prev_x) * (radius / dist),
         RingY: currentY - (currentY - this.prev_y) * (radius / dist)
       }
     },
-    */
     getDist: function (x1, y1, x2, y2) {
       return Math.pow((Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2)), 0.5)
     },
@@ -180,22 +182,25 @@ export default {
 
       let element = event.target
       let touch = event.targetTouches[0]
-      element.setAttribute('radius', touch.radiusX)
-      element.setAttribute('center-offsetx', touch.target.clientWidth / 2)
-      element.setAttribute('center-offsety', touch.target.clientHeight / 2)
+      element.setAttribute('radius', touch.target.offsetWidth / 2)
+      element.setAttribute('center-offsetx', touch.target.offsetWidth / 2)
+      element.setAttribute('center-offsety', touch.target.offsetHeight / 2)
       element.classList.add('moving')
     },
     move_with_finger: function (event) {
       if (this.current_drag === event.target.id || this.current_drag === '') {
         let touch = event.targetTouches[0]
         let element = event.target
-        // let updatePos = this.computeRingXY(touch.pageX, touch.pageY)
+        let updatePos = this.computeRingXY(touch.pageX, touch.pageY)
 
+        // console.log(updatePos)
         // place element where the finger is
-        element.style.left = touch.pageX - touch.target.clientWidth / 2 + 'px'
-        element.style.top = touch.pageY - touch.target.clientHeight / 2 + 'px'
-        this.x = touch.pageX
-        this.y = touch.pageY
+        element.style.left = touch.pageX - touch.target.offsetWidth / 2 + 'px'
+        element.style.top = touch.pageY - touch.target.offsetHeight / 2 + 'px'
+        // this.x = touch.pageX
+        // this.y = touch.pageY
+        this.x = updatePos.RingX
+        this.y = updatePos.RingY
       }
       event.preventDefault()
     },
@@ -206,6 +211,7 @@ export default {
       let divX
       let divY
       let newPos
+      let updatePos
       let centerOffsetX = Number(element.getAttribute('center-offsetx'))
       let centerOffsetY = Number(element.getAttribute('center-offsety'))
 
@@ -218,8 +224,9 @@ export default {
           element.style.left = newPos.newOffsetX + svgBox.absX - centerOffsetX + 'px'
           element.style.top = newPos.newOffsetY + svgBox.absY - centerOffsetY + 'px'
 
-          this.x = newPos.newOffsetX + svgBox.absX
-          this.y = newPos.newOffsetY + svgBox.absY
+          updatePos = this.computeRingXY(newPos.newOffsetX + svgBox.absX, newPos.newOffsetY + svgBox.absY)
+          this.x = updatePos.RingX
+          this.y = updatePos.RingY
           this.block_part = `part${newPos.part}`
           this.placement = newPos.block > 6 ? `${13 - newPos.block}` : `${newPos.block}`
         } else {
