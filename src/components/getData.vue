@@ -25,7 +25,7 @@
         </b-form-select>
       </div>
       <div>
-        <button id="historyBtn" @click='showHistory = true' v-if="showBtn"> 回放 </button>
+        <button id="historyBtn" @click='showHistory' v-if="showBtn"> 回放 </button>
       </div>
     </div>
     <div id="hotZone">
@@ -82,19 +82,20 @@
         <li> date : {{this.date}}</li>
       </div>
     </div>
-    <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
+    <history ref="history"></history>
   </div>
 </template>
 
 <script>
 import {db} from '../db.js'
 import Block from './recordForm/perBlock'
-import History from './recordForm/showHistory'
+import history from './recordForm/History'
 
 export default {
   components: {
     Block,
-    History
+    History,
+    history
   },
   data: function () {
     return {
@@ -114,7 +115,6 @@ export default {
       station: false, // bottom: false  top: true
       showPlayer: false,
       showGame: false,
-      showHistory: false,
       showBtn: false,
       history: [],
       option1: [],
@@ -126,6 +126,10 @@ export default {
     players: db.collection('players')
   },
   methods: {
+    showHistory: function () {
+      this.$refs.history.showList = this.history
+      this.$bvModal.show('modal-2')
+    },
     FindByName: function () {
       this.$store.dispatch('getDataByName', this.name).then(res => {
         this.win = res.win
@@ -274,9 +278,6 @@ export default {
         default:
           break
       }
-    },
-    test: function () {
-      console.log(123)
     }
   },
   async mounted () {

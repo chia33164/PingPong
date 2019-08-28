@@ -40,10 +40,10 @@
         <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
         <b-button id="btn5" variant="outline-primary" @click='save'> 緩存 </b-button>
         <b-button id="btn6" variant="outline-primary" @click='showModal'> 暫停 </b-button>
-        <!--b-button id="btn5" variant="outline-primary" @click='showHistory = true'> 回放 </b-button-->
+        <!-- <b-button id="btn5" variant="outline-primary" @click='showHistory()'> 回放 </b-button> -->
       </div>
     </div>
-    <History :showList="history" v-if='showHistory' @close='showHistory = false'></History>
+    <History ref="history"></History>
     <InputModal @getInfo="getModalInfo"></InputModal>
 
     <b-modal ref="my-modal" hide-footer title="暫停">
@@ -61,7 +61,7 @@
 <script>
 import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
-import History from './recordForm/showHistory'
+import History from './recordForm/History'
 import InputModal from './recordForm/input_modal'
 
 export default {
@@ -85,7 +85,6 @@ export default {
       currentScore: [0, 0], // my point , the other side point
       hand: '',
       NumOfBoard: '',
-      showHistory: false,
       inputData: null,
       skill: '',
       stopTimes: 0,
@@ -298,6 +297,10 @@ export default {
     },
     changeInfo: function () {
       this.$bvModal.show('modal-1')
+    },
+    showHistory: function () {
+      this.$refs.history.showList = this.history
+      this.$bvModal.show('modal-2')
     },
     save: function () {
       let status = {
