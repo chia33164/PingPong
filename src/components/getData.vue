@@ -2,7 +2,7 @@
   <div id="databoard">
     <div id=select>
       <div id="selectName">
-        <b-form-select v-model="name" :options="option1" @click="showBtn=false" @change="FindByName">
+        <b-form-select v-model="name" :options="option1" @change="FindByName">
           <template slot="first">
             <option :value="''" disabled>選手</option>
           </template>
@@ -10,7 +10,7 @@
       </div>
       <br>
       <div id="selectGame">
-        <b-form-select v-model="game" :options="option2" @click="showBtn=false" @change="FindByGame">
+        <b-form-select v-model="game" :options="option2" @change="FindByGame">
           <template slot="first">
             <option :value="''" disabled>比賽</option>
           </template>
@@ -18,14 +18,14 @@
       </div>
       <br>
       <div id="selectRound">
-        <b-form-select v-model="round" :options="option3" @click="showBtn=false" @change="DrawHotZone(round)">
+        <b-form-select v-model="round" :options="option3" @change="DrawHotZone(round)">
           <template slot="first">
             <option :value="''" disabled>局</option>
           </template>
         </b-form-select>
       </div>
       <div>
-        <button id="historyBtn" @click='showHistory' v-if="showBtn"> 回放 </button>
+        <button id="historyBtn" @click='showHistory' v-if="showBtn">回放</button>
       </div>
     </div>
     <div id="hotZone">
@@ -120,6 +120,7 @@ export default {
         this.game = ''
         // init round
         this.round = ''
+        this.showBtn = false
       })
     },
     FindByGame: function () {
@@ -143,6 +144,7 @@ export default {
         this.DrawHotZone(0)
         // init round
         this.round = ''
+        this.showBtn = false
       })
     },
     DrawHotZone: function (no) {

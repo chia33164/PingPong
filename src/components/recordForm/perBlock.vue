@@ -17,7 +17,7 @@
       </g>
       <g id="part5">
         <rect x="50" y="50" width="50" height="50" :fill="color" :fill-opacity="opacity"/>
-        <text x="70" y="75" font-family="Verdana" font-size="20" fill="black" v-if="opacity !== 1" > {{Math.round(opacity * 100)}} %</text>
+        <text x="70" y="75" font-family="Verdana" font-size="20" fill="black" v-if="opacity !== 1 && mode !== 1" > {{Math.round(opacity * 100)}} %</text>
       </g>
       <g id="part6">
         <rect x="50" y="100" width="50" height="50" :fill="color" :fill-opacity="opacity"/>
@@ -43,6 +43,7 @@
 
 <script>
 export default {
+  props: ['mode'],
   data: function () {
     return {
       color: 'white',
