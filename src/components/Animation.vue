@@ -2,6 +2,12 @@
   <div class="showHistory_container">
     <div>
       <svg id="history_container" width="450" height="600">
+          <defs>
+            <marker id='arrow-head' orient="auto" markerWidth='50' markerHeight='100' refX='10' refY='5'>
+                <!-- triangle pointing (+x) -->
+                <path d='M10,0 V10 L0,5 Z' fill="red" />
+            </marker>
+          </defs>
           <g>
             <Block ref="block1" id="group1" x='0' y='0'></Block>
             <Block ref="block2" id="group2" x='150' y='0'></Block>
@@ -23,8 +29,8 @@
             <Block ref="block12" id="group12" x='300' y='450'></Block>
           </g>
           <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
-          <line id='first' :x1="lastThreeXY[0]" :y1="lastThreeXY[1]" :x2="lastThreeXY[2]" :y2="lastThreeXY[3]" stroke-width="2" stroke='red' v-show="lineNum >= 1"/>
-          <line id='second' :x1="lastThreeXY[2]" :y1="lastThreeXY[3]" :x2="lastThreeXY[4]" :y2="lastThreeXY[5]" stroke-width="1" stroke='red' v-show="lineNum >= 2"/>
+          <line id='first' :x1="lastThreeXY[0]" :y1="lastThreeXY[1]" :x2="lastThreeXY[2]" :y2="lastThreeXY[3]" stroke-width="1" stroke='red' v-show="lineNum >= 1"/>
+          <line id='second' :x1="lastThreeXY[2]" :y1="lastThreeXY[3]" :x2="lastThreeXY[4]" :y2="lastThreeXY[5]" stroke-width="1" stroke='red' marker-end='url(#arrow-head)' v-show="lineNum >= 2"/>
           <line id='third' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
           <image xlink:href="../assets/person.png" x=0 y=560 width="40px" height="40px"/>
           <circle v-show="start" cx="0" cy="0" r="15" fill="red" stroke="black" stroke-width="1" id="ballon">
@@ -354,7 +360,7 @@ export default {
     },
     nextMove: function () {
       let ball = document.getElementById('Ball')
-      let SVGElement = document.getElementById('history_container')
+      // let SVGElement = document.getElementById('history_container')
       let pathList = this.roundList[this.roundIdx]
 
       if (this.pathIdx < pathList.length - 1) {
@@ -364,7 +370,7 @@ export default {
         let duration = moveTimes * 0.5 / this.speed
 
         // SVGElement.setCurrentTime(0)
-        console.log(SVGElement.getCurrentTime())
+        // console.log(SVGElement.getCurrentTime())
         ball.setAttribute('dur', `${duration}s`)
         ball.setAttribute('path', path)
         this.ballStatus = this.roundStatus[this.roundIdx][4][this.pathIdx].status
@@ -462,9 +468,9 @@ export default {
       let ballstatus = status.status
       let idx = 0
       let pos
-      this.startStation = !getPoint
       if (ballstatus === '出界或掛網') {
         // outside ball
+        this.startStation = !getPoint
         status.lastThree.forEach(ball => {
           pos = this.getPos(ball)
           this.lastThreeXY[idx] = pos[0]
@@ -473,6 +479,7 @@ export default {
         })
       } else {
         // do not catch
+        this.startStation = getPoint
         for (let i = 0; i < status.lastThree.length; i++) {
           pos = this.getPos(status.lastThree[i])
           if (i === 0) {
