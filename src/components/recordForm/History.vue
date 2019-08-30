@@ -69,9 +69,6 @@ export default {
       y: -50,
       ringX: 0,
       ringY: 0,
-      lost: false,
-      get: false,
-      serve: false,
       idx: 0,
       showList: []
     }
@@ -286,16 +283,10 @@ export default {
       this.ringY = this.y + vectorY * (radius / length)
     },
     swipeleft: function () {
-      this.lost = false
-      this.get = false
-      this.serve = false
       let leftIdx = this.idx <= 0 ? 0 : this.idx - 1
       this.getPos(leftIdx)
     },
     swiperight: function () {
-      this.lost = false
-      this.get = false
-      this.serve = false
       let rightIdx = this.idx >= (this.showList.length - 1) ? (this.showList.length - 1) : this.idx + 1
       this.getPos(rightIdx)
     }

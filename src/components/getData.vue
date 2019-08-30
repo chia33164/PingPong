@@ -31,33 +31,21 @@
     <div id="hotZone">
       <svg class="table_container" width="450" height="600">
         <g>
-          <Block ref="block1" id="group1" x='0' y='0'></Block>
-          <Block ref="block2" id="group2" x='150' y='0'></Block>
-          <Block ref="block3" id="group3" x='300' y='0'></Block>
           <Block ref="overlap1" id="overlap1" x='0' y='0'></Block>
           <Block ref="overlap2" id="overlap2" x='150' y='0'></Block>
           <Block ref="overlap3" id="overlap3" x='300' y='0'></Block>
         </g>
         <g>
-          <Block ref="block4" id="group4" x='0' y='150'></Block>
-          <Block ref="block5" id="group5" x='150' y='150'></Block>
-          <Block ref="block6" id="group6" x='300' y='150'></Block>
           <Block ref="overlap4" id="overlap4" x='0' y='150'></Block>
           <Block ref="overlap5" id="overlap5" x='150' y='150'></Block>
           <Block ref="overlap6" id="overlap6" x='300' y='150'></Block>
         </g>
         <g>
-          <Block ref="block7" id="group7" x='0' y='300'></Block>
-          <Block ref="block8" id="group8" x='150' y='300'></Block>
-          <Block ref="block9" id="group9" x='300' y='300'></Block>
           <Block ref="overlap7" id="overlap7" x='0' y='300'></Block>
           <Block ref="overlap8" id="overlap8" x='150' y='300'></Block>
           <Block ref="overlap9" id="overlap9" x='300' y='300'></Block>
         </g>
         <g>
-          <Block ref="block10" id="group10" x='0' y='450'></Block>
-          <Block ref="block11" id="group11" x='150' y='450'></Block>
-          <Block ref="block12" id="group12" x='300' y='450'></Block>
           <Block ref="overlap10" id="overlap10" x='0' y='450'></Block>
           <Block ref="overlap11" id="overlap11" x='150' y='450'></Block>
           <Block ref="overlap12" id="overlap12" x='300' y='450'></Block>
