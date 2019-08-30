@@ -67,10 +67,11 @@
     </div>
     <div id="info">
       <div>
-        <h1> 選手訊息 </h1>
-      </div>
-      <div>
-        <b-table striped hover :items="items"></b-table>
+        <b-table hover :items="items" caption-top>
+          <template slot="table-caption">
+            <h2> 選手訊息 </h2>
+          </template>
+        </b-table>
       </div>
     </div>
     <history ref="history"></history>
