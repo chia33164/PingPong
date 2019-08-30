@@ -2,7 +2,7 @@
   <div id="databoard">
     <div id=select>
       <div id="selectName">
-        <b-form-select v-model="name" :options="option1" @click="showPlayer=false, showGame=false, showBtn=false" @change="FindByName">
+        <b-form-select v-model="name" :options="option1" @click="showBtn=false" @change="FindByName">
           <template slot="first">
             <option :value="''" disabled>選手</option>
           </template>
@@ -10,7 +10,7 @@
       </div>
       <br>
       <div id="selectGame">
-        <b-form-select v-model="game" :options="option2" @click="showGame=false, showBtn=false" @change="FindByGame">
+        <b-form-select v-model="game" :options="option2" @click="showBtn=false" @change="FindByGame">
           <template slot="first">
             <option :value="''" disabled>比賽</option>
           </template>
@@ -69,17 +69,8 @@
       <div>
         <h1> 選手訊息 </h1>
       </div>
-      <div v-if="showPlayer">
-        <h1> {{this.name}} </h1>
-        <li> win   : {{this.win}}</li>
-        <li> lose  : {{this.lose}}</li>
-      </div>
-      <div v-if="showGame">
-        <h1> {{this.game}}</h1>
-        <li> result: {{this.result}}</li>
-        <li> score : {{this.score}}</li>
-        <li> competitor : {{this.competitor}}</li>
-        <li> date : {{this.date}}</li>
+      <div>
+        <b-table striped hover :items="items"></b-table>
       </div>
     </div>
     <history ref="history"></history>
@@ -94,7 +85,6 @@ import history from './recordForm/History'
 export default {
   components: {
     Block,
-    History,
     history
   },
   data: function () {
@@ -102,19 +92,12 @@ export default {
       players: [],
       games: [],
       rounds: [],
+      items: [],
       name: '',
       game: '',
       round: '',
-      win: '',
-      lose: '',
-      result: '',
-      score: '',
-      date: '',
-      competitor: '',
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       station: false, // bottom: false  top: true
-      showPlayer: false,
-      showGame: false,
       showBtn: false,
       history: [],
       option1: [],
@@ -131,11 +114,17 @@ export default {
       this.$bvModal.show('modal-2')
     },
     FindByName: function () {
+      this.items = []
       this.$store.dispatch('getDataByName', this.name).then(res => {
-        this.win = res.win
-        this.lose = res.lose
+        let itemsName = ['姓名', '勝場', '敗場']
+        let itemDetail = [this.name, res.win, res.lose]
+        for (let i = 0; i < 3; i++) {
+          this.items.push({
+            '項目': itemsName[i],
+            '說明': itemDetail[i]
+          })
+        }
         this.games = res.games
-        this.showPlayer = true
         // set select list
         this.SetOption(2)
         // init game
@@ -146,18 +135,23 @@ export default {
     },
     FindByGame: function () {
       // clear data
+      this.items.splice(3, 5)
+
       this.$store.dispatch('getDataByGame', {name: this.name, game: this.game}).then(res => {
-        this.result = res.result
+        let itemsName = ['比賽', '對手', '比分', '日期', '結果']
+        let itemDetail = [this.game, res.competitor, res.scores, res.date, res.result]
+        for (let i = 0; i < 5; i++) {
+          this.items.push({
+            '項目': itemsName[i],
+            '說明': itemDetail[i]
+          })
+        }
         this.rounds = res.rounds
-        this.score = res.scores
-        this.date = res.date
-        this.competitor = res.competitor
+
         // set select list
         this.SetOption(3)
         // draw hot zone for game
         this.DrawHotZone(0)
-        // append data to web
-        this.showGame = true
         // init round
         this.round = ''
       })
