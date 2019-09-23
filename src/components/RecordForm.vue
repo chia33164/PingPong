@@ -1,24 +1,6 @@
 <template>
   <div id="record_container">
-    <div id="list">
-      <div id="title">
-        <div id="Name1">{{this.name1}}</div>
-        <div id="Name2">{{this.name2}}</div>
-        <div id="Game">{{this.game}}</div>
-        <b-button size="sm" variant="outline-primary" id='infoBox' @click="changeInfo">資訊</b-button>
-      </div>
-      <div>
-        <div class="record">比分</div>
-        <div class="record">發球方</div>
-        <div class="record">擊球技術</div>
-        <div class="record">得分落點</div>
-      </div>
-      <div>
-        <lists v-for="(item, index) in oneRound" :index="index" :key="index" :item="item"></lists>
-      </div>
-    </div>
-    <drag id="table" ref="table"></drag>
-    <div class="rightPart">
+    <div class="leftPart">
       <div class="symbol_container">
         <b-button id="skill1" variant="outline-primary" @click='hand="正手"'> 正手 </b-button>
         <b-button id="skill2" variant="outline-primary" @click='hand="反手"'> 反手 </b-button>
@@ -38,9 +20,27 @@
         <b-button id="btn1" variant="outline-primary" @click='oneHand'> 更新 </b-button>
         <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
         <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
-        <b-button id="btn5" variant="outline-primary" @click='save'> 緩存 </b-button>
+        <!-- <b-button id="btn5" variant="outline-primary" @click='save'> 緩存 </b-button> -->
         <b-button id="btn6" variant="outline-primary" @click='showModal'> 暫停 </b-button>
         <!-- <b-button id="btn5" variant="outline-primary" @click='showHistory()'> 回放 </b-button> -->
+      </div>
+    </div>
+    <drag id="table" ref="table"></drag>
+    <div id="list">
+      <div id="title">
+        <div id="Name1">{{this.name1}}</div>
+        <div id="Name2">{{this.name2}}</div>
+        <div id="Game">{{this.game}}</div>
+        <b-button size="sm" variant="outline-primary" id='infoBox' @click="changeInfo">資訊</b-button>
+      </div>
+      <div>
+        <div class="record">比分</div>
+        <div class="record">發球方</div>
+        <div class="record">擊球技術</div>
+        <div class="record">得分落點</div>
+      </div>
+      <div>
+        <lists v-for="(item, index) in oneRound" :index="index" :key="index" :item="item"></lists>
       </div>
     </div>
     <History ref="history"></History>
@@ -145,6 +145,9 @@ export default {
       // initial drag object's position
       this.$refs.table.initialTouch()
       this.hand = ''
+
+      // save to localStorage
+      this.save()
     },
     deletePreviousHand: function () {
       let lastHand = this.oneRound[this.oneRound.length - 1]
@@ -285,6 +288,8 @@ export default {
       this.serve = (data[4] === 'true')
       this.NumOfBoard = data[5]
       this.$refs.table.changeHotZone(this.station)
+      // save to localStorage
+      this.save()
     },
     initInfo: function () {
       this.inputData = null
@@ -489,6 +494,10 @@ export default {
 #infoBox {
   height: 50px;
   width: 60px;
+}
+
+#leftPart {
+  text-align: center;
 }
 
 </style>
