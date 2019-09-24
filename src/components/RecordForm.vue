@@ -40,11 +40,12 @@
         <div class="record">得分落點</div>
       </div>
       <div>
-        <lists v-for="(item, index) in oneRound" :index="index" :key="index" :item="item"></lists>
+        <lists v-for="(item, index) in oneRound" :index="index" :key="index" :item="item" @fix="showChangeModal(index)"></lists>
       </div>
     </div>
     <History ref="history"></History>
     <InputModal @getInfo="getModalInfo"></InputModal>
+    <FixModal ref="changeData" :data="changeData"></FixModal>
 
     <b-modal ref="my-modal" hide-footer title="暫停">
       <div class="d-block text-center">
@@ -63,13 +64,15 @@ import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
 import History from './recordForm/History'
 import InputModal from './recordForm/input_modal'
+import FixModal from './recordForm/change_modal'
 
 export default {
   components: {
     drag,
     lists,
     History,
-    InputModal
+    InputModal,
+    FixModal
   },
   data: function () {
     return {
@@ -88,7 +91,8 @@ export default {
       inputData: null,
       skill: '',
       stopTimes: 0,
-      stopBtn: [true, true]
+      stopBtn: [true, true],
+      changeData: null
     }
   },
   methods: {
@@ -363,6 +367,12 @@ export default {
     },
     hideModal: function () {
       this.$refs['my-modal'].hide()
+    },
+    showChangeModal: function (index) {
+      this.changeData = this.oneRound[index]
+      this.changeData['index'] = index
+      this.$bvModal.show('modal-3')
+      // this.$refs.changeData.showData()
     }
   },
   mounted () {

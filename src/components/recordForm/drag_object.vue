@@ -203,8 +203,6 @@ export default {
         // place element where the finger is
         element.style.left = touch.pageX - touch.target.offsetWidth / 2 + 'px'
         element.style.top = touch.pageY - touch.target.offsetHeight / 2 + 'px'
-        // this.x = touch.pageX
-        // this.y = touch.pageY
         this.x = updatePos.RingX
         this.y = updatePos.RingY
       }
@@ -364,7 +362,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.getSVGPosition())
     this.initTouch()
     this.changeColor()
     this.initHotZone()

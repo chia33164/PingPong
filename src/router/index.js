@@ -5,6 +5,7 @@ import recordForm from '@/components/RecordForm'
 import Exam from '@/components/Exam'
 import databoard from '@/components/getData'
 import animation from '@/components/Animation'
+import statistic from '@/components/Statistic'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/animation',
       name: 'animation',
       component: animation
+    },
+    {
+      path: '/statistic',
+      name: 'statistic',
+      component: statistic
     }
   ]
 })

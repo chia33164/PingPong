@@ -41,10 +41,10 @@
         <b-form-invalid-feedback id="input-live-feedback"> 必填 </b-form-invalid-feedback>
         
         <b-form-group label="" :state="roundState">
-          <b-form-radio v-model="numOfBoards" value="1"> 1 局 </b-form-radio>
-          <b-form-radio v-model="numOfBoards" value="3"> 3 局 </b-form-radio>
-          <b-form-radio v-model="numOfBoards" value="5"> 5 局 </b-form-radio>
-          <b-form-radio v-model="numOfBoards" value="7"> 7 局 </b-form-radio>
+          <b-form-radio v-model="numOfBoards" value="1"> 1 戰 1 勝 </b-form-radio>
+          <b-form-radio v-model="numOfBoards" value="3"> 3 戰 2 勝 </b-form-radio>
+          <b-form-radio v-model="numOfBoards" value="5"> 5 戰 3 勝 </b-form-radio>
+          <b-form-radio v-model="numOfBoards" value="7"> 7 戰 4 勝 </b-form-radio>
           <b-form-invalid-feedback :state="roundState">必填</b-form-invalid-feedback>
           <b-form-valid-feedback :state="roundState">ok</b-form-valid-feedback>
         </b-form-group>

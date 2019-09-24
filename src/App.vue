@@ -15,13 +15,17 @@
         <span @click="changeMode" id="1" v-if="mode == 1" style="color:#35495E">紀錄表</span>
         <span @click="changeMode" id="1" v-else>紀錄表</span>
       </router-link>
+      <router-link tag="li" to="/statistic">
+        <span @click="changeMode" id="2" v-if="mode == 2" style="color:#35495E">戰況統計</span>
+        <span @click="changeMode" id="2" v-else>戰況統計</span>
+      </router-link>
       <router-link tag="li" to="/databoard">
-        <span @click="changeMode" id="2" v-if="mode == 2" style="color:#35495E">歷史紀錄</span>
-        <span @click="changeMode" id="2" v-else>歷史紀錄</span>
+        <span @click="changeMode" id="3" v-if="mode == 3" style="color:#35495E">歷史紀錄</span>
+        <span @click="changeMode" id="3" v-else>歷史紀錄</span>
       </router-link>
       <router-link tag="li" to="/animation">
-        <span @click="changeMode" id="3" v-if="mode == 3" style="color:#35495E">歷史動畫</span>
-        <span @click="changeMode" id="3" v-else>歷史動畫</span>
+        <span @click="changeMode" id="4" v-if="mode == 4" style="color:#35495E">歷史動畫</span>
+        <span @click="changeMode" id="4" v-else>歷史動畫</span>
       </router-link>
     </footer>
   </div>
