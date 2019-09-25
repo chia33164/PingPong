@@ -48,6 +48,9 @@
     </svg>
       <template slot="modal-header">
         <button @click="showData"> 開始 </button>
+        <button @click="hand = 'F'">正手</button>
+        <button @click="hand = 'B'">反手</button>
+        <button @click="save"> 儲存 </button>
         <b> 修改 </b>
       </template>
       <template slot="modal-footer">
@@ -72,7 +75,9 @@ export default {
       ringY: 0,
       idx: 0,
       showList: [],
-      station: null
+      station: null,
+      hand: null,
+      result: null
     }
   },
   components: {
@@ -153,11 +158,82 @@ export default {
         absY: svgBox.y
       }
     },
+    setMovable: function () {
+      let node = document.getElementById('nodeTemp')
+      node.addEventListener('touchstart', this.startMoving, false)
+      node.addEventListener('touchmove', this.Moving, false)
+      node.addEventListener('touchend', this.stopMoving, false)
+    },
+    startMoving: function (event) {
+      let currentNode = event.changedTouches[0]
+      let svgBox = this.getSVGPosition()
+      let divX = (currentNode.pageX - svgBox.absX) / (svgBox.boxWidth / 9)
+      let divY = (currentNode.pageY - svgBox.absY) / (svgBox.boxHeight / 12)
+      let FixPos = this.getNewPos(Math.floor(divX), Math.floor(divY))
+
+      this.prev_x = FixPos.newOffsetX
+      this.prev_y = FixPos.newOffsetY
+    },
+    Moving: function (event) {
+      // place element where the finger is
+      let touch = event.targetTouches[0]
+      let svgBox = this.getSVGPosition()
+
+      this.x = touch.pageX - svgBox.absX
+      this.y = touch.pageY - svgBox.absY
+      this.getRingXY()
+    },
+    stopMoving: function (event) {
+      let currentNode = event.changedTouches[0]
+      let svgBox = this.getSVGPosition()
+      let divX = (currentNode.pageX - svgBox.absX) / (svgBox.boxWidth / 9)
+      let divY = (currentNode.pageY - svgBox.absY) / (svgBox.boxHeight / 12)
+      let newToPos = this.getNewPos(Math.floor(divX), Math.floor(divY))
+      let newFromPos = this.getNewPos(Math.floor(this.prev_x / (svgBox.boxWidth / 9)), Math.floor(this.prev_y / (svgBox.boxHeight / 12)))
+
+      this.x = newToPos.newOffsetX
+      this.y = newToPos.newOffsetY
+      this.getRingXY()
+      this.result = this.getRegularPos(newFromPos, newToPos)
+    },
+    getRegularPos: function (newFrom, newEnd) {
+      return {
+        skill: (newFrom.block > 6) ? this.hand.concat(String(13 - newFrom.block)) : this.hand.concat(String(newFrom.block)),
+        part: 'part'.concat(String(newFrom.part)),
+        placement: (newEnd.block > 6) ? String(13 - newEnd.block) : String(newEnd.block),
+        placement_part: String(newEnd.part)
+      }
+    },
+    save: function (event) {
+      // change list value
+      this.result['index'] = this.idx
+      this.$emit('newData', this.result)
+    },
     showData: function () {
-    //   console.log(this.data)
       this.station = this.data.station
       this.idx = this.data.index
+      this.hand = this.data.skill.substr(0, 1)
+      this.setMovable()
       this.getPos2(this.data.station, this.data.getpoint, this.data.skill, this.data.part, this.data.placement, this.data.placement_part)
+    },
+    getNewPos: function (numOfPartX, numOfPartY) {
+      let svgBox = this.getSVGPosition()
+      let blockWidth = svgBox.boxWidth / 9
+      let partRow = numOfPartY % 3
+      let partCol = numOfPartX % 3
+      let blockCol = Math.floor(numOfPartY / 3) // (0~11 / 3) => (0~3)
+      let blockRow = Math.floor(numOfPartX / 3) // (0~8 / 3) => (0~2)
+      let OffsetX = blockWidth * numOfPartX
+      let OffsetY = blockWidth * numOfPartY
+      let isValid = !(OffsetX < 0 || OffsetX > 400 || OffsetY < 0 || OffsetY > 550)
+
+      return {
+        newOffsetX: (isValid) ? (blockWidth * numOfPartX + blockWidth / 2) : null,
+        newOffsetY: (isValid) ? (blockWidth * numOfPartY + blockWidth / 2) : null,
+        part: (isValid) ? (partRow * 3 + partCol + 1) : null,
+        block: (isValid) ? (blockCol * 3 + blockRow + 1) : null,
+        isValid: isValid
+      }
     }
   },
   mounted () {

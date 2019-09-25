@@ -45,7 +45,7 @@
     </div>
     <History ref="history"></History>
     <InputModal @getInfo="getModalInfo"></InputModal>
-    <FixModal ref="changeData" :data="changeData"></FixModal>
+    <FixModal ref="changeData" :data="changeData" @newData="changeListData"></FixModal>
 
     <b-modal ref="my-modal" hide-footer title="暫停">
       <div class="d-block text-center">
@@ -372,7 +372,13 @@ export default {
       this.changeData = this.oneRound[index]
       this.changeData['index'] = index
       this.$bvModal.show('modal-3')
-      // this.$refs.changeData.showData()
+    },
+    changeListData: function (newData) {
+      this.oneRound[newData.index].skill = newData.skill
+      this.oneRound[newData.index].placement = newData.placement
+      this.oneRound[newData.index].placement_part = newData.placement_part
+      this.oneRound[newData.index].part = newData.part
+      this.$bvModal.hide('modal-3')
     }
   },
   mounted () {
