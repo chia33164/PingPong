@@ -42,7 +42,7 @@
       <g>
 
       </g>
-      <line id='test1' :x1="prev_x-132" :y1="prev_y-60" :x2="x-132" :y2="y-60" stroke='red' marker-end="url(#arrow-head)" v-show="showLine"/>
+      <line id='test1' :x1="prev_x-230.5" :y1="prev_y-60" :x2="x-230.5" :y2="y-60" stroke='red' marker-end="url(#arrow-head)" v-show="showLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>
       <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-show="station === 'top'"/>
       <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-show="station === 'bottom'"/>
@@ -178,6 +178,8 @@ export default {
         let divX = (currentNode.pageX - svgBox.absX) / (svgBox.boxWidth / 9)
         let divY = (currentNode.pageY - svgBox.absY) / (svgBox.boxHeight / 12)
         let FixPos = this.getNewPos(Math.floor(divX), Math.floor(divY))
+        console.log(FixPos)
+        console.log(svgBox)
 
         this.prev_x = FixPos.newOffsetX + svgBox.absX
         this.prev_y = FixPos.newOffsetY + svgBox.absY
