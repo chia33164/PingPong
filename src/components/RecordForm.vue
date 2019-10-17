@@ -330,7 +330,7 @@ export default {
       localStorage.setItem('status', JSON.stringify(status))
     },
     load: function (prevStatus) {
-      localStorage.setItem('status', null)
+      // localStorage.setItem('status', null)
       this.serve = prevStatus.serve
       this.name1 = prevStatus.name1
       this.name2 = prevStatus.name2
@@ -387,12 +387,13 @@ export default {
     if (prevStatus === null) {
       this.$bvModal.show('modal-1')
     } else {
-      if (confirm('要恢復先前狀態嗎？')) {
-        this.load(prevStatus)
-      } else {
-        localStorage.setItem('status', null)
-        this.$bvModal.show('modal-1')
-      }
+      this.load(prevStatus)
+      // if (confirm('要恢復先前狀態嗎？')) {
+      //   this.load(prevStatus)
+      // } else {
+      //   localStorage.setItem('status', null)
+      //   this.$bvModal.show('modal-1')
+      // }
     }
   }
 }

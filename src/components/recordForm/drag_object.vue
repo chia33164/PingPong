@@ -178,8 +178,6 @@ export default {
         let divX = (currentNode.pageX - svgBox.absX) / (svgBox.boxWidth / 9)
         let divY = (currentNode.pageY - svgBox.absY) / (svgBox.boxHeight / 12)
         let FixPos = this.getNewPos(Math.floor(divX), Math.floor(divY))
-        console.log(FixPos)
-        console.log(svgBox)
 
         this.prev_x = FixPos.newOffsetX + svgBox.absX
         this.prev_y = FixPos.newOffsetY + svgBox.absY
@@ -201,7 +199,6 @@ export default {
         let element = event.target
         let updatePos = this.computeRingXY(touch.pageX, touch.pageY)
 
-        // console.log(updatePos)
         // place element where the finger is
         element.style.left = touch.pageX - touch.target.offsetWidth / 2 + 'px'
         element.style.top = touch.pageY - touch.target.offsetHeight / 2 + 'px'
@@ -243,7 +240,6 @@ export default {
         this.getpoint = (element.id === 'getPoint') || (element.id === 'servePoint')
         if (this.prev_x !== 0 && this.prev_y !== 0) this.drawLine()
 
-        // console.log(newPos)
         element.classList.remove('moving')
         event.preventDefault()
       }
