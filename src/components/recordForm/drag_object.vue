@@ -240,8 +240,13 @@ export default {
 
         this.serve_point = (element.id === 'servePoint')
         this.getpoint = (element.id === 'getPoint') || (element.id === 'servePoint')
-        if (this.prev_x !== 0 && this.prev_y !== 0) this.drawLine()
 
+        if (this.prev_x !== 0 && this.prev_y !== 0) {
+          this.drawLine()
+        } else {
+          // lose point and placement = '0'
+          this.prev_placement = this.placement
+        }
         element.classList.remove('moving')
         event.preventDefault()
       }

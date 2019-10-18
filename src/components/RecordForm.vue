@@ -134,7 +134,7 @@ export default {
         part: this.$refs.table.prev_block_part,
         getpoint: this.$refs.table.getpoint,
         station: this.$refs.table.station,
-        placement: this.$refs.table.placement,
+        placement: (this.$refs.table.prev_x !== 0 && this.$refs.table.prev_y !== 0) ? this.$refs.table.placement : '0',
         placement_part: this.$refs.table.block_part.substr(4)
       }
 
