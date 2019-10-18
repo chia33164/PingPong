@@ -388,12 +388,23 @@ export default {
       this.$bvModal.show('modal-1')
     } else {
       this.load(prevStatus)
-      // if (confirm('要恢復先前狀態嗎？')) {
-      //   this.load(prevStatus)
-      // } else {
-      //   localStorage.setItem('status', null)
-      //   this.$bvModal.show('modal-1')
-      // }
+      if (confirm('要恢復先前狀態嗎？')) {
+        this.load(prevStatus)
+      } else {
+        localStorage.setItem('status', null)
+        // init data
+        this.clearPreviousData()
+        // init table color
+        this.$refs.table.changeColor()
+        // init score
+        this.currentScore = [0, 0]
+        // reset table to green
+        for (let i = 1; i <= 12; i++) {
+          document.getElementById(`group${i}`).style.background = 'green'
+        }
+        this.$refs.table.clearLine()
+        this.$bvModal.show('modal-1')
+      }
     }
   }
 }

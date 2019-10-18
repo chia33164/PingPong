@@ -42,7 +42,7 @@
       <g>
 
       </g>
-      <line id='test1' :x1="prev_x-230.5" :y1="prev_y-60" :x2="x-230.5" :y2="y-60" stroke='red' marker-end="url(#arrow-head)" v-show="showLine"/>
+      <line id='test1' :x1="prev_x-absX" :y1="prev_y-absY" :x2="x-absX" :y2="y-absY" stroke='red' marker-end="url(#arrow-head)" v-show="showLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>
       <image xlink:href="../../assets/person.png" x=0 y=0 width="40px" height="40px" v-show="station === 'top'"/>
       <image xlink:href="../../assets/person.png" x=0 y=560 width="40px" height="40px" v-show="station === 'bottom'"/>
@@ -69,7 +69,9 @@ export default {
       serve_point: false,
       showLine: false,
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      current_drag: ''
+      current_drag: '',
+      absX: 0,
+      absY: 0
     }
   },
   components: {
@@ -262,6 +264,9 @@ export default {
       getPoint.addEventListener('touchend', this.moveStop, false)
       lostPoint.addEventListener('touchend', this.moveStop, false)
       servePoint.addEventListener('touchend', this.moveStop, false)
+
+      this.absX = this.getSVGPosition().absX
+      this.absY = this.getSVGPosition().absY
     },
     initHotZone: function () {
       this.$refs.overlap1.color = 'red'
