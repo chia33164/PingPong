@@ -37,7 +37,7 @@
         <div class="record">比分</div>
         <div class="record">發球方</div>
         <div class="record">擊球技術</div>
-        <div class="record">得分落點</div>
+        <div class="record">落點</div>
       </div>
       <div>
         <lists v-for="(item, index) in oneRound" :index="index" :key="index" :item="item" @fix="showChangeModal(index)"></lists>

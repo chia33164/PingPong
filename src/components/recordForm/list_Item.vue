@@ -7,11 +7,17 @@
       <div class="list-item list_stop"></div>
     </div>
     <div v-else>
-      <div>
+      <div v-if="item.getpoint">
         <div class="list-item">{{item.score}}</div>
         <div class="list-item">{{item.serve}}</div>
         <div class="list-item">{{item.skill}}</div>
         <div class="list-item">{{item.placement}}</div>
+      </div>
+      <div v-else>
+        <div class="list-item list_lostpoint" >{{item.score}}</div>
+        <div class="list-item list_lostpoint" >{{item.serve}}</div>
+        <div class="list-item list_lostpoint" >{{item.skill}}</div>
+        <div class="list-item list_lostpoint" >{{item.placement}}</div>
       </div>
       <div>
         <b-button size="sm" variant="outline-primary" class="changeItem" @click="changeData">改</b-button>
@@ -46,6 +52,10 @@ export default {
 
 .list_stop {
   background-color: red;
+}
+
+.list_lostpoint {
+  background-color: yellow;
 }
 
 .list_container {
