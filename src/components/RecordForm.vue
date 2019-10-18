@@ -481,6 +481,8 @@ export default {
 .btn_container {
   display: flex;
   flex-direction: column;
+  margin-top: 60px;
+  margin-left: 30px;
 }
 #title {
   display: flex;
@@ -511,6 +513,7 @@ export default {
   flex-direction: column;
   text-align: left;
   margin-top: 10px;
+  margin-left: 30px;
   height: 150px;
   width: 100px;
 }

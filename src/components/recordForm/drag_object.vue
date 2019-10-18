@@ -82,12 +82,12 @@ export default {
       let getPoint = document.getElementById('getPoint')
       let lostPoint = document.getElementById('lostPoint')
       let servePoint = document.getElementById('servePoint')
-      servePoint.style.left = 0 + 'px'
-      servePoint.style.top = 178 + 'px'
-      getPoint.style.left = 0 + 'px'
-      getPoint.style.top = 236.5 + 'px'
-      lostPoint.style.left = 0 + 'px'
-      lostPoint.style.top = 295 + 'px'
+      servePoint.style.left = 30 + 'px'
+      servePoint.style.top = 208 + 'px'
+      getPoint.style.left = 30 + 'px'
+      getPoint.style.top = 266.5 + 'px'
+      lostPoint.style.left = 30 + 'px'
+      lostPoint.style.top = 325 + 'px'
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
@@ -380,18 +380,18 @@ export default {
 <style>
 #getPoint {
   position:absolute;
-  left: 0px;
-  top: 236.5px;
+  left: 30px;
+  top: 266.5px;
 }
 #lostPoint {
   position:absolute;
-  left: 0px;
-  top: 295px;
+  left: 30px;
+  top: 325px;
 }
 #servePoint {
   position:absolute;
-  left: 0px;
-  top: 178px;
+  left: 30px;
+  top: 208px;
 }
 .overlap {
   z-index: 2;
