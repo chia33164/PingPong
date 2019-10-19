@@ -50,6 +50,7 @@
           <Block ref="overlap11" id="overlap11" x='150' y='450'></Block>
           <Block ref="overlap12" id="overlap12" x='300' y='450'></Block>
         </g>
+        <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>
         <image xlink:href="../assets/person.png" x=0 y=560 width="40px" height="40px"/>
       </svg>
     </div>
@@ -159,13 +160,21 @@ export default {
               if (everyHand.getpoint) {
                 this.opacity[everyHand.placement - 1] += 1
               } else {
-                this.opacity[12 - everyHand.placement] += 1
+                if (everyHand.placement === '0') {
+                  this.opacity[12 - Number((everyHand.skill.split('F')[1] === undefined) ? everyHand.skill.split('B')[1] : everyHand.skill.split('F')[1])] += 1
+                } else {
+                  this.opacity[12 - everyHand.placement] += 1
+                }
               }
             } else {
               if (everyHand.getpoint) {
                 this.opacity[everyHand.placement - 1] += 1
               } else {
-                this.opacity[12 - everyHand.placement] += 1
+                if (everyHand.placement === '0') {
+                  this.opacity[12 - Number((everyHand.skill.split('F')[1] === undefined) ? everyHand.skill.split('B')[1] : everyHand.skill.split('F')[1])] += 1
+                } else {
+                  this.opacity[12 - everyHand.placement] += 1
+                }
               }
             }
           })
@@ -179,13 +188,21 @@ export default {
             if (element.getpoint) {
               this.opacity[element.placement - 1] += 1
             } else {
-              this.opacity[12 - element.placement] += 1
+              if (element.placement === '0') {
+                this.opacity[12 - Number((element.skill.split('F')[1] === undefined) ? element.skill.split('B')[1] : element.skill.split('F')[1])] += 1
+              } else {
+                this.opacity[12 - element.placement] += 1
+              }
             }
           } else {
             if (element.getpoint) {
               this.opacity[element.placement - 1] += 1
             } else {
-              this.opacity[12 - element.placement] += 1
+              if (element.placement === '0') {
+                this.opacity[12 - Number((element.skill.split('F')[1] === undefined) ? element.skill.split('B')[1] : element.skill.split('F')[1])] += 1
+              } else {
+                this.opacity[12 - element.placement] += 1
+              }
             }
           }
         })

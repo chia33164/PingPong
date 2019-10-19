@@ -347,7 +347,7 @@ export default {
 
       // change hot zone
       this.oneRound.forEach(data => {
-        let idx = (data.getpoint) ? (parseInt(data.placement, 10) - 1) : (12 - parseInt(data.placement, 10))
+        let idx = (data.placement === '0') ? (12 - Number(data.skill.split('F')[1] === undefined ? data.skill.split('B')[1] : data.skill.split('F')[1])) : (data.getpoint) ? (parseInt(data.placement, 10) - 1) : (12 - parseInt(data.placement, 10))
         this.$refs.table.opacity[idx] += (this.$refs.table.opacity[idx] < 1) ? 0.2 : 0
         this.$refs.table.changeHotZone(data.station)
       })
