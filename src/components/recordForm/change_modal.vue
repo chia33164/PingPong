@@ -1,7 +1,7 @@
 <template>
   <div id="change_modal">
     <b-modal
-    id="modal-3"
+    id="fixModal"
     ref="modal"
     title="修改"
     >

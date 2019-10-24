@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>exam</p>
+    <h1>膠囊圖</h1>
   </div>
 </template>
 

@@ -134,7 +134,6 @@ export default {
       let skillB = [0, 0, 0, 0, 0, 0]
       let place = [0, 0, 0, 0, 0, 0]
       let serve = 0
-      console.log(this.oneRound)
       this.oneRound.forEach(item => {
         if (item.getpoint) {
           switch (item.skill) {

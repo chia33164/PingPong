@@ -215,35 +215,21 @@ export default {
         topHalf += this.opacity[i]
         bottomHalf += this.opacity[i + 6]
       }
+
       for (let i = 0; i < 6; i++) {
         if (topHalf !== 0) this.opacity[i] /= topHalf
         if (bottomHalf !== 0) this.opacity[i + 6] /= bottomHalf
       }
 
-      this.$refs.overlap1.color = 'green'
-      this.$refs.overlap2.color = 'green'
-      this.$refs.overlap3.color = 'green'
-      this.$refs.overlap4.color = 'green'
-      this.$refs.overlap5.color = 'green'
-      this.$refs.overlap6.color = 'green'
-      this.$refs.overlap7.color = 'red'
-      this.$refs.overlap8.color = 'red'
-      this.$refs.overlap9.color = 'red'
-      this.$refs.overlap10.color = 'red'
-      this.$refs.overlap11.color = 'red'
-      this.$refs.overlap12.color = 'red'
-      this.$refs.overlap1.opacity = this.opacity[0]
-      this.$refs.overlap2.opacity = this.opacity[1]
-      this.$refs.overlap3.opacity = this.opacity[2]
-      this.$refs.overlap4.opacity = this.opacity[3]
-      this.$refs.overlap5.opacity = this.opacity[4]
-      this.$refs.overlap6.opacity = this.opacity[5]
-      this.$refs.overlap7.opacity = this.opacity[6]
-      this.$refs.overlap8.opacity = this.opacity[7]
-      this.$refs.overlap9.opacity = this.opacity[8]
-      this.$refs.overlap10.opacity = this.opacity[9]
-      this.$refs.overlap11.opacity = this.opacity[10]
-      this.$refs.overlap12.opacity = this.opacity[11]
+      for (let item in this.$refs) {
+        let idx = Object.keys(this.$refs).indexOf(item)
+        if (item === 'history') continue
+        // swap overlap's color according to player's station
+        this.$refs[item].color = (idx <= 5) ? 'green' : 'red'
+        // swap overlap's opacity according to player's station
+        this.$refs[item].opacity = this.opacity[idx]
+      }
+
       this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     },
     SetOption: async function (mode) {

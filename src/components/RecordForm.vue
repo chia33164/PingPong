@@ -19,10 +19,9 @@
       <div class="btn_container">
         <b-button id="btn1" variant="outline-primary" @click='oneHand'> 更新 </b-button>
         <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
-        <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
-        <!-- <b-button id="btn5" variant="outline-primary" @click='save'> 緩存 </b-button> -->
         <b-button id="btn6" variant="outline-primary" @click='showModal'> 暫停 </b-button>
-        <!-- <b-button id="btn5" variant="outline-primary" @click='showHistory()'> 回放 </b-button> -->
+        <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
+        <b-button id="btn5" variant="outline-primary" @click='showReview'> 回放 </b-button>
       </div>
     </div>
     <drag id="table" ref="table"></drag>
@@ -43,11 +42,11 @@
         <lists v-for="(item, index) in oneRound" :index="index" :key="index" :item="item" @fix="showChangeModal(index)"></lists>
       </div>
     </div>
-    <History ref="history"></History>
-    <InputModal @getInfo="getModalInfo"></InputModal>
+    <InputModal ref="info" @getInfo="getModalInfo"></InputModal>
     <FixModal ref="changeData" :data="changeData" @newData="changeListData"></FixModal>
+    <Review ref="review" :data="allRounds"></Review>
 
-    <b-modal ref="my-modal" hide-footer title="暫停">
+    <b-modal ref="stopModal" hide-footer title="暫停">
       <div class="d-block text-center">
         <h3>誰要求暫停？</h3>
       </div>
@@ -62,17 +61,17 @@
 <script>
 import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
-import History from './recordForm/History'
 import InputModal from './recordForm/input_modal'
 import FixModal from './recordForm/change_modal'
+import Review from './recordForm/review'
 
 export default {
   components: {
     drag,
     lists,
-    History,
     InputModal,
-    FixModal
+    FixModal,
+    Review
   },
   data: function () {
     return {
@@ -83,7 +82,6 @@ export default {
       station: '',
       oneRound: [],
       allRounds: [],
-      history: [],
       roundScore: [0, 0], // win , lose
       currentScore: [0, 0], // my point , the other side point
       hand: '',
@@ -99,7 +97,7 @@ export default {
     oneHand: function () {
       if (this.inputData === null || this.inputData[0] === '' || this.inputData[1] === '' || this.inputData[2] === '' || this.inputData[3] === null) {
         alert('請先填寫資訊')
-        this.$bvModal.show('modal-1')
+        this.$bvModal.show('infoModal')
         this.skill = ''
         this.$refs.table.initialTouch()
         return
@@ -139,7 +137,6 @@ export default {
       }
 
       this.oneRound.push(perBall)
-      this.history.push(perBall)
 
       // change hot zone
       let idx = (perBall.placement === '0') ? (12 - Number(this.$refs.table.prev_placement)) : (perBall.getpoint) ? (parseInt(perBall.placement, 10) - 1) : (12 - parseInt(perBall.placement, 10))
@@ -195,9 +192,6 @@ export default {
         let previousServe = this.oneRound[this.oneRound.length - 1].serve
         this.serve = (this.oneRound.length === 0) ? (this.inputData[4] === 'true') : (previousServe === undefined) ? this.serve : (previousServe === '1')
       }
-
-      // delete history
-      this.history.pop()
     },
     clearPreviousData: function () {
       // clear previous data
@@ -205,7 +199,6 @@ export default {
       this.initInfo()
       this.oneRound = []
       this.allRounds = []
-      this.history = []
       this.NumOfBoard = ''
       this.roundScore = [0, 0]
       this.stopTimes = 0
@@ -222,6 +215,7 @@ export default {
 
       // init table color
       this.$refs.table.changeColor()
+      this.station = this.$refs.table.station
 
       // init score
       this.currentScore = [0, 0]
@@ -235,6 +229,8 @@ export default {
           alert('no send')
         }
       }
+
+      this.save()
     },
     isFinished: function () {
       let NumOfBoard = Number(this.NumOfBoard)
@@ -276,11 +272,6 @@ export default {
       // init score
       this.currentScore = [0, 0]
 
-      // reset table to green
-      for (let i = 1; i <= 12; i++) {
-        document.getElementById(`group${i}`).style.background = 'green'
-      }
-
       this.$refs.table.clearLine()
     },
     getModalInfo: function (data) {
@@ -305,11 +296,10 @@ export default {
       this.NumOfBoard = ''
     },
     changeInfo: function () {
-      this.$bvModal.show('modal-1')
+      this.$bvModal.show('infoModal')
     },
-    showHistory: function () {
-      this.$refs.history.showList = this.history
-      this.$bvModal.show('modal-2')
+    showReview: function () {
+      this.$refs.review.isOpen = true
     },
     save: function () {
       let status = {
@@ -320,7 +310,6 @@ export default {
         station: this.station,
         oneRound: this.oneRound,
         allRounds: this.allRounds,
-        history: this.history,
         roundScore: this.roundScore,
         currentScore: this.currentScore,
         NumOfBoard: this.NumOfBoard,
@@ -338,12 +327,17 @@ export default {
       this.station = prevStatus.station
       this.oneRound = prevStatus.oneRound
       this.allRounds = prevStatus.allRounds
-      this.history = prevStatus.history
       this.roundScore = prevStatus.roundScore
       this.currentScore = prevStatus.currentScore
       this.NumOfBoard = prevStatus.NumOfBoard
       this.inputData = prevStatus.inputData
       this.stopTimes = prevStatus.stopTimes
+      this.$refs.info.name1 = prevStatus.name1
+      this.$refs.info.name2 = prevStatus.name2
+      this.$refs.info.game = prevStatus.game
+      this.$refs.info.selected = this.station
+      this.$refs.info.numOfBoards = prevStatus.NumOfBoard
+      this.$refs.info.serve = prevStatus.serve
 
       // change hot zone
       this.oneRound.forEach(data => {
@@ -351,6 +345,7 @@ export default {
         this.$refs.table.opacity[idx] += (this.$refs.table.opacity[idx] < 1) ? 0.2 : 0
         this.$refs.table.changeHotZone(data.station)
       })
+      this.$refs.table.station = this.station
     },
     callStop: function (no) {
       let stop = {
@@ -363,31 +358,30 @@ export default {
       this.stopBtn[no - 1] = false
     },
     showModal: function () {
-      this.$refs['my-modal'].show()
+      this.$refs['stopModal'].show()
     },
     hideModal: function () {
-      this.$refs['my-modal'].hide()
+      this.$refs['stopModal'].hide()
     },
     showChangeModal: function (index) {
       this.changeData = this.oneRound[index]
       this.changeData['index'] = index
-      this.$bvModal.show('modal-3')
+      this.$bvModal.show('fixModal')
     },
     changeListData: function (newData) {
       this.oneRound[newData.index].skill = newData.skill
       this.oneRound[newData.index].placement = newData.placement
       this.oneRound[newData.index].placement_part = newData.placement_part
       this.oneRound[newData.index].part = newData.part
-      this.$bvModal.hide('modal-3')
+      this.$bvModal.hide('fixModal')
     }
   },
   mounted () {
     let prevStatus = JSON.parse(localStorage.getItem('status'))
 
     if (prevStatus === null) {
-      this.$bvModal.show('modal-1')
+      this.$bvModal.show('infoModal')
     } else {
-      this.load(prevStatus)
       if (confirm('要恢復先前狀態嗎？')) {
         this.load(prevStatus)
       } else {
@@ -398,12 +392,8 @@ export default {
         this.$refs.table.changeColor()
         // init score
         this.currentScore = [0, 0]
-        // reset table to green
-        for (let i = 1; i <= 12; i++) {
-          document.getElementById(`group${i}`).style.background = 'green'
-        }
         this.$refs.table.clearLine()
-        this.$bvModal.show('modal-1')
+        this.$bvModal.show('infoModal')
       }
     }
   }
@@ -476,7 +466,6 @@ export default {
 #btn2, #btn3, #btn4, #btn5, #btn6, #skill1, #skill2 {
   width: 60px;
   height: 60px;
-  padding: 10px;
 } 
 .btn_container {
   display: flex;

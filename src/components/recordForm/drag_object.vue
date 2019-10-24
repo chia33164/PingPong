@@ -8,36 +8,24 @@
         </marker>
       </defs>
       <g>
-        <Block ref="block1" id="group1" x='0' y='0' :mode='1' ></Block>
-        <Block ref="block2" id="group2" x='150' y='0' :mode='1'></Block>
-        <Block ref="block3" id="group3" x='300' y='0' :mode='1'></Block>
-        <Block ref="overlap1" id="overlap1" x='0' y='0' :mode='1'></Block>
-        <Block ref="overlap2" id="overlap2" x='150' y='0' :mode='1'></Block>
-        <Block ref="overlap3" id="overlap3" x='300' y='0' :mode='1'></Block>
+        <Block ref="overlap1" x='0' y='0' :mode='1'></Block>
+        <Block ref="overlap2" x='150' y='0' :mode='1'></Block>
+        <Block ref="overlap3" x='300' y='0' :mode='1'></Block>
       </g>
       <g>
-        <Block ref="block4" id="group4" x='0' y='150' :mode='1'></Block>
-        <Block ref="block5" id="group5" x='150' y='150' :mode='1'></Block>
-        <Block ref="block6" id="group6" x='300' y='150' :mode='1'></Block>
-        <Block ref="overlap4" id="overlap4" x='0' y='150' :mode='1'></Block>
-        <Block ref="overlap5" id="overlap5" x='150' y='150' :mode='1'></Block>
-        <Block ref="overlap6" id="overlap6" x='300' y='150' :mode='1'></Block>
+        <Block ref="overlap4" x='0' y='150' :mode='1'></Block>
+        <Block ref="overlap5" x='150' y='150' :mode='1'></Block>
+        <Block ref="overlap6" x='300' y='150' :mode='1'></Block>
       </g>
       <g>
-        <Block ref="block7" id="group7" x='0' y='300' :mode='1'></Block>
-        <Block ref="block8" id="group8" x='150' y='300' :mode='1'></Block>
-        <Block ref="block9" id="group9" x='300' y='300' :mode='1'></Block>
-        <Block ref="overlap7" id="overlap7" x='0' y='300' :mode='1'></Block>
-        <Block ref="overlap8" id="overlap8" x='150' y='300' :mode='1'></Block>
-        <Block ref="overlap9" id="overlap9" x='300' y='300' :mode='1'></Block>
+        <Block ref="overlap7" x='0' y='300' :mode='1'></Block>
+        <Block ref="overlap8" x='150' y='300' :mode='1'></Block>
+        <Block ref="overlap9" x='300' y='300' :mode='1'></Block>
       </g>
       <g>
-        <Block ref="block10" id="group10" x='0' y='450' :mode='1'></Block>
-        <Block ref="block11" id="group11" x='150' y='450' :mode='1'></Block>
-        <Block ref="block12" id="group12" x='300' y='450' :mode='1'></Block>
-        <Block ref="overlap10" id="overlap10" x='0' y='450' :mode='1'></Block>
-        <Block ref="overlap11" id="overlap11" x='150' y='450' :mode='1'></Block>
-        <Block ref="overlap12" id="overlap12" x='300' y='450' :mode='1'></Block>
+        <Block ref="overlap10" x='0' y='450' :mode='1'></Block>
+        <Block ref="overlap11" x='150' y='450' :mode='1'></Block>
+        <Block ref="overlap12" x='300' y='450' :mode='1'></Block>
       </g>
       <g>
 
@@ -138,37 +126,14 @@ export default {
       }
     },
     changeColor: function () {
-      if (this.station === 'top') {
-        this.station = 'bottom'
-      } else if (this.station === 'bottom') {
-        this.station = 'top'
-      }
-      this.$refs.block1.color = 'white'
-      this.$refs.block2.color = 'white'
-      this.$refs.block3.color = 'white'
-      this.$refs.block4.color = 'white'
-      this.$refs.block5.color = 'white'
-      this.$refs.block6.color = 'white'
-      this.$refs.block7.color = 'white'
-      this.$refs.block8.color = 'white'
-      this.$refs.block9.color = 'white'
-      this.$refs.block10.color = 'white'
-      this.$refs.block11.color = 'white'
-      this.$refs.block12.color = 'white'
+      this.station = (this.station === 'top') ? 'bottom' : 'top'
+
       // init hot zone
+      for (let item in this.$refs) {
+        this.$refs[item].opacity = 0
+      }
+
       this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-      this.$refs.overlap1.opacity = 0
-      this.$refs.overlap2.opacity = 0
-      this.$refs.overlap3.opacity = 0
-      this.$refs.overlap4.opacity = 0
-      this.$refs.overlap5.opacity = 0
-      this.$refs.overlap6.opacity = 0
-      this.$refs.overlap7.opacity = 0
-      this.$refs.overlap8.opacity = 0
-      this.$refs.overlap9.opacity = 0
-      this.$refs.overlap10.opacity = 0
-      this.$refs.overlap11.opacity = 0
-      this.$refs.overlap12.opacity = 0
     },
     start_mov: function (event) {
       if (this.current_drag === '') {
@@ -270,93 +235,29 @@ export default {
       lostPoint.addEventListener('touchend', this.moveStop, false)
       servePoint.addEventListener('touchend', this.moveStop, false)
 
-      this.absX = this.getSVGPosition().absX
-      this.absY = this.getSVGPosition().absY
+      let pos = this.getSVGPosition()
+      this.absX = pos.absX
+      this.absY = pos.absY
     },
     initHotZone: function () {
-      this.$refs.overlap1.color = 'red'
-      this.$refs.overlap2.color = 'red'
-      this.$refs.overlap3.color = 'red'
-      this.$refs.overlap4.color = 'red'
-      this.$refs.overlap5.color = 'red'
-      this.$refs.overlap6.color = 'red'
-      this.$refs.overlap7.color = 'red'
-      this.$refs.overlap8.color = 'red'
-      this.$refs.overlap9.color = 'red'
-      this.$refs.overlap10.color = 'red'
-      this.$refs.overlap11.color = 'red'
-      this.$refs.overlap12.color = 'red'
-      this.$refs.overlap1.opacity = 0
-      this.$refs.overlap2.opacity = 0
-      this.$refs.overlap3.opacity = 0
-      this.$refs.overlap4.opacity = 0
-      this.$refs.overlap5.opacity = 0
-      this.$refs.overlap6.opacity = 0
-      this.$refs.overlap7.opacity = 0
-      this.$refs.overlap8.opacity = 0
-      this.$refs.overlap9.opacity = 0
-      this.$refs.overlap10.opacity = 0
-      this.$refs.overlap11.opacity = 0
-      this.$refs.overlap12.opacity = 0
+      for (let item in this.$refs) {
+        this.$refs[item].color = 'red'
+        this.$refs[item].opacity = 0
+      }
     },
     changeHotZone: function (station) {
       this.station = station
-      if (station === 'top') {
-        // swap overlap's color according to player's station
-        this.$refs.overlap1.color = 'red'
-        this.$refs.overlap2.color = 'red'
-        this.$refs.overlap3.color = 'red'
-        this.$refs.overlap4.color = 'red'
-        this.$refs.overlap5.color = 'red'
-        this.$refs.overlap6.color = 'red'
-        this.$refs.overlap7.color = 'green'
-        this.$refs.overlap8.color = 'green'
-        this.$refs.overlap9.color = 'green'
-        this.$refs.overlap10.color = 'green'
-        this.$refs.overlap11.color = 'green'
-        this.$refs.overlap12.color = 'green'
-
-        // swap overlap's opacity according to player's station
-        this.$refs.overlap1.opacity = this.opacity[11]
-        this.$refs.overlap2.opacity = this.opacity[10]
-        this.$refs.overlap3.opacity = this.opacity[9]
-        this.$refs.overlap4.opacity = this.opacity[8]
-        this.$refs.overlap5.opacity = this.opacity[7]
-        this.$refs.overlap6.opacity = this.opacity[6]
-        this.$refs.overlap7.opacity = this.opacity[5]
-        this.$refs.overlap8.opacity = this.opacity[4]
-        this.$refs.overlap9.opacity = this.opacity[3]
-        this.$refs.overlap10.opacity = this.opacity[2]
-        this.$refs.overlap11.opacity = this.opacity[1]
-        this.$refs.overlap12.opacity = this.opacity[0]
-      } else if (station === 'bottom') {
-        // swap overlap's color according to player's station
-        this.$refs.overlap1.color = 'green'
-        this.$refs.overlap2.color = 'green'
-        this.$refs.overlap3.color = 'green'
-        this.$refs.overlap4.color = 'green'
-        this.$refs.overlap5.color = 'green'
-        this.$refs.overlap6.color = 'green'
-        this.$refs.overlap7.color = 'red'
-        this.$refs.overlap8.color = 'red'
-        this.$refs.overlap9.color = 'red'
-        this.$refs.overlap10.color = 'red'
-        this.$refs.overlap11.color = 'red'
-        this.$refs.overlap12.color = 'red'
-
-        // swap overlap's opacity according to player's station
-        this.$refs.overlap1.opacity = this.opacity[0]
-        this.$refs.overlap2.opacity = this.opacity[1]
-        this.$refs.overlap3.opacity = this.opacity[2]
-        this.$refs.overlap4.opacity = this.opacity[3]
-        this.$refs.overlap5.opacity = this.opacity[4]
-        this.$refs.overlap6.opacity = this.opacity[5]
-        this.$refs.overlap7.opacity = this.opacity[6]
-        this.$refs.overlap8.opacity = this.opacity[7]
-        this.$refs.overlap9.opacity = this.opacity[8]
-        this.$refs.overlap10.opacity = this.opacity[9]
-        this.$refs.overlap11.opacity = this.opacity[10]
-        this.$refs.overlap12.opacity = this.opacity[11]
+      for (let item in this.$refs) {
+        let idx = Object.keys(this.$refs).indexOf(item)
+        if (station === 'top') {
+          // swap overlap's color according to player's station
+          this.$refs[item].color = (idx <= 5) ? 'red' : 'green'
+          // swap overlap's opacity according to player's station
+          this.$refs[item].opacity = this.opacity[11 - idx]
+        } else if (station === 'bottom') {
+          this.$refs[item].color = (idx <= 5) ? 'green' : 'red'
+          this.$refs[item].opacity = this.opacity[idx]
+        }
       }
     },
     getSVGPosition: function () {

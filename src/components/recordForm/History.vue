@@ -1,7 +1,7 @@
 <template>
   <div id="history_modal">
     <b-modal
-    id="modal-2"
+    id="historyModal"
     ref="modal"
     title="回放"
     >
@@ -14,28 +14,28 @@
             </marker>
           </defs>
           <g>
-            <Block ref="block1" id="group1" x='0' y='0'></Block>
-            <Block ref="block2" id="group2" x='150' y='0'></Block>
-            <Block ref="block3" id="group3" x='300' y='0'></Block>
+            <Block ref="block1" x='0' y='0'></Block>
+            <Block ref="block2" x='150' y='0'></Block>
+            <Block ref="block3" x='300' y='0'></Block>
           </g>
           <g>
-            <Block ref="block4" id="group4" x='0' y='150'></Block>
-            <Block ref="block5" id="group5" x='150' y='150'></Block>
-            <Block ref="block6" id="group6" x='300' y='150'></Block>
+            <Block ref="block4" x='0' y='150'></Block>
+            <Block ref="block5" x='150' y='150'></Block>
+            <Block ref="block6" x='300' y='150'></Block>
           </g>
           <g>
-            <Block ref="block7" id="group7" x='0' y='300'></Block>
-            <Block ref="block8" id="group8" x='150' y='300'></Block>
-            <Block ref="block9" id="group9" x='300' y='300'></Block>
+            <Block ref="block7" x='0' y='300'></Block>
+            <Block ref="block8" x='150' y='300'></Block>
+            <Block ref="block9" x='300' y='300'></Block>
           </g>
           <g>
-            <Block ref="block10" id="group10" x='0' y='450'></Block>
-            <Block ref="block11" id="group11" x='150' y='450'></Block>
-            <Block ref="block12" id="group12" x='300' y='450'></Block>
+            <Block ref="block10" x='0' y='450'></Block>
+            <Block ref="block11" x='150' y='450'></Block>
+            <Block ref="block12" x='300' y='450'></Block>
           </g>
 
-          <line id='test1' :x1="prev_x" :y1="prev_y" :x2="ringX" :y2="ringY" stroke='red' marker-end="url(#arrow-head)"/>
-          <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke='red'/>
+          <line :x1="prev_x" :y1="prev_y" :x2="ringX" :y2="ringY" stroke='red' marker-end="url(#arrow-head)"/>
+          <line x1='0' y1='300' x2='450' y2='300' stroke='red'/>
 
           <g id="nodeTemp" class="layerNodeGroup">
             <circle class="layerNode source" fill="white" :cx="x" :cy="y" r="20" stroke="grey" stroke-width="2"></circle>
@@ -85,103 +85,31 @@ export default {
         let endPart = this.showList[idx].placement_part
         let start = this.showList[idx].skill.substr(1)
         let startPart = this.showList[idx].part.substr(4)
+        let posX, posY
         if (this.showList[idx].getpoint) {
-          switch (start) {
-            case '1':
-              this.judgePosByPart(0, startPart, 300, 450)
-              break
-            case '2':
-              this.judgePosByPart(0, startPart, 150, 450)
-              break
-            case '3':
-              this.judgePosByPart(0, startPart, 0, 450)
-              break
-            case '4':
-              this.judgePosByPart(0, startPart, 300, 300)
-              break
-            case '5':
-              this.judgePosByPart(0, startPart, 150, 300)
-              break
-            case '6':
-              this.judgePosByPart(0, startPart, 0, 300)
-              break
-            default:
-              break
-          }
-          switch (end) {
-            case '1':
-              this.judgePosByPart(1, endPart, 0, 0)
-              break
-            case '2':
-              this.judgePosByPart(1, endPart, 150, 0)
-              break
-            case '3':
-              this.judgePosByPart(1, endPart, 300, 0)
-              break
-            case '4':
-              this.judgePosByPart(1, endPart, 0, 150)
-              break
-            case '5':
-              this.judgePosByPart(1, endPart, 150, 150)
-              break
-            case '6':
-              this.judgePosByPart(1, endPart, 300, 150)
-              break
-            default:
-              break
-          }
+          posX = 300 - 150 * ((Number(start) - 1) % 3)
+          posY = 450 - 150 * ((Number(start) - 1) / 3)
+          this.judgePosByPart(0, startPart, posX, posY)
+
+          posX = 150 * ((Number(end) - 1) % 3)
+          posY = 150 * ((Number(end) - 1) / 3)
+          this.judgePosByPart(1, endPart, posX, posY)
+
           if (this.showList[idx].skill === 'S') {
             node.children[0].setAttribute('stroke', 'orange')
-            node.children[1].children[0].textContent = '得分'
           } else {
             node.children[0].setAttribute('stroke', 'red')
-            node.children[1].children[0].textContent = '得分'
           }
+          node.children[1].children[0].textContent = '得分'
         } else {
-          switch (start) {
-            case '1':
-              this.judgePosByPart(0, startPart, 0, 0)
-              break
-            case '2':
-              this.judgePosByPart(0, startPart, 150, 0)
-              break
-            case '3':
-              this.judgePosByPart(0, startPart, 300, 0)
-              break
-            case '4':
-              this.judgePosByPart(0, startPart, 0, 150)
-              break
-            case '5':
-              this.judgePosByPart(0, startPart, 150, 150)
-              break
-            case '6':
-              this.judgePosByPart(0, startPart, 300, 150)
-              break
-            default:
-              break
-          }
-          switch (end) {
-            case '1':
-              this.judgePosByPart(1, endPart, 300, 450)
-              break
-            case '2':
-              this.judgePosByPart(1, endPart, 150, 450)
-              break
-            case '3':
-              this.judgePosByPart(1, endPart, 0, 450)
-              break
-            case '4':
-              this.judgePosByPart(1, endPart, 300, 300)
-              break
-            case '5':
-              this.judgePosByPart(1, endPart, 150, 300)
-              break
-            case '6':
-              this.judgePosByPart(1, endPart, 0, 300)
-              break
-            default:
-              break
-          }
+          posX = 150 * ((Number(start) - 1) % 3)
+          posY = 150 * ((Number(start) - 1) % 3)
+          this.judgePosByPart(0, startPart, posX, posY)
+
+          posX = 300 - 150 * ((Number(start) - 1) % 3)
+          posY = 450 - 150 * ((Number(start) - 1) / 3)
+          this.judgePosByPart(1, endPart, posX, posY)
+
           node.children[0].setAttribute('stroke', 'blue')
           node.children[1].children[0].textContent = '失分'
         }

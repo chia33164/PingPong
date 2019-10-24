@@ -1,7 +1,7 @@
 <template>
   <div id="input_modal">
     <b-modal
-    id="modal-1"
+    id="infoModal"
     ref="modal"
     title="基本資訊"
     @show="resetModal"

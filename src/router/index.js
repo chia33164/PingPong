@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import recordForm from '@/components/RecordForm'
-import Exam from '@/components/Exam'
+import capsule from '@/components/capsule'
 import databoard from '@/components/getData'
 import animation from '@/components/Animation'
 import statistic from '@/components/Statistic'
@@ -22,9 +22,9 @@ export default new Router({
       component: recordForm
     },
     {
-      path: '/exam',
-      name: 'exam',
-      component: Exam
+      path: '/capsule',
+      name: 'capsule',
+      component: capsule
     },
     {
       path: '/databoard',
