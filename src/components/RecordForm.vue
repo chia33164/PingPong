@@ -2,8 +2,8 @@
   <div id="record_container">
     <div class="leftPart">
       <div class="symbol_container">
-        <b-button id="skill1" variant="outline-primary" @click='hand="正手"'> 正手 </b-button>
-        <b-button id="skill2" variant="outline-primary" @click='hand="反手"'> 反手 </b-button>
+        <button class="operateBtn" id="skill1" @click='hand="正手"'> 正手 </button>
+        <button class="operateBtn" id="skill2" @click='hand="反手"'> 反手 </button>
       </div>
       <div class="toolList" >
         <div class="toolNode serve" id="servePoint"> 發球得分 </div>
@@ -14,14 +14,12 @@
       <br>
       <br>
       <br>
-      <br>
-      <br>
       <div class="btn_container">
-        <b-button id="btn1" variant="outline-primary" @click='oneHand'> 更新 </b-button>
-        <b-button id="btn2" variant="outline-primary" @click='deletePreviousHand'> 刪除 </b-button>
-        <b-button id="btn6" variant="outline-primary" @click='showModal'> 暫停 </b-button>
-        <b-button id="btn3" variant="outline-primary" @click='endRound'> 完局 </b-button>
-        <b-button id="btn5" variant="outline-primary" @click='showReview'> 回放 </b-button>
+        <button class="operateBtn" id="updateBtn" @click='oneHand'> 更新 </button>
+        <button class="operateBtn" id="deleteBtn" @click='deletePreviousHand'> 刪除 </button>
+        <button class="operateBtn" id="stopBtn" @click='showModal'> 暫停 </button>
+        <button class="operateBtn" id="endBtn" @click='endRound'> 完局 </button>
+        <button class="operateBtn" id="replayBtn" @click='showReview'> 回放 </button>
       </div>
     </div>
     <drag id="table" ref="table"></drag>
@@ -30,7 +28,7 @@
         <div id="Name1">{{this.name1}}</div>
         <div id="Name2">{{this.name2}}</div>
         <div id="Game">{{this.game}}</div>
-        <b-button size="sm" variant="outline-primary" id='infoBox' @click="changeInfo">資訊</b-button>
+        <button class="operateBtn" id='infoBox' @click="changeInfo">資訊</button>
       </div>
       <div>
         <div class="record">比分</div>
@@ -95,6 +93,8 @@ export default {
   },
   methods: {
     oneHand: function () {
+      document.getElementById('skill1').classList.remove('clickedBtn')
+      document.getElementById('skill2').classList.remove('clickedBtn')
       if (this.inputData === null || this.inputData[0] === '' || this.inputData[1] === '' || this.inputData[2] === '' || this.inputData[3] === null) {
         alert('請先填寫資訊')
         this.$bvModal.show('infoModal')
@@ -377,6 +377,39 @@ export default {
     }
   },
   mounted () {
+    // set buttons' clicked view
+    let elements = [document.getElementById('skill1'), document.getElementById('skill2')]
+    let toggle = (e) => {
+      if (e.target.id === 'skill1') {
+        elements[0].classList.add('clickedBtn')
+        elements[1].classList.remove('clickedBtn')
+      } else {
+        elements[1].classList.add('clickedBtn')
+        elements[0].classList.remove('clickedBtn')
+      }
+    }
+    elements.forEach(ele => {
+      ele.addEventListener('click', toggle, false)
+    })
+
+    document.getElementById('infoBox').addEventListener('pointerdown', function () {
+      document.getElementById('infoBox').classList.add('clickedBtn')
+    }, false)
+
+    document.getElementById('infoBox').addEventListener('pointerup', function () {
+      document.getElementById('infoBox').classList.remove('clickedBtn')
+    }, false)
+
+    let btnsId = ['updateBtn', 'deleteBtn', 'stopBtn', 'endBtn', 'replayBtn']
+    btnsId.forEach(id => {
+      document.getElementById(id).addEventListener('pointerdown', function () {
+        document.getElementById(id).classList.add('clickedBtn')
+      }, false)
+      document.getElementById(id).addEventListener('pointerup', function () {
+        document.getElementById(id).classList.remove('clickedBtn')
+      }, false)
+    })
+
     let prevStatus = JSON.parse(localStorage.getItem('status'))
 
     if (prevStatus === null) {
@@ -458,15 +491,7 @@ export default {
 #table {
   padding: 10px;
 }
-#btn1 {
-  /* margin-top: 4px; */
-  width: 60px;
-  height: 60px;
-}
-#btn2, #btn3, #btn4, #btn5, #btn6, #skill1, #skill2 {
-  width: 60px;
-  height: 60px;
-} 
+
 .btn_container {
   display: flex;
   flex-direction: column;
@@ -511,13 +536,25 @@ export default {
   width: 100px; 
 }
 
-#infoBox {
-  height: 50px;
-  width: 60px;
-}
-
 #leftPart {
   text-align: center;
+}
+
+.operateBtn {
+  padding: 7px;
+  margin-top: 5px;
+  background-color: white;
+  color: rgb(108, 110, 254);
+  font-size: 1.1rem;
+  border: 1px solid rgb(108, 110, 254);
+  border-radius: 10px;
+  width: 60px;
+  height: 50px;
+}
+
+.clickedBtn {
+  background-color: rgb(108, 110, 254);
+  color: white;
 }
 
 </style>
