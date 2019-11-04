@@ -23,14 +23,14 @@
         <span @click="changeMode" id="3" v-if="mode == 3" style="color:#35495E">歷史記錄</span>
         <span @click="changeMode" id="3" v-else>歷史記錄</span>
       </router-link>
-      <router-link tag="li" to="/capsule">
+      <!-- <router-link tag="li" to="/capsule">
         <span @click="changeMode" id="4" v-if="mode == 4" style="color:#35495E">對戰資訊</span>
         <span @click="changeMode" id="4" v-else>對戰資訊</span>
       </router-link>
       <router-link tag="li" to="/animation">
         <span @click="changeMode" id="5" v-if="mode == 5" style="color:#35495E">球路動畫</span>
         <span @click="changeMode" id="5" v-else>球路動畫</span>
-      </router-link>
+      </router-link> -->
     </footer>
   </div>
 </template>

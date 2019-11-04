@@ -82,30 +82,7 @@ export default {
     DrawHotZone: function (no) {
       // draw hotzone for game
       this.station = this.data[no].round[0].station === 'top'
-      this.data[no].round.forEach(everyHand => {
-        // accumulate placement time
-        if (this.station) {
-          if (everyHand.getpoint) {
-            this.opacity[12 - Number(everyHand.placement)] += 1
-          } else {
-            if (everyHand.placement === '0') {
-              this.opacity[Number((everyHand.skill.split('F')[1] === undefined) ? everyHand.skill.split('B')[1] : everyHand.skill.split('F')[1]) - 1] += 1
-            } else {
-              this.opacity[Number(everyHand.placement) - 1] += 1
-            }
-          }
-        } else {
-          if (everyHand.getpoint) {
-            this.opacity[everyHand.placement - 1] += 1
-          } else {
-            if (everyHand.placement === '0') {
-              this.opacity[12 - Number((everyHand.skill.split('F')[1] === undefined) ? everyHand.skill.split('B')[1] : everyHand.skill.split('F')[1])] += 1
-            } else {
-              this.opacity[12 - everyHand.placement] += 1
-            }
-          }
-        }
-      })
+      this.opacity = JSON.parse('[' + this.data[no].round[this.data[no].round.length - 1].opacity + ']')
 
       let topHalf = 0
       let bottomHalf = 0

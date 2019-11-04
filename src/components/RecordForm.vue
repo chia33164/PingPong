@@ -697,12 +697,15 @@ export default {
   color: #2c3e50;
 }
 
+.table_container {
+  margin-top: 10px;
+}
+
 .stopBtns {
   display: flex;
   flex-direction: row;
   text-align: center;
-  justify-content: center;
-  align-items: center;
+  justify-content: center;align-items: center;
 }
 
 .toolNode {
