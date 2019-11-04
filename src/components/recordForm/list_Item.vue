@@ -8,19 +8,19 @@
     </div>
     <div v-else>
       <div v-if="item.getpoint">
-        <div class="list-item">{{item.score}}</div>
+        <div class="list-item">{{JSON.parse('[' + item.currentScore + ']')[0]}}:{{JSON.parse('[' + item.currentScore + ']')[1]}}</div>
         <div class="list-item">{{item.serve}}</div>
         <div class="list-item">{{item.skill}}</div>
         <div class="list-item">{{item.placement}}</div>
       </div>
       <div v-else>
-        <div class="list-item list_lostpoint" >{{item.score}}</div>
+        <div class="list-item list_lostpoint" >{{JSON.parse('[' + item.currentScore + ']')[0]}}:{{JSON.parse('[' + item.currentScore + ']')[1]}}</div>
         <div class="list-item list_lostpoint" >{{item.serve}}</div>
         <div class="list-item list_lostpoint" >{{item.skill}}</div>
         <div class="list-item list_lostpoint" >{{item.placement}}</div>
       </div>
       <div>
-        <b-button size="sm" variant="outline-primary" class="changeItem" @click="changeData">改</b-button>
+        <button class="changeItem" @click="changeData">改</button>
       </div>
     </div>
   </div>
@@ -76,6 +76,11 @@ export default {
   width: 25px;
   height: 25px;
   align-content: center;
+  background-color: white;
+  padding: 2px;
+  color: rgb(108, 110, 254);
+  font-size: 1.1rem;
+  border: 1px solid rgb(108, 110, 254);
 }
 
 .inputItem {

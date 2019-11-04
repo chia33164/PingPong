@@ -28,7 +28,6 @@
         <Block ref="overlap12" x='300' y='450' :mode='1'></Block>
       </g>
       <g>
-
       </g>
       <line id='test1' :x1="prev_x-absX" :y1="prev_y-absY" :x2="x-absX" :y2="y-absY" stroke='red' marker-end="url(#arrow-head)" v-show="showLine"/>
       <line id='test2' x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>

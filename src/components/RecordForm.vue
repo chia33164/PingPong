@@ -22,11 +22,46 @@
         <button class="operateBtn" id="replayBtn" @click='showReview'> 回放 </button>
       </div>
     </div>
-    <drag id="table" ref="table"></drag>
+    <div class="table_container">
+      <svg id="table_container" width="450" height="600">
+        <defs>
+          <marker id='arrow-head' orient="auto" markerWidth='50' markerHeight='100' refX='10' refY='5'>
+              <!-- triangle pointing (+x) -->
+              <path d='M0,0 V10 L10,5 Z' fill="red" />
+          </marker>
+        </defs>
+        <g>
+          <Block ref="overlap1" x='0' y='0' :mode='1'></Block>
+          <Block ref="overlap2" x='150' y='0' :mode='1'></Block>
+          <Block ref="overlap3" x='300' y='0' :mode='1'></Block>
+        </g>
+        <g>
+          <Block ref="overlap4" x='0' y='150' :mode='1'></Block>
+          <Block ref="overlap5" x='150' y='150' :mode='1'></Block>
+          <Block ref="overlap6" x='300' y='150' :mode='1'></Block>
+        </g>
+        <g>
+          <Block ref="overlap7" x='0' y='300' :mode='1'></Block>
+          <Block ref="overlap8" x='150' y='300' :mode='1'></Block>
+          <Block ref="overlap9" x='300' y='300' :mode='1'></Block>
+        </g>
+        <g>
+          <Block ref="overlap10" x='0' y='450' :mode='1'></Block>
+          <Block ref="overlap11" x='150' y='450' :mode='1'></Block>
+          <Block ref="overlap12" x='300' y='450' :mode='1'></Block>
+        </g>
+        <g>
+        </g>
+        <line :x1="prev_x-absX" :y1="prev_y-absY" :x2="x-absX" :y2="y-absY" stroke='red' marker-end="url(#arrow-head)" v-show="showLine"/>
+        <line x1='0' y1='300' x2='450' y2='300' stroke-width="4" stroke='red'/>
+        <image xlink:href="../assets/person.png" x=0 y=0 width="40px" height="40px" v-show="station === 'top'"/>
+        <image xlink:href="../assets/person.png" x=0 y=560 width="40px" height="40px" v-show="station === 'bottom'"/>
+      </svg>
+    </div>
     <div id="list">
       <div id="title">
-        <div id="Name1">{{this.name1}}</div>
-        <div id="Name2">{{this.name2}}</div>
+        <div class="Name">{{this.name1}}</div>
+        <div class="Name">{{this.name2}}</div>
         <div id="Game">{{this.game}}</div>
         <button class="operateBtn" id='infoBox' @click="changeInfo">資訊</button>
       </div>
@@ -48,15 +83,16 @@
       <div class="d-block text-center">
         <h3>誰要求暫停？</h3>
       </div>
-      <b-button class="mt-3" variant="outline-danger" block @click="callStop(1)" v-if="stopBtn[0]">{{name1}}</b-button>
-      <b-button class="mt-3" variant="outline-danger" block @click="callStop(1)" v-else disabled>{{name1}}</b-button>
-      <b-button class="mt-2" variant="outline-danger" block @click="callStop(2)" v-if="stopBtn[1]">{{name2}}</b-button>
-      <b-button class="mt-2" variant="outline-danger" block @click="callStop(2)" v-else disabled>{{name2}}</b-button>
+      <div class="stopBtns">
+        <button class="stopBtn" @click="callStop(1)" v-if="stopBtn[0]">{{name1}}</button>
+        <button class="stopBtn" @click="callStop(2)" v-if="stopBtn[1]">{{name2}}</button>
+      </div>
     </b-modal>
   </div>
 </template>
 
 <script>
+import Block from './recordForm/perBlock.vue'
 import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
 import InputModal from './recordForm/input_modal'
@@ -69,7 +105,8 @@ export default {
     lists,
     InputModal,
     FixModal,
-    Review
+    Review,
+    Block
   },
   data: function () {
     return {
@@ -88,7 +125,22 @@ export default {
       skill: '',
       stopTimes: 0,
       stopBtn: [true, true],
-      changeData: null
+      changeData: null,
+      placement: '',
+      prev_placement: '',
+      block_part: '0',
+      prev_block_part: '0',
+      prev_x: 0,
+      prev_y: 0,
+      x: 0,
+      y: 0,
+      getpoint: false,
+      serve_point: false,
+      showLine: false,
+      opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      current_drag: '',
+      absX: 0,
+      absY: 0
     }
   },
   methods: {
@@ -98,22 +150,21 @@ export default {
       if (this.inputData === null || this.inputData[0] === '' || this.inputData[1] === '' || this.inputData[2] === '' || this.inputData[3] === null) {
         alert('請先填寫資訊')
         this.$bvModal.show('infoModal')
-        this.skill = ''
-        this.$refs.table.initialTouch()
+        this.resetTouch()
         return
       }
 
       if (this.hand === '') {
         alert('請選擇正反手！！')
-        this.$refs.table.initialTouch()
+        this.resetTouch()
         return
       }
 
       // get serve, point, forehand, backhand
-      this.skill = (this.hand === '正手') ? 'F' + this.$refs.table.prev_placement : 'B' + this.$refs.table.prev_placement
+      this.skill = (this.hand === '正手') ? 'F' + this.prev_placement : 'B' + this.prev_placement
 
       // add score
-      this.$refs.table.getpoint ? this.currentScore[0]++ : this.currentScore[1]++
+      this.getpoint ? this.currentScore[0]++ : this.currentScore[1]++
 
       // change serve side
       if (this.oneRound.length === 0) {
@@ -124,78 +175,63 @@ export default {
         this.serve = !this.serve
       }
 
+      // change hot zone
+      let idx = (!(this.prev_x !== 0 && this.prev_y !== 0)) ? (12 - Number(this.prev_placement)) : (this.getpoint) ? (parseInt(this.placement, 10) - 1) : (12 - parseInt(this.placement, 10))
+      this.opacity[idx] += (this.opacity[idx] < 1) ? 0.2 : 0
+      this.changeHotZone(this.station)
+
       // record every round
       let perBall = {
-        score: `${this.currentScore[0]}:${this.currentScore[1]}`,
+        currentScore: String(this.currentScore),
         serve: this.serve ? '1' : '0',
-        skill: this.$refs.table.serve_point ? 'S' : this.skill,
-        part: this.$refs.table.prev_block_part,
-        getpoint: this.$refs.table.getpoint,
-        station: this.$refs.table.station,
-        placement: (this.$refs.table.prev_x !== 0 && this.$refs.table.prev_y !== 0) ? this.$refs.table.placement : '0',
-        placement_part: this.$refs.table.block_part.substr(4)
+        skill: this.serve_point ? 'S' : this.skill,
+        part: this.prev_block_part,
+        getpoint: this.getpoint,
+        station: this.station,
+        placement: (this.prev_x !== 0 && this.prev_y !== 0) ? this.placement : '0',
+        placement_part: this.block_part.substr(4),
+        opacity: String(this.opacity)
       }
 
       this.oneRound.push(perBall)
 
-      // change hot zone
-      let idx = (perBall.placement === '0') ? (12 - Number(this.$refs.table.prev_placement)) : (perBall.getpoint) ? (parseInt(perBall.placement, 10) - 1) : (12 - parseInt(perBall.placement, 10))
-      this.$refs.table.opacity[idx] += (this.$refs.table.opacity[idx] < 1) ? 0.2 : 0
-      this.$refs.table.changeHotZone(perBall.station)
-
       // initial drag object's position
-      this.$refs.table.initialTouch()
+      this.resetTouch()
       this.hand = ''
 
       // save to localStorage
       this.save()
     },
     deletePreviousHand: function () {
+      if (this.oneRound.length === 0) return
       let lastHand = this.oneRound[this.oneRound.length - 1]
-      let idx
+      this.oneRound.pop()
 
       if (lastHand.stop) {
-        this.oneRound.pop()
         this.stopTimes--
+        this.stopBtn[lastHand.no - 1] = true
       } else {
-        idx = lastHand.getpoint ? (parseInt(lastHand.placement, 10) - 1) : (12 - parseInt(lastHand.placement, 10))
-
-        // resume previous opacity
-        this.$refs.table.opacity[idx] -= (this.$refs.table.opacity[idx] > 0) ? 0.2 : 0
-        this.$refs.table.changeHotZone(lastHand.station)
-
-        // init score
         if (this.oneRound.length === 0) {
+          this.serve = (this.inputData[4] === 'true')
           this.currentScore = [0, 0]
-        } else if (this.oneRound.length === 1) {
-          this.oneRound.pop()
-          this.currentScore = [0, 0]
+          this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          this.changeHotZone(this.inputData[3])
         } else {
-          this.oneRound.pop()
-          let score = this.oneRound[this.oneRound.length - 1].score
-          let iter = 0
-
-          // skip timeout
-          while (score === undefined) {
-            iter++
-            score = this.oneRound[this.oneRound.length - 1 - iter].score
-            // stop and turn serve side
-            if ((this.oneRound.length - this.stopTimes) % 2 === 0) this.serve = !this.serve
+          let lastHand = this.oneRound[this.oneRound.length - 1]
+          // TODO : double time stop will trig issue
+          if (lastHand.stop) {
+            lastHand = this.oneRound[this.oneRound.length - 2]
           }
-
-          let myPoint = score.split(':')[0]
-          let hisPoint = score.split(':')[1]
-          this.currentScore = [myPoint, hisPoint]
+          this.serve = lastHand.stop ? this.serve : lastHand.serve
+          this.currentScore = JSON.parse('[' + lastHand.currentScore + ']')
+          this.opacity = JSON.parse('[' + lastHand.opacity + ']')
+          this.changeHotZone(lastHand.station)
         }
-
-        // resume serve side
-        let previousServe = this.oneRound[this.oneRound.length - 1].serve
-        this.serve = (this.oneRound.length === 0) ? (this.inputData[4] === 'true') : (previousServe === undefined) ? this.serve : (previousServe === '1')
       }
     },
     clearPreviousData: function () {
       // clear previous data
-      this.$refs.table.initialTouch()
+      this.resetTouch()
       this.initInfo()
       this.oneRound = []
       this.allRounds = []
@@ -209,13 +245,13 @@ export default {
       this.allRounds.push({no: this.allRounds.length + 1, round: this.oneRound})
 
       // clear previous data
-      this.$refs.table.initialTouch()
-      this.$refs.table.clearLine()
+      this.resetTouch()
+      this.clearLine()
       this.oneRound = []
 
       // init table color
-      this.$refs.table.changeColor()
-      this.station = this.$refs.table.station
+      this.changeColor()
+      this.station = this.station
 
       // init score
       this.currentScore = [0, 0]
@@ -267,12 +303,12 @@ export default {
       })
 
       // init table color
-      this.$refs.table.changeColor()
+      this.changeColor()
 
       // init score
       this.currentScore = [0, 0]
 
-      this.$refs.table.clearLine()
+      this.clearLine()
     },
     getModalInfo: function (data) {
       this.inputData = data
@@ -282,18 +318,9 @@ export default {
       this.station = data[3]
       this.serve = (data[4] === 'true')
       this.NumOfBoard = data[5]
-      this.$refs.table.changeHotZone(this.station)
+      this.changeHotZone(this.station)
       // save to localStorage
       this.save()
-    },
-    initInfo: function () {
-      this.inputData = null
-      this.game = ''
-      this.name1 = ''
-      this.name2 = ''
-      this.station = ''
-      this.serve = null
-      this.NumOfBoard = ''
     },
     changeInfo: function () {
       this.$bvModal.show('infoModal')
@@ -342,14 +369,15 @@ export default {
       // change hot zone
       this.oneRound.forEach(data => {
         let idx = (data.placement === '0') ? (12 - Number(data.skill.split('F')[1] === undefined ? data.skill.split('B')[1] : data.skill.split('F')[1])) : (data.getpoint) ? (parseInt(data.placement, 10) - 1) : (12 - parseInt(data.placement, 10))
-        this.$refs.table.opacity[idx] += (this.$refs.table.opacity[idx] < 1) ? 0.2 : 0
-        this.$refs.table.changeHotZone(data.station)
+        this.opacity[idx] += (this.opacity[idx] < 1) ? 0.2 : 0
+        this.changeHotZone(data.station)
       })
-      this.$refs.table.station = this.station
+      this.station = this.station
     },
     callStop: function (no) {
       let stop = {
         stop: true,
+        no: no,
         player: no === 1 ? this.name1 : this.name2
       }
       this.stopTimes++
@@ -374,41 +402,266 @@ export default {
       this.oneRound[newData.index].placement_part = newData.placement_part
       this.oneRound[newData.index].part = newData.part
       this.$bvModal.hide('fixModal')
+    },
+    clearLine: function () {
+      this.prev_x = 0
+      this.prev_y = 0
+      this.showLine = false
+    },
+    drawLine: function () {
+      this.showLine = true
+    },
+    computeRingXY: function (currentX, currentY) {
+      let dist = this.getDist(this.prev_x, this.prev_y, currentX, currentY)
+      let element = document.getElementsByClassName('moving')[0]
+      let radius = Number(element.getAttribute('radius'))
+      // 用相似形計算
+      return {
+        RingX: currentX - (currentX - this.prev_x) * (radius / dist),
+        RingY: currentY - (currentY - this.prev_y) * (radius / dist)
+      }
+    },
+    getDist: function (x1, y1, x2, y2) {
+      return Math.pow((Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2)), 0.5)
+    },
+    getNewPos: function (numOfPartX, numOfPartY) {
+      let svgBox = this.getSVGPosition()
+      let blockWidth = svgBox.boxWidth / 9
+      let partRow = numOfPartY % 3
+      let partCol = numOfPartX % 3
+      let blockCol = Math.floor(numOfPartY / 3) // (0~11 / 3) => (0~3)
+      let blockRow = Math.floor(numOfPartX / 3) // (0~8 / 3) => (0~2)
+      let OffsetX = blockWidth * numOfPartX
+      let OffsetY = blockWidth * numOfPartY
+      let isValid = !(OffsetX < 0 || OffsetX > 400 || OffsetY < 0 || OffsetY > 550)
+
+      return {
+        newOffsetX: (isValid) ? (blockWidth * numOfPartX + blockWidth / 2) : null,
+        newOffsetY: (isValid) ? (blockWidth * numOfPartY + blockWidth / 2) : null,
+        part: (isValid) ? (partRow * 3 + partCol + 1) : null,
+        block: (isValid) ? (blockCol * 3 + blockRow + 1) : null,
+        isValid: isValid
+      }
+    },
+    changeColor: function () {
+      this.station = (this.station === 'top') ? 'bottom' : 'top'
+
+      // init hot zone
+      for (let item in this.$refs) {
+        this.$refs[item].opacity = 0
+      }
+
+      this.opacity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    start_mov: function (event) {
+      if (this.current_drag === '') {
+        this.current_drag = event.target.id
+      } else {
+        // record prev x and prev y
+        let currentNode = event.changedTouches[0]
+        let svgBox = this.getSVGPosition()
+        let divX = (currentNode.pageX - svgBox.absX) / (svgBox.boxWidth / 9)
+        let divY = (currentNode.pageY - svgBox.absY) / (svgBox.boxHeight / 12)
+        let FixPos = this.getNewPos(Math.floor(divX), Math.floor(divY))
+
+        this.prev_x = FixPos.newOffsetX + svgBox.absX
+        this.prev_y = FixPos.newOffsetY + svgBox.absY
+        this.prev_placement = this.placement
+        this.prev_block_part = this.block_part
+        this.drawLine()
+      }
+
+      let element = event.target
+      let touch = event.targetTouches[0]
+      element.setAttribute('radius', touch.target.offsetWidth / 2)
+      element.setAttribute('center-offsetx', touch.target.offsetWidth / 2)
+      element.setAttribute('center-offsety', touch.target.offsetHeight / 2)
+      element.classList.add('moving')
+    },
+    move_with_finger: function (event) {
+      if (this.current_drag === event.target.id || this.current_drag === '') {
+        let touch = event.targetTouches[0]
+        let element = event.target
+        let updatePos = this.computeRingXY(touch.pageX, touch.pageY)
+
+        // place element where the finger is
+        element.style.left = touch.pageX - touch.target.offsetWidth / 2 + 'px'
+        element.style.top = touch.pageY - touch.target.offsetHeight / 2 + 'px'
+        this.x = updatePos.RingX
+        this.y = updatePos.RingY
+      }
+      event.preventDefault()
+    },
+    moveStop: function (event) {
+      let element = event.target
+      let currentNode = event.changedTouches[0]
+      let svgBox = this.getSVGPosition()
+      let divX
+      let divY
+      let newPos
+      let updatePos
+      let centerOffsetX = Number(element.getAttribute('center-offsetx'))
+      let centerOffsetY = Number(element.getAttribute('center-offsety'))
+
+      if (element.id === this.current_drag || this.current_drag === '') {
+        divX = (currentNode.pageX - svgBox.absX) / (svgBox.boxWidth / 9)
+        divY = (currentNode.pageY - svgBox.absY) / (svgBox.boxHeight / 12)
+        newPos = this.getNewPos(Math.floor(divX), Math.floor(divY))
+
+        if (newPos.isValid) {
+          element.style.left = newPos.newOffsetX + svgBox.absX - centerOffsetX + 'px'
+          element.style.top = newPos.newOffsetY + svgBox.absY - centerOffsetY + 'px'
+
+          updatePos = this.computeRingXY(newPos.newOffsetX + svgBox.absX, newPos.newOffsetY + svgBox.absY)
+          this.x = updatePos.RingX
+          this.y = updatePos.RingY
+          this.block_part = `part${newPos.part}`
+          this.placement = newPos.block > 6 ? `${13 - newPos.block}` : `${newPos.block}`
+        } else {
+          this.resetTouch()
+        }
+
+        this.serve_point = (element.id === 'servePoint')
+        this.getpoint = (element.id === 'getPoint') || (element.id === 'servePoint')
+
+        if (this.prev_x !== 0 && this.prev_y !== 0) {
+          this.drawLine()
+        } else {
+          // lose point and placement = '0'
+          this.prev_placement = this.placement
+        }
+        element.classList.remove('moving')
+        event.preventDefault()
+      }
+    },
+    resetTouch: function () {
+      let getPoint = document.getElementById('getPoint')
+      let lostPoint = document.getElementById('lostPoint')
+      let servePoint = document.getElementById('servePoint')
+      servePoint.style.left = 30 + 'px'
+      servePoint.style.top = 178 + 'px'
+      getPoint.style.left = 30 + 'px'
+      getPoint.style.top = 236.5 + 'px'
+      lostPoint.style.left = 30 + 'px'
+      lostPoint.style.top = 295 + 'px'
+      this.serve_point = false
+      this.getpoint = false
+      this.current_drag = ''
+      this.placement = ''
+      this.prev_placement = ''
+      this.block_part = '0'
+      this.prev_block_part = '0'
+      this.skill = ''
+      this.clearLine()
+    },
+    initInfo: function () {
+      this.inputData = null
+      this.game = ''
+      this.name1 = ''
+      this.name2 = ''
+      this.station = ''
+      this.serve = null
+      this.NumOfBoard = ''
+    },
+    initTouch: function () {
+      let getPoint = document.getElementById('getPoint')
+      let lostPoint = document.getElementById('lostPoint')
+      let servePoint = document.getElementById('servePoint')
+
+      // when touchstart
+      getPoint.addEventListener('touchstart', this.start_mov, false)
+      lostPoint.addEventListener('touchstart', this.start_mov, false)
+      servePoint.addEventListener('touchstart', this.start_mov, false)
+      // when touchmove
+      getPoint.addEventListener('touchmove', this.move_with_finger, false)
+      lostPoint.addEventListener('touchmove', this.move_with_finger, false)
+      servePoint.addEventListener('touchmove', this.move_with_finger, false)
+
+      // when touchend
+      getPoint.addEventListener('touchend', this.moveStop, false)
+      lostPoint.addEventListener('touchend', this.moveStop, false)
+      servePoint.addEventListener('touchend', this.moveStop, false)
+
+      let pos = this.getSVGPosition()
+      this.absX = pos.absX
+      this.absY = pos.absY
+    },
+    initHotZone: function () {
+      for (let item in this.$refs) {
+        this.$refs[item].color = 'red'
+        this.$refs[item].opacity = 0
+      }
+    },
+    initButtons: function () {
+      // set buttons' clicked view
+      let elements = [document.getElementById('skill1'), document.getElementById('skill2')]
+      let toggle = (e) => {
+        if (e.target.id === 'skill1') {
+          elements[0].classList.add('clickedBtn')
+          elements[1].classList.remove('clickedBtn')
+        } else {
+          elements[1].classList.add('clickedBtn')
+          elements[0].classList.remove('clickedBtn')
+        }
+      }
+      elements.forEach(ele => {
+        ele.addEventListener('click', toggle, false)
+      })
+
+      document.getElementById('infoBox').addEventListener('pointerdown', function () {
+        document.getElementById('infoBox').classList.add('clickedBtn')
+      }, false)
+
+      document.getElementById('infoBox').addEventListener('pointerup', function () {
+        document.getElementById('infoBox').classList.remove('clickedBtn')
+      }, false)
+
+      let btnsId = ['updateBtn', 'deleteBtn', 'stopBtn', 'endBtn', 'replayBtn']
+      btnsId.forEach(id => {
+        let element = document.getElementById(id)
+        element.addEventListener('pointerdown', function () {
+          element.classList.add('clickedBtn')
+        }, false)
+        element.addEventListener('pointerup', function () {
+          element.classList.remove('clickedBtn')
+        }, false)
+      })
+    },
+    changeHotZone: function (station) {
+      this.station = station
+      for (let item in this.$refs) {
+        let idx = Object.keys(this.$refs).indexOf(item)
+        if (station === 'top') {
+          // swap overlap's color according to player's station
+          this.$refs[item].color = (idx <= 5) ? 'red' : 'green'
+          // swap overlap's opacity according to player's station
+          this.$refs[item].opacity = this.opacity[11 - idx]
+        } else if (station === 'bottom') {
+          this.$refs[item].color = (idx <= 5) ? 'green' : 'red'
+          this.$refs[item].opacity = this.opacity[idx]
+        }
+      }
+    },
+    getSVGPosition: function () {
+      let svgBox = document.getElementById('table_container').getBoundingClientRect()
+      return {
+        boxHeight: svgBox.height,
+        boxWidth: svgBox.width,
+        absX: svgBox.x,
+        absY: svgBox.y
+      }
     }
   },
   mounted () {
-    // set buttons' clicked view
-    let elements = [document.getElementById('skill1'), document.getElementById('skill2')]
-    let toggle = (e) => {
-      if (e.target.id === 'skill1') {
-        elements[0].classList.add('clickedBtn')
-        elements[1].classList.remove('clickedBtn')
-      } else {
-        elements[1].classList.add('clickedBtn')
-        elements[0].classList.remove('clickedBtn')
-      }
+    this.initTouch()
+    this.changeColor()
+    this.initHotZone()
+    this.initButtons()
+    // forbid presslong to pop menu
+    document.oncontextmenu = function (e) {
+      e.preventDefault()
+      return false
     }
-    elements.forEach(ele => {
-      ele.addEventListener('click', toggle, false)
-    })
-
-    document.getElementById('infoBox').addEventListener('pointerdown', function () {
-      document.getElementById('infoBox').classList.add('clickedBtn')
-    }, false)
-
-    document.getElementById('infoBox').addEventListener('pointerup', function () {
-      document.getElementById('infoBox').classList.remove('clickedBtn')
-    }, false)
-
-    let btnsId = ['updateBtn', 'deleteBtn', 'stopBtn', 'endBtn', 'replayBtn']
-    btnsId.forEach(id => {
-      document.getElementById(id).addEventListener('pointerdown', function () {
-        document.getElementById(id).classList.add('clickedBtn')
-      }, false)
-      document.getElementById(id).addEventListener('pointerup', function () {
-        document.getElementById(id).classList.remove('clickedBtn')
-      }, false)
-    })
 
     let prevStatus = JSON.parse(localStorage.getItem('status'))
 
@@ -422,10 +675,10 @@ export default {
         // init data
         this.clearPreviousData()
         // init table color
-        this.$refs.table.changeColor()
+        this.changeColor()
         // init score
         this.currentScore = [0, 0]
-        this.$refs.table.clearLine()
+        this.clearLine()
         this.$bvModal.show('infoModal')
       }
     }
@@ -442,6 +695,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.stopBtns {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .toolNode {
@@ -503,7 +764,7 @@ export default {
   flex-direction: row
 }
 
-#Name1, #Name2 {
+.Name {
   height: 50px;
   width: 65px;
   text-align: center;
@@ -552,9 +813,49 @@ export default {
   height: 50px;
 }
 
+.stopBtn {
+  padding: 7px;
+  margin: 5px;
+  background-color: white;
+  color: red;
+  font-size: 1.1rem;
+  border: 1px solid red;
+  border-radius: 10px;
+  width: 45%;
+  height: 50px;
+}
+
 .clickedBtn {
   background-color: rgb(108, 110, 254);
   color: white;
+}
+
+#getPoint {
+  position:absolute;
+  left: 30px;
+  top: 236.5px;
+}
+#lostPoint {
+  position:absolute;
+  left: 30px;
+  top: 295px;
+}
+#servePoint {
+  position:absolute;
+  left: 30px;
+  top: 178px;
+}
+.overlap {
+  z-index: 2;
+  background-color: "red";
+}
+#topPerson, #bottomPerson {
+  background-image: url('../assets/person.png');
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50% 50%
 }
 
 </style>
