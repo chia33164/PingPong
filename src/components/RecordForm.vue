@@ -60,9 +60,6 @@
     </div>
     <div id="list">
       <div id="title">
-        <div class="Name">{{this.name1}}</div>
-        <div class="Name">{{this.name2}}</div>
-        <div id="Game">{{this.game}}</div>
         <button class="operateBtn" id='infoBox' @click="changeInfo">資訊</button>
       </div>
       <div>
@@ -138,7 +135,8 @@ export default {
       opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       current_drag: '',
       absX: 0,
-      absY: 0
+      absY: 0,
+      numOfRounds: ''
     }
   },
   methods: {
@@ -316,6 +314,7 @@ export default {
       this.station = data[3]
       this.serve = (data[4] === 'true')
       this.NumOfBoard = data[5]
+      this.numOfRounds = data[6]
       this.changeHotZone(this.station)
       // save to localStorage
       this.save()
@@ -332,6 +331,7 @@ export default {
         name1: this.name1,
         name2: this.name2,
         game: this.game,
+        numOfRounds: this.numOfRounds,
         station: this.station,
         oneRound: this.oneRound,
         allRounds: this.allRounds,
@@ -349,6 +349,7 @@ export default {
       this.name1 = prevStatus.name1
       this.name2 = prevStatus.name2
       this.game = prevStatus.game
+      this.numOfRounds = prevStatus.numOfRounds
       this.station = prevStatus.station
       this.oneRound = prevStatus.oneRound
       this.allRounds = prevStatus.allRounds
@@ -363,6 +364,7 @@ export default {
       this.$refs.info.selected = this.station
       this.$refs.info.numOfBoards = prevStatus.NumOfBoard
       this.$refs.info.serve = prevStatus.serve
+      this.$refs.info.numOfRounds = prevStatus.numOfRounds
 
       // change hot zone
       this.oneRound.forEach(data => {
@@ -539,9 +541,9 @@ export default {
       // servePoint.style.left = 30 + 'px'
       // servePoint.style.top = 178 + 'px'
       getPoint.style.left = 30 + 'px'
-      getPoint.style.top = 236.5 + 'px'
+      getPoint.style.top = 206.5 + 'px'
       lostPoint.style.left = 30 + 'px'
-      lostPoint.style.top = 295 + 'px'
+      lostPoint.style.top = 265 + 'px'
       this.serve_point = false
       this.getpoint = false
       this.current_drag = ''
@@ -703,7 +705,8 @@ export default {
   display: flex;
   flex-direction: row;
   text-align: center;
-  justify-content: center;align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .toolNode {
@@ -765,16 +768,6 @@ export default {
   flex-direction: row
 }
 
-.Name {
-  height: 50px;
-  width: 65px;
-  text-align: center;
-}
-#Game {
-  height: 50px;
-  width: 200px;
-  text-align: center;
-}
 #btn {
   border-top: 10px;
   margin-top: 3%;
