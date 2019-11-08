@@ -6,7 +6,7 @@
         <button class="operateBtn" id="skill2" @click='hand="反手"'> 反手 </button>
       </div>
       <div class="toolList" >
-        <div class="toolNode serve" id="servePoint"> 發球得分 </div>
+        <!-- <div class="toolNode serve" id="servePoint"> 發球得分 </div> -->
         <div class="toolNode getPoint" id="getPoint"> 得分 </div>
         <div class="toolNode lostPoint" id="lostPoint"> 失分 </div>
       </div>
@@ -93,7 +93,6 @@
 
 <script>
 import Block from './recordForm/perBlock.vue'
-import drag from './recordForm/drag_object'
 import lists from './recordForm/list_Item'
 import InputModal from './recordForm/input_modal'
 import FixModal from './recordForm/change_modal'
@@ -101,7 +100,6 @@ import Review from './recordForm/review'
 
 export default {
   components: {
-    drag,
     lists,
     InputModal,
     FixModal,
@@ -537,9 +535,9 @@ export default {
     resetTouch: function () {
       let getPoint = document.getElementById('getPoint')
       let lostPoint = document.getElementById('lostPoint')
-      let servePoint = document.getElementById('servePoint')
-      servePoint.style.left = 30 + 'px'
-      servePoint.style.top = 178 + 'px'
+      // let servePoint = document.getElementById('servePoint')
+      // servePoint.style.left = 30 + 'px'
+      // servePoint.style.top = 178 + 'px'
       getPoint.style.left = 30 + 'px'
       getPoint.style.top = 236.5 + 'px'
       lostPoint.style.left = 30 + 'px'
@@ -566,21 +564,21 @@ export default {
     initTouch: function () {
       let getPoint = document.getElementById('getPoint')
       let lostPoint = document.getElementById('lostPoint')
-      let servePoint = document.getElementById('servePoint')
+      // let servePoint = document.getElementById('servePoint')
 
       // when touchstart
       getPoint.addEventListener('touchstart', this.start_mov, false)
       lostPoint.addEventListener('touchstart', this.start_mov, false)
-      servePoint.addEventListener('touchstart', this.start_mov, false)
+      // servePoint.addEventListener('touchstart', this.start_mov, false)
       // when touchmove
       getPoint.addEventListener('touchmove', this.move_with_finger, false)
       lostPoint.addEventListener('touchmove', this.move_with_finger, false)
-      servePoint.addEventListener('touchmove', this.move_with_finger, false)
+      // servePoint.addEventListener('touchmove', this.move_with_finger, false)
 
       // when touchend
       getPoint.addEventListener('touchend', this.moveStop, false)
       lostPoint.addEventListener('touchend', this.moveStop, false)
-      servePoint.addEventListener('touchend', this.moveStop, false)
+      // servePoint.addEventListener('touchend', this.moveStop, false)
 
       let pos = this.getSVGPosition()
       this.absX = pos.absX
@@ -836,18 +834,18 @@ export default {
 #getPoint {
   position:absolute;
   left: 30px;
-  top: 236.5px;
+  top: 206.5px;
 }
 #lostPoint {
   position:absolute;
   left: 30px;
-  top: 295px;
+  top: 265px;
 }
-#servePoint {
+/* #servePoint {
   position:absolute;
   left: 30px;
   top: 178px;
-}
+} */
 .overlap {
   z-index: 2;
   background-color: "red";
